@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "mimo-v2-flash",
+        "name": "Mimo V2 Flash",
+        "org": "Xiaomi",
+        "access": "open",
+        "family": {
+            "name": "Mimo",
+            "ver": "2"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 93,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 83,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 83,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T21:45:58.135Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 1288
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 1446
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 3668
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 984
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 2345
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 1404
+        },
+        "TC-07": {
+            "status": null,
+            "time": 3438
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 2086
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 1612
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 663
+        },
+        "TC-11": {
+            "status": null,
+            "time": 1020
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 1262
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 1492
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 1420
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 2410
+        }
+    }
+}
