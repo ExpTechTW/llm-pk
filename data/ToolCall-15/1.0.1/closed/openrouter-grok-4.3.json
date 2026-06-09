@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "grok-4.3",
+        "name": "Grok 4.3",
+        "org": "X-AI",
+        "access": "closed",
+        "family": {
+            "name": "Grok",
+            "ver": "4.3"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 73,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 33,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 67,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T23:03:15.308Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 2976
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 2107
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 9099
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2279
+        },
+        "TC-05": {
+            "status": 0,
+            "time": 2400
+        },
+        "TC-06": {
+            "status": 0,
+            "time": 2826
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 5032
+        },
+        "TC-08": {
+            "status": 0,
+            "time": 3651
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 2361
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 1262
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 1023
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 1754
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 4967
+        },
+        "TC-14": {
+            "status": 0,
+            "time": 2682
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 2951
+        }
+    }
+}
