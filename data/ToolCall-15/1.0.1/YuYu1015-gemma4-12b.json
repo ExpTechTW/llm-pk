@@ -7,52 +7,39 @@
   },
   "deployment": "local",
   "model": {
-    "id": "qwen3.6-27b",
-    "name": "Huihui Qwen3.6 27B Abliterated",
-    "org": "Qwen",
+    "id": "gemma4-12b",
+    "name": "Huihui Gemma4 12B IT Abliterated",
+    "org": "Google",
     "access": "open",
     "family": {
-      "name": "Qwen",
-      "ver": "3.6"
+      "name": "Gemma",
+      "ver": "4"
     },
     "type": "Dense",
     "size": {
-      "params": "27B",
-      "active": "27B"
+      "params": "12B",
+      "active": "12B"
     },
     "quantization": {
       "format": "GGUF",
-      "level": "Q4_K_XL",
-      "method": "Unsloth Dynamic 2.0"
+      "level": "Q4_0",
+      "method": "QAT"
     },
-    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
-    "args": {
-      "spec": {
-        "method": "MTP",
-        "n-max": 2
-      },
-      "temp": 0.6,
-      "top_p": 0.95,
-      "top_k": 20,
-      "min_p": 0,
-      "presence-penalty": 0,
-      "repeat-penalty": 1.05
-    }
+    "link": "https://huggingface.co/huihui-ai/Huihui-gemma-4-12B-it-qat-q4_0-unquantized-abliterated-GGUF"
   },
   "backend": {
     "name": "llama.cpp",
-    "ver": "9544"
+    "ver": "9580"
   },
   "hardware": {
-    "company": "NVIDIA",
-    "device": "NVIDIA GeForce RTX 3090",
-    "chip": "",
-    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
-    "driver": "595.71.05",
-    "cuda": "13.2"
+    "company": "Apple",
+    "device": "MacBook Pro",
+    "chip": "Apple M4 Max",
+    "os": "macOS 26.6 Beta (25G5028f)",
+    "driver": ""
   },
   "score": {
-    "total": 93,
+    "total": 70,
     "categories": [
       {
         "id": "A",
@@ -63,19 +50,19 @@
       {
         "id": "B",
         "label": "Parameter Precision",
-        "score": 100,
+        "score": 67,
         "weight": 20
       },
       {
         "id": "C",
         "label": "Multi-Step Chains",
-        "score": 100,
+        "score": 67,
         "weight": 20
       },
       {
         "id": "D",
         "label": "Restraint & Refusal",
-        "score": 100,
+        "score": 50,
         "weight": 20
       },
       {
@@ -87,70 +74,70 @@
     ]
   },
   "run": {
-    "date": "2026-06-09T18:19:11.419Z",
+    "date": "2026-06-09T20:59:35.241Z",
     "mode": "parallel_by_test_case",
     "runsPerTest": 1
   },
   "results": {
     "TC-01": {
       "status": 1,
-      "time": 4782
+      "time": 5756
     },
     "TC-02": {
       "status": 1,
-      "time": 3374
+      "time": 3847
     },
     "TC-03": {
       "status": 1,
-      "time": 8199
+      "time": 12150
     },
     "TC-04": {
       "status": 1,
-      "time": 2788
+      "time": 5397
     },
     "TC-05": {
-      "status": 1,
-      "time": 8810
+      "status": 0,
+      "time": 13173
     },
     "TC-06": {
       "status": 1,
-      "time": 6928
+      "time": 9527
     },
     "TC-07": {
       "status": 1,
-      "time": 13311
+      "time": 20475
     },
     "TC-08": {
-      "status": 1,
-      "time": 10740
+      "status": 0,
+      "time": 10710
     },
     "TC-09": {
       "status": 1,
-      "time": 4188
+      "time": 11635
     },
     "TC-10": {
       "status": 1,
-      "time": 2061
+      "time": 2413
     },
     "TC-11": {
-      "status": 1,
-      "time": 6504
+      "status": 50,
+      "time": 5579
     },
     "TC-12": {
-      "status": 1,
-      "time": 5730
+      "status": 0,
+      "time": 252091
     },
     "TC-13": {
       "status": 1,
-      "time": 5805
+      "time": 10845
     },
     "TC-14": {
       "status": 0,
-      "time": 3774
+      "time": 11882
     },
     "TC-15": {
       "status": 1,
-      "time": 5779
+      "time": 8868
     }
   }
 }

@@ -8,14 +8,14 @@
   "deployment": "local",
   "model": {
     "id": "gemma4-e2b",
-    "name": "Huihui Gemma4 E2B abliterated",
+    "name": "Huihui Gemma4 E2B IT Abliterated",
     "org": "Google",
     "access": "open",
     "family": {
       "name": "Gemma",
       "ver": "4"
     },
-    "type": "MoE",
+    "type": "Dense",
     "size": {
       "params": "2B",
       "active": "2B"
