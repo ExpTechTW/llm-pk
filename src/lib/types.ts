@@ -50,6 +50,7 @@ export interface SubmissionRow {
   scoreTotal: number;
   scoreCats: ScoreCategory[];
   passCount: number;
+  halfCount: number;
   totalCount: number;
   totalTime: number;
   runDate: string;

@@ -1,27 +1,12 @@
 import type { SubmissionRow } from "./types";
 
-// 速度排行沒有意義(不同 device 無法比較),故只提供分數 / 最新 / 啟動參數量。
-export type SortKey = "score" | "recent" | "activeAsc" | "activeDesc";
+// 速度排行沒有意義(不同 device 無法比較),故只提供分數 / 最新。
+export type SortKey = "score" | "recent";
 
 export const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "score", label: "分數" },
-  { key: "recent", label: "最新" },
-  { key: "activeAsc", label: "啟動參數 少→多" },
-  { key: "activeDesc", label: "啟動參數 多→少" }
+  { key: "recent", label: "最新" }
 ];
-
-// 將參數量字串(如 "2.5B"、"350M"、"1.2T")轉成可比較的數值;無法解析回傳 null。
-export function parseParamCount(s: string | null): number | null {
-  if (!s) return null;
-  const m = s.trim().match(/^([\d.]+)\s*([kmbt])?/i);
-  if (!m) return null;
-  const n = parseFloat(m[1]);
-  if (Number.isNaN(n)) return null;
-  const unit = (m[2] ?? "").toLowerCase();
-  const mult =
-    unit === "t" ? 1e12 : unit === "b" ? 1e9 : unit === "m" ? 1e6 : unit === "k" ? 1e3 : 1;
-  return n * mult;
-}
 
 export interface FacetDef {
   key: string;
@@ -72,16 +57,6 @@ function matchesFacets(r: SubmissionRow, selected: Selected, exceptKey?: string)
 function sortRows(rows: SubmissionRow[], sort: SortKey): SubmissionRow[] {
   const copy = [...rows];
   copy.sort((a, b) => {
-    if (sort === "activeAsc" || sort === "activeDesc") {
-      const av = parseParamCount(a.sizeActive);
-      const bv = parseParamCount(b.sizeActive);
-      // 無啟動參數資料者一律排在最後
-      if (av === null && bv === null) return b.scoreTotal - a.scoreTotal;
-      if (av === null) return 1;
-      if (bv === null) return -1;
-      const diff = sort === "activeAsc" ? av - bv : bv - av;
-      return diff || b.scoreTotal - a.scoreTotal;
-    }
     if (sort === "score") return b.scoreTotal - a.scoreTotal || avgTime(a) - avgTime(b);
     return b.runDate.localeCompare(a.runDate) || b.scoreTotal - a.scoreTotal;
   });

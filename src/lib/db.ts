@@ -80,6 +80,7 @@ interface RawRow {
   score_total: number;
   score_cats: string | null;
   pass_count: number;
+  half_count: number;
   total_count: number;
   total_time: number;
   run_date: string;
@@ -130,6 +131,7 @@ function mapRow(r: RawRow): SubmissionRow {
     scoreTotal: r.score_total,
     scoreCats: parseJson<ScoreCategory[]>(r.score_cats, []),
     passCount: r.pass_count,
+    halfCount: r.half_count,
     totalCount: r.total_count,
     totalTime: r.total_time,
     runDate: r.run_date,
@@ -142,9 +144,13 @@ function mapRow(r: RawRow): SubmissionRow {
 export function getSubmissionsByPack(db: Database, packName: string, packVer: string): SubmissionRow[] {
   const rows = queryAll<RawRow>(
     db,
-    `SELECT * FROM submission
-      WHERE pack_name = $pack AND pack_ver = $ver
-      ORDER BY score_total DESC, total_time ASC`,
+    `SELECT s.*,
+       (SELECT COUNT(*) FROM result r
+         WHERE r.submission_id = s.id
+           AND (r.status IS NULL OR (r.status > 0 AND r.status < 1))) AS half_count
+       FROM submission s
+      WHERE s.pack_name = $pack AND s.pack_ver = $ver
+      ORDER BY s.score_total DESC, s.total_time ASC`,
     { $pack: packName, $ver: packVer }
   );
   return rows.map(mapRow);
@@ -152,7 +158,15 @@ export function getSubmissionsByPack(db: Database, packName: string, packVer: st
 
 /** 單一投稿(詳細頁用)。 */
 export function getSubmissionById(db: Database, id: number): SubmissionRow | null {
-  const rows = queryAll<RawRow>(db, `SELECT * FROM submission WHERE id = $id`, { $id: id });
+  const rows = queryAll<RawRow>(
+    db,
+    `SELECT s.*,
+       (SELECT COUNT(*) FROM result r
+         WHERE r.submission_id = s.id
+           AND (r.status IS NULL OR (r.status > 0 AND r.status < 1))) AS half_count
+       FROM submission s WHERE s.id = $id`,
+    { $id: id }
+  );
   return rows.length ? mapRow(rows[0]) : null;
 }
 

@@ -4,6 +4,7 @@ import { Cloud, Cpu } from "lucide-react";
 
 import { GithubAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
+import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -118,7 +119,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
             />
           </div>
           <span className="text-muted-foreground font-data text-[11px] tabular-nums">
-            {row.passCount}/{row.totalCount}
+            {formatPass(row.passCount, row.halfCount)}/{row.totalCount}
           </span>
         </div>
       </article>

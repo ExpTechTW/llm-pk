@@ -56,10 +56,10 @@ function Chip({ children, className }: { children: ReactNode; className?: string
   );
 }
 
-function Panel({ title, children }: { title: string; children: ReactNode }) {
+function Panel({ title, children, titleSize = "text-[10px]" }: { title: string; children: ReactNode; titleSize?: string }) {
   return (
-    <section className="bg-card/60 border-border/60 rounded-2xl border p-5 backdrop-blur-sm">
-      <h2 className="text-muted-foreground mb-3 text-[10px] font-semibold tracking-[0.16em] uppercase">
+    <section className={cn("bg-card/60 border-border/60 rounded-2xl border p-5 backdrop-blur-sm")}>
+      <h2 className={cn(`text-muted-foreground mb-3 ${titleSize} font-semibold tracking-[0.16em] uppercase`)}>
         {title}
       </h2>
       {children}
@@ -204,7 +204,7 @@ export default function Detail() {
       {/* 資訊區塊 */}
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {row.scoreCats.length > 0 ? (
-          <Panel title="分類分數">
+          <Panel title="分類分數" titleSize="text-sm">
             <div className="flex flex-col gap-3">
               {row.scoreCats.map((cat) => (
                 <div key={cat.id} className="flex flex-col gap-1">
@@ -224,7 +224,7 @@ export default function Detail() {
           </Panel>
         ) : null}
 
-        <Panel title={isCloud ? "供應商" : "硬體"}>
+        <Panel title={isCloud ? "供應商" : "硬體"} titleSize="text-sm">
           <div className="grid grid-cols-2 gap-3">
             {isCloud ? (
               <Meta label="後端 / API" value={`${row.backendName}${row.backendVer ? ` ${row.backendVer}` : ""}`} />
@@ -249,7 +249,21 @@ export default function Detail() {
           </div>
         </Panel>
 
-        <Panel title="執行資訊">
+        {row.sizeActive || row.sizeParams ? (
+          <Panel title="啟動參數" titleSize="text-sm">
+            <div className="flex items-baseline gap-2">
+              <span className="font-data text-3xl leading-none font-bold tabular-nums">
+                {row.sizeActive ?? row.sizeParams}
+              </span>
+              {row.sizeParams && row.sizeActive && row.sizeActive !== row.sizeParams ? (
+                <span className="text-muted-foreground text-sm">/ {row.sizeParams} 總參數</span>
+              ) : null}
+            </div>
+            <p className="text-muted-foreground mt-1.5 text-xs">每次推理實際啟動的參數量</p>
+          </Panel>
+        ) : null}
+
+        <Panel title="執行資訊" titleSize="text-sm">
           <div className="grid grid-cols-2 gap-3">
             <Meta label="日期" value={row.runDate.slice(0, 10)} />
             {row.runMode ? <Meta label="模式" value={row.runMode} /> : null}
@@ -261,7 +275,7 @@ export default function Detail() {
       </div>
 
       {/* 題目結果 */}
-      <Panel title={`題目結果 · ${row.passCount}/${row.totalCount} 通過,未過 ${wrong.length} 題`}>
+      <Panel title={`題目結果 · ${row.passCount}/${row.totalCount} 通過,未過 ${wrong.length} 題`} titleSize="text-sm">
         <p className="text-muted-foreground mb-3 text-xs">點題號查看題目與評分標準</p>
         <div className="flex flex-wrap gap-1.5">
           {results.map((r) => {
