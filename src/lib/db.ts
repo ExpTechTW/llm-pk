@@ -2,7 +2,7 @@ import initSqlJs from "sql.js";
 import type { Database } from "sql.js";
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 
-import type { PackInfo, ScoreCategory, SubmissionRow } from "./types";
+import type { PackInfo, ResultEntry, ScoreCategory, SubmissionRow } from "./types";
 
 let dbPromise: Promise<Database> | null = null;
 
@@ -36,14 +36,14 @@ function queryAll<T>(db: Database, sql: string, params?: Record<string, unknown>
   }
 }
 
-/** 所有測試類型(BenchPack),依投稿數由多到少排序。 */
+/** 所有測試類型(BenchPack)的 名稱+版本 組合,依投稿數由多到少排序。 */
 export function getPacks(db: Database): PackInfo[] {
   return queryAll<PackInfo>(
     db,
-    `SELECT pack_name AS name, MAX(pack_ver) AS ver, COUNT(*) AS count
+    `SELECT pack_name AS name, pack_ver AS ver, COUNT(*) AS count
        FROM submission
-      GROUP BY pack_name
-      ORDER BY count DESC, name ASC`
+      GROUP BY pack_name, pack_ver
+      ORDER BY count DESC, name ASC, ver DESC`
   );
 }
 
@@ -52,6 +52,9 @@ interface RawRow {
   author: string;
   benchlocal: string;
   model_name: string;
+  model_id: string | null;
+  model_org: string | null;
+  org_avatar: string | null;
   model_link: string | null;
   model_access: string;
   deployment: string;
@@ -96,6 +99,9 @@ function mapRow(r: RawRow): SubmissionRow {
     author: r.author,
     benchlocal: r.benchlocal,
     modelName: r.model_name,
+    modelId: r.model_id,
+    modelOrg: r.model_org,
+    orgAvatar: r.org_avatar,
     modelLink: r.model_link,
     access: r.model_access,
     deployment: r.deployment,
@@ -126,12 +132,29 @@ function mapRow(r: RawRow): SubmissionRow {
   };
 }
 
-/** 某個 pack 的所有投稿(已依分數排序);搜尋 / 篩選 / 分頁在前端用 in-memory 處理。 */
-export function getSubmissionsByPack(db: Database, packName: string): SubmissionRow[] {
+/** 某個 pack(名稱+版本)的所有投稿(已依分數排序);搜尋 / 篩選 / 分頁在前端用 in-memory 處理。 */
+export function getSubmissionsByPack(db: Database, packName: string, packVer: string): SubmissionRow[] {
   const rows = queryAll<RawRow>(
     db,
-    `SELECT * FROM submission WHERE pack_name = $pack ORDER BY score_total DESC, total_time ASC`,
-    { $pack: packName }
+    `SELECT * FROM submission
+      WHERE pack_name = $pack AND pack_ver = $ver
+      ORDER BY score_total DESC, total_time ASC`,
+    { $pack: packName, $ver: packVer }
   );
   return rows.map(mapRow);
+}
+
+/** 單一投稿(詳細頁用)。 */
+export function getSubmissionById(db: Database, id: number): SubmissionRow | null {
+  const rows = queryAll<RawRow>(db, `SELECT * FROM submission WHERE id = $id`, { $id: id });
+  return rows.length ? mapRow(rows[0]) : null;
+}
+
+/** 單一投稿的每題結果,依題號排序。 */
+export function getResults(db: Database, submissionId: number): ResultEntry[] {
+  return queryAll<{ scenario_id: string; status: number; time: number }>(
+    db,
+    `SELECT scenario_id, status, time FROM result WHERE submission_id = $id ORDER BY scenario_id ASC`,
+    { $id: submissionId }
+  ).map((r) => ({ scenarioId: r.scenario_id, status: r.status, time: r.time }));
 }

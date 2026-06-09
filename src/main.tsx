@@ -1,11 +1,22 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HashRouter, Route, Routes } from "react-router-dom";
 
-import App from "./App.tsx";
+import { Layout } from "./components/Layout.tsx";
+import Home from "./pages/Home.tsx";
+import Detail from "./pages/Detail.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <HashRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="s/:id" element={<Detail />} />
+          <Route path="*" element={<Home />} />
+        </Route>
+      </Routes>
+    </HashRouter>
   </StrictMode>
 );

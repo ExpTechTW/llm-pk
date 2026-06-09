@@ -1,10 +1,10 @@
 import type { SubmissionRow } from "./types";
 
-export type SortKey = "score" | "speed" | "recent";
+// 速度排行沒有意義(不同 device 無法比較),故只提供分數 / 最新。
+export type SortKey = "score" | "recent";
 
 export const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "score", label: "分數" },
-  { key: "speed", label: "速度(每題)" },
   { key: "recent", label: "最新" }
 ];
 
@@ -59,7 +59,6 @@ function sortRows(rows: SubmissionRow[], sort: SortKey): SubmissionRow[] {
   const copy = [...rows];
   copy.sort((a, b) => {
     if (sort === "score") return b.scoreTotal - a.scoreTotal || avgTime(a) - avgTime(b);
-    if (sort === "speed") return avgTime(a) - avgTime(b) || b.scoreTotal - a.scoreTotal;
     return b.runDate.localeCompare(a.runDate) || b.scoreTotal - a.scoreTotal;
   });
   return copy;

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, SlidersHorizontal, Trophy } from "lucide-react";
+import { Loader2, SlidersHorizontal } from "lucide-react";
 
 import { FilterSidebar } from "@/components/FilterSidebar";
+import { PackSelect, type PackKey } from "@/components/PackSelect";
 import { SearchBar } from "@/components/SearchBar";
 import { SubmissionCard } from "@/components/SubmissionCard";
 import { Button } from "@/components/ui/button";
@@ -17,11 +18,11 @@ import {
 import { useDb } from "@/hooks/useDb";
 import { cn } from "@/lib/utils";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 15;
 
-export default function App() {
+export default function Home() {
   const { db, loading, error } = useDb();
-  const [pack, setPack] = useState<string | null>(null);
+  const [pack, setPack] = useState<PackKey | null>(null);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Selected>(emptySelected);
   const [sort, setSort] = useState<SortKey>("score");
@@ -29,7 +30,10 @@ export default function App() {
   const [showFilters, setShowFilters] = useState(false);
 
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
-  const rows = useMemo(() => (db && pack ? getSubmissionsByPack(db, pack) : []), [db, pack]);
+  const rows = useMemo(
+    () => (db && pack ? getSubmissionsByPack(db, pack.name, pack.ver) : []),
+    [db, pack]
+  );
   const facets = useMemo(() => computeFacets(rows, search, selected), [rows, search, selected]);
   const filtered = useMemo(
     () => applyFilters(rows, search, selected, sort),
@@ -37,15 +41,15 @@ export default function App() {
   );
 
   useEffect(() => {
-    if (!pack && packs.length > 0) setPack(packs[0].name);
+    if (!pack && packs.length > 0) setPack({ name: packs[0].name, ver: packs[0].ver });
   }, [packs, pack]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [pack, search, selected, sort]);
 
-  const changePack = (name: string) => {
-    setPack(name);
+  const changePack = (next: PackKey) => {
+    setPack(next);
     setSelected(emptySelected());
   };
 
@@ -63,16 +67,7 @@ export default function App() {
   const activeFilters = countSelected(selected);
 
   return (
-    <div className="from-background to-muted/20 min-h-screen bg-gradient-to-b">
-      {/* Navbar */}
-      <header className="border-border/60 bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-          <Trophy className="size-5 text-amber-500" />
-          <span className="font-semibold tracking-wide">LLM PK</span>
-          <span className="text-muted-foreground ml-auto text-xs">本地模型跑分排行</span>
-        </div>
-      </header>
-
+    <>
       {/* Hero + 搜尋 */}
       <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 pt-12 pb-8">
         <h1 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
@@ -87,7 +82,7 @@ export default function App() {
         <SearchBar value={search} onChange={setSearch} />
       </section>
 
-      <main className="mx-auto max-w-6xl px-4 pb-20">
+      <main className="mx-auto max-w-[1400px] px-4 pb-20">
         {loading ? (
           <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
             <Loader2 className="size-4 animate-spin" />
@@ -108,27 +103,14 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* Pack 選擇器 */}
-            {packs.length > 1 ? (
-              <div className="mb-5 flex flex-wrap justify-center gap-2">
-                {packs.map((p) => (
-                  <Button
-                    key={p.name}
-                    size="sm"
-                    variant={p.name === pack ? "default" : "outline"}
-                    onClick={() => changePack(p.name)}
-                    className="rounded-full"
-                  >
-                    {p.name}
-                    <span className="opacity-60">{p.count}</span>
-                  </Button>
-                ))}
-              </div>
-            ) : null}
+            {/* BenchPack 下拉選單 */}
+            <div className="mb-5 flex justify-center">
+              <PackSelect packs={packs} value={pack} onChange={changePack} />
+            </div>
 
-            <div className="lg:grid lg:grid-cols-[248px_1fr] lg:gap-6">
-              {/* 篩選側欄 */}
-              <aside className="lg:block">
+            <div className="lg:grid lg:grid-cols-[256px_minmax(0,1fr)] lg:gap-8">
+              {/* 篩選側欄(桌面:sticky 固定,不隨清單滾動;過長時內部捲動) */}
+              <aside className="lg:sticky lg:top-16 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
                 <div className="mb-3 lg:hidden">
                   <Button
                     variant="outline"
@@ -142,24 +124,22 @@ export default function App() {
                 </div>
                 <div
                   className={cn(
-                    "lg:sticky lg:top-20 lg:block",
-                    showFilters ? "block" : "hidden"
+                    "border-border/60 bg-card/40 rounded-xl border p-4",
+                    showFilters ? "block" : "hidden lg:block"
                   )}
                 >
-                  <div className="border-border/60 bg-card/40 mb-4 rounded-xl border p-4 lg:mb-0">
-                    <FilterSidebar
-                      facets={facets}
-                      selected={selected}
-                      onToggle={toggle}
-                      onReset={() => setSelected(emptySelected())}
-                      sort={sort}
-                      onSortChange={setSort}
-                    />
-                  </div>
+                  <FilterSidebar
+                    facets={facets}
+                    selected={selected}
+                    onToggle={toggle}
+                    onReset={() => setSelected(emptySelected())}
+                    sort={sort}
+                    onSortChange={setSort}
+                  />
                 </div>
               </aside>
 
-              {/* 排行清單 */}
+              {/* 排行清單(概覽) */}
               <div className="flex flex-col gap-3">
                 <div className="text-muted-foreground flex items-center justify-between px-1 text-xs">
                   <span>
@@ -193,6 +173,6 @@ export default function App() {
           </>
         )}
       </main>
-    </div>
+    </>
   );
 }

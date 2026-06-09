@@ -26,8 +26,11 @@ data/{pack}/{ver}/{author}-{name}.json
 
 ## 前端
 
-- 中上**搜尋框**(模型 / 系列 / 作者 / 後端),左側**篩選側欄**(部署、權重、系列、架構、量化格式、後端、硬體廠牌,各帶即時數量),可依分數 / 速度 / 最新排序。
-- 每筆投稿一張卡片:GitHub 頭像、名次、完整標籤(量化、後端、硬體、分類分數、執行模式、次數、日期…)。
+- 中上**搜尋框**(模型 / 系列 / 作者 / 後端);**下拉選單**切換 BenchPack(`{name}-{ver}`)。
+- 左側**篩選側欄**(部署、權重、系列、架構、量化格式、後端、硬體廠牌,各帶即時數量),桌面固定不隨內容捲動;依分數 / 最新排序(速度因 device 不同無意義,已移除)。
+- 首頁是**概覽卡**:廠牌 logo(由 `model.id`/`model.org` 對應 HuggingFace 頭像,無則彩色字母)為主視覺,模型 `name` 為標題,作者(GitHub 頭像)為副標。
+- 點卡片進**詳細頁**:完整規格、分類分數、硬體、執行資訊,以及**每題色塊格 + 錯題清單**。
+- RWD:桌面雙欄(固定側欄 + 清單),手機篩選改為可收合。
 
 ## 開發
 
@@ -57,7 +60,9 @@ npm run build      # 驗證型別 + 建 DB + 打包(輸出 dist/)
   "BenchPack": { "name": "ToolCall-15", "ver": "1.0.1" },  // 測試類型 名稱 / 版本
   "deployment": "local",                        // local | cloud(判別器)
   "model": {
-    "name": "Qwen3.6-35B-A3B-…-int4-AutoRound",
+    "name": "Qwen3 27B",                        // 重點展示的乾淨名稱
+    "id": "Qwen/Qwen3-27B",                     // 選填:完整識別碼(HF 形式 org/model → 自動帶廠牌 logo)
+    "org": "Qwen",                              // 選填:廠牌(留空則由 id 前綴或 family 推得)
     "access": "open",                           // open | closed(開源/閉源權重)
     "family": { "name": "Qwen", "ver": "3.6" }, // 選填
     "type": "MoE",                              // 選填:MoE / Dense

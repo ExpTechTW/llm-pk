@@ -61,7 +61,9 @@ const hardwareSchema = z
   .catchall(z.union([z.string(), z.number(), z.boolean()]));
 
 const modelCommon = {
-  name: z.string().min(1, "model.name 不可為空"),
+  name: z.string().min(1, "model.name 不可為空"), // 重點展示的乾淨名稱(如 Qwen3 27B)
+  id: z.string().optional(), // 完整識別碼,建議用 HuggingFace 形式 org/model(如 Qwen/Qwen3-27B)
+  org: z.string().optional(), // 廠牌 / 組織(顯示 logo 用);留空時由 id 前綴或 family 推得
   access: z.enum(["open", "closed"]), // 開源 / 閉源權重
   family: z.object({ name: z.string(), ver: z.string() }).partial().optional(),
   type: z.string().optional(), // MoE / Dense

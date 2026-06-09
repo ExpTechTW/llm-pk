@@ -4,6 +4,12 @@ export interface PackInfo {
   count: number;
 }
 
+export interface ResultEntry {
+  scenarioId: string;
+  status: number;
+  time: number;
+}
+
 export interface ScoreCategory {
   id: string;
   label?: string;
@@ -16,6 +22,9 @@ export interface SubmissionRow {
   author: string;
   benchlocal: string;
   modelName: string;
+  modelId: string | null;
+  modelOrg: string | null;
+  orgAvatar: string | null;
   modelLink: string | null;
   access: "open" | "closed" | string;
   deployment: "local" | "cloud" | string;
