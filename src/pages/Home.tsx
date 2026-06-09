@@ -170,7 +170,7 @@ export default function Home() {
 
       {/* 模型跑馬燈(左 / 右 / 左 交錯捲動) */}
       {all.length > 0 ? (
-        <section id="explore" className="animate-rise relative left-1/2 mb-14 w-screen -translate-x-1/2 scroll-mt-20 py-2 pt-20">
+        <section id="explore" className="animate-rise -mx-4 mb-14 scroll-mt-20 overflow-x-clip py-2 pt-20">
           <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl text-center pb-6">強大的社群</h2>
           <ModelMarquee rows={all} />
         </section>
@@ -213,7 +213,7 @@ export default function Home() {
               完整排行 <ArrowRight className="size-4" />
             </Link>
           </div>
-          <div className="grid gap-x-6 gap-y-8 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2">
             <LeadGroup title="本地" icon={Cpu} rows={topLocal} />
             <LeadGroup title="雲端" icon={Cloud} rows={topCloud} />
           </div>
