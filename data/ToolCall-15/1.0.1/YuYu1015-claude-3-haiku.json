@@ -1,0 +1,129 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "name": "anthropic/claude-3-haiku",
+        "access": "closed",
+        "family": {
+            "name": "Claude",
+            "ver": "3"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 70,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 50,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T21:14:16.607Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 2119
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 2957
+        },
+        "TC-03": {
+            "status": 0,
+            "time": 3210
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 4302
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 3155
+        },
+        "TC-06": {
+            "status": 0,
+            "time": 5394
+        },
+        "TC-07": {
+            "status": 0,
+            "time": 5445
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 4383
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 4456
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 626
+        },
+        "TC-11": {
+            "status": 50,
+            "time": 2014
+        },
+        "TC-12": {
+            "status": 0,
+            "time": 2985
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 2297
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 3445
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 3911
+        }
+    }
+}
