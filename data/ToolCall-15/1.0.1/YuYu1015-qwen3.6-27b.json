@@ -41,7 +41,7 @@
   },
   "backend": {
     "name": "llama.cpp",
-    "ver": "b9544"
+    "ver": "9544"
   },
   "hardware": {
     "company": "NVIDIA",

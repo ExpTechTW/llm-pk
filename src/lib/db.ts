@@ -158,7 +158,7 @@ export function getSubmissionById(db: Database, id: number): SubmissionRow | nul
 
 /** 單一投稿的每題結果,依題號排序。 */
 export function getResults(db: Database, submissionId: number): ResultEntry[] {
-  return queryAll<{ scenario_id: string; status: number; time: number }>(
+  return queryAll<{ scenario_id: string; status: number | null; time: number }>(
     db,
     `SELECT scenario_id, status, time FROM result WHERE submission_id = $id ORDER BY scenario_id ASC`,
     { $id: submissionId }

@@ -17,13 +17,20 @@ import type { ResultEntry } from "@/lib/types";
 import { useDb } from "@/hooks/useDb";
 import { cn } from "@/lib/utils";
 
-function statusInfo(status: number) {
+function statusInfo(status: number | null) {
+  // null = 半對;小數(0,1)亦視為半對(相容舊資料)
+  if (status === null || (status > 0 && status < 1))
+    return { label: "半對", chip: "bg-amber-500/15 text-amber-400", dot: "bg-amber-400" };
   if (status < 0) return { label: "未跑", chip: "bg-muted/60 text-muted-foreground", dot: "bg-muted-foreground/50" };
-  if (status >= 1)
-    return { label: "通過", chip: "bg-primary/15 text-primary", dot: "bg-primary" };
-  if (status > 0)
-    return { label: "部分", chip: "bg-amber-500/15 text-amber-400", dot: "bg-amber-400" };
-  return { label: "失敗", chip: "bg-red-500/15 text-red-400", dot: "bg-red-400" };
+  if (status >= 1) return { label: "正常", chip: "bg-primary/15 text-primary", dot: "bg-primary" };
+  return { label: "錯誤", chip: "bg-red-500/15 text-red-400", dot: "bg-red-400" };
+}
+
+// 未通過(錯誤 + 半對),排除未跑與正常
+function isNotPassed(status: number | null): boolean {
+  if (status === null) return true;
+  if (status < 0) return false;
+  return status < 1;
 }
 
 function shortId(scenarioId: string): string {
@@ -77,7 +84,7 @@ export default function Detail() {
 
   const row = useMemo(() => (db && id ? getSubmissionById(db, Number(id)) : null), [db, id]);
   const results = useMemo<ResultEntry[]>(() => (db && id ? getResults(db, Number(id)) : []), [db, id]);
-  const wrong = results.filter((r) => r.status >= 0 && r.status < 1);
+  const wrong = results.filter((r) => isNotPassed(r.status));
   const resultById = useMemo(() => new Map(results.map((r) => [r.scenarioId, r])), [results]);
 
   useEffect(() => {
@@ -254,7 +261,7 @@ export default function Detail() {
       </div>
 
       {/* 題目結果 */}
-      <Panel title={`題目結果 · ${row.passCount}/${row.totalCount} 通過,錯 ${wrong.length} 題`}>
+      <Panel title={`題目結果 · ${row.passCount}/${row.totalCount} 通過,未過 ${wrong.length} 題`}>
         <p className="text-muted-foreground mb-3 text-xs">點題號查看題目與評分標準</p>
         <div className="flex flex-wrap gap-1.5">
           {results.map((r) => {
@@ -279,7 +286,7 @@ export default function Detail() {
         {wrong.length > 0 ? (
           <div className="mt-5 flex flex-col gap-1">
             <span className="text-muted-foreground mb-1 text-[10px] font-semibold tracking-[0.16em] uppercase">
-              錯題清單
+              未過題目(錯誤 / 半對)
             </span>
             <div className="divide-border/60 flex flex-col divide-y">
               {wrong.map((r) => {

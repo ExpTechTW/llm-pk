@@ -23,8 +23,8 @@ import { fileURLToPath } from "node:url";
 /* ----------------------------- 共用片段 ----------------------------- */
 
 const resultEntry = z.object({
-  // 每題狀態:1=pass、(0,1)=partial 分數、0=fail、-1=未執行/錯誤
-  status: z.number(),
+  // 每題狀態:1=正常、0=錯誤、null=半對、-1=未執行/錯誤
+  status: z.number().nullable(),
   // 每題花費時間(毫秒)
   time: z.number().nonnegative()
 });

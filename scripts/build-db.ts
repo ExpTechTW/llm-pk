@@ -69,9 +69,10 @@ function scoreStats(results: Submission["results"]): {
   let totalCount = 0;
   let totalTime = 0;
   for (const entry of Object.values(results)) {
-    if (entry.status < 0) continue; // 未執行/錯誤不計入
-    totalCount += 1;
-    if (entry.status >= 1) passCount += 1;
+    const s = entry.status;
+    if (s !== null && s < 0) continue; // 未執行/錯誤(-1)不計入
+    totalCount += 1; // 正常 / 錯誤 / 半對(null)都算作答
+    if (s !== null && s >= 1) passCount += 1; // 只有正常(1)算通過
     totalTime += entry.time;
   }
   return { passCount, totalCount, totalTime };

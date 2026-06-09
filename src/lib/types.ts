@@ -6,7 +6,7 @@ export interface PackInfo {
 
 export interface ResultEntry {
   scenarioId: string;
-  status: number;
+  status: number | null; // 1=正常、0=錯誤、null=半對、-1=未執行
   time: number;
 }
 

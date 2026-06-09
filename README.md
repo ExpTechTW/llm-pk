@@ -103,7 +103,7 @@ npm run build      # 驗證型別 + 建 DB + 打包(輸出 dist/)
   },
   "run": { "date": "2026-06-10T08:30:00Z", "mode": "serial", "runsPerTest": 1 },
   "results": {                                   // 每題:status + 花費時間(ms)
-    "TC-01": { "status": 1, "time": 16000 }      // 1=pass、(0,1)=partial、0=fail、-1=未執行/錯誤
+    "TC-01": { "status": 1, "time": 16000 }      // 1=正常、0=錯誤、null=半對、-1=未執行/錯誤
   }
 }
 ```
