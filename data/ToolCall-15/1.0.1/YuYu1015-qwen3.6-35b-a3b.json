@@ -1,0 +1,154 @@
+{
+  "BenchLocal": "0.3.0",
+  "author": "whes1015",
+  "BenchPack": {
+    "name": "ToolCall-15",
+    "ver": "1.0.1"
+  },
+  "deployment": "local",
+  "model": {
+    "name": "qwen3.6-35b-a3b",
+    "access": "open",
+    "family": {
+      "name": "Qwen",
+      "ver": "3.6"
+    },
+    "type": "MoE",
+    "size": {
+      "params": "35B",
+      "active": "3B"
+    },
+    "quantization": {
+      "format": "safetensors",
+      "level": "int4",
+      "method": "AutoRound"
+    },
+    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-35B-A3B-abliterated-int4-AutoRound",
+    "args": {
+      "spec": {
+        "method": "MTP",
+        "n-max": 3
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "epeat-penalty": 1.05
+    }
+  },
+  "backend": {
+    "name": "vllm",
+    "ver": "0.22.1rc1"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "DGX Spark",
+    "chip": "",
+    "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+    "driver": "595.71.05",
+    "cuda": "13.2"
+  },
+  "score": {
+    "total": 90,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Tool Selection",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "B",
+        "label": "Parameter Precision",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "C",
+        "label": "Multi-Step Chains",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Restraint & Refusal",
+        "score": 50,
+        "weight": 20
+      },
+      {
+        "id": "E",
+        "label": "Error Recovery",
+        "score": 100,
+        "weight": 20
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-09T18:46:21.896Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "TC-01": {
+      "status": 1,
+      "time": 5766
+    },
+    "TC-02": {
+      "status": 1,
+      "time": 5458
+    },
+    "TC-03": {
+      "status": 1,
+      "time": 7614
+    },
+    "TC-04": {
+      "status": 1,
+      "time": 4037
+    },
+    "TC-05": {
+      "status": 1,
+      "time": 9355
+    },
+    "TC-06": {
+      "status": 1,
+      "time": 6529
+    },
+    "TC-07": {
+      "status": 1,
+      "time": 13625
+    },
+    "TC-08": {
+      "status": 1,
+      "time": 9835
+    },
+    "TC-09": {
+      "status": 1,
+      "time": 5183
+    },
+    "TC-10": {
+      "status": 1,
+      "time": 4529
+    },
+    "TC-11": {
+      "status": 50,
+      "time": 5504
+    },
+    "TC-12": {
+      "status": 0,
+      "time": 27057
+    },
+    "TC-13": {
+      "status": 1,
+      "time": 7346
+    },
+    "TC-14": {
+      "status": 1,
+      "time": 7955
+    },
+    "TC-15": {
+      "status": 1,
+      "time": 9317
+    }
+  }
+}
