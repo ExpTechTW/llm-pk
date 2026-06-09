@@ -23,6 +23,7 @@ import {
   Ollama,
   OpenAI,
   Qwen,
+  XiaomiMiMo,
   Yi,
   ZAI,
   Zhipu
@@ -63,6 +64,8 @@ const BRANDS: Record<string, BrandComp> = {
   chatglm: ChatGLM,
   thudm: ChatGLM,
   minimax: Minimax,
+  xiaomi: XiaomiMiMo,
+  mimo: XiaomiMiMo,
   moonshot: Moonshot,
   moonshotai: Moonshot,
   kimi: Kimi,
