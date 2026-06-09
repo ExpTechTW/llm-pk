@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "qwen3.6-35b-a3b",
+        "name": "Qwen3.6 35B A3B",
+        "org": "Qwen",
+        "access": "closed",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 100,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T22:08:18.952Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 2733
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 1969
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 2715
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2252
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 4959
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 4895
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 6283
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 4246
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 2627
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 2282
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 13862
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 5599
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 6474
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 3307
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 4119
+        }
+    }
+}
