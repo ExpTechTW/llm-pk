@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "gemini-2.5-pro",
+        "name": "Gemini 2.5 Pro",
+        "org": "Google",
+        "access": "closed",
+        "family": {
+            "name": "Gemini",
+            "ver": "2.5"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 67,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 83,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 50,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 67,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T22:41:41.147Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 5660
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 4518
+        },
+        "TC-03": {
+            "status": null,
+            "time": 6185
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 4374
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 6767
+        },
+        "TC-06": {
+            "status": 0,
+            "time": 9315
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 22340
+        },
+        "TC-08": {
+            "status": 0,
+            "time": 19243
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 8655
+        },
+        "TC-10": {
+            "status": 0,
+            "time": 7576
+        },
+        "TC-11": {
+            "status": null,
+            "time": 11105
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 4219
+        },
+        "TC-13": {
+            "status": 0,
+            "time": 6640
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 5122
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 11769
+        }
+    }
+}

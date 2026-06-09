@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "gpt-5.5",
+        "name": "GPT 5.5",
+        "org": "OpenAI",
+        "access": "closed",
+        "family": {
+            "name": "GPT",
+            "ver": "5.5"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 70,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 17,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T22:43:47.616Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 3159
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 5118
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 9233
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2942
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 8074
+        },
+        "TC-06": {
+            "status": 0,
+            "time": 3677
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 8685
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 8426
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 3453
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 1345
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 1996
+        },
+        "TC-12": {
+            "status": 0,
+            "time": 3858
+        },
+        "TC-13": {
+            "status": 0,
+            "time": 5858
+        },
+        "TC-14": {
+            "status": 0,
+            "time": 5061
+        },
+        "TC-15": {
+            "status": null,
+            "time": 10878
+        }
+    }
+}
