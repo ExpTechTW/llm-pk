@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "nemotron-3-ultra-550b-a55b",
+        "name": "Nemotron 3 Ultra 550B A55B",
+        "org": "NVIDIA",
+        "access": "closed",
+        "family": {
+            "name": "Nemotron",
+            "ver": "3"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 100,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-09T22:29:00.886Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 1768
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 2014
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 2939
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 1774
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 4375
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 3588
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 8445
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 4964
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 2715
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 1410
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 1095
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 1458
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 4102
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 2301
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 3126
+        }
+    }
+}
