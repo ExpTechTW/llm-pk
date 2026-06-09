@@ -8,11 +8,11 @@
     "deployment": "cloud",
     "model": {
         "id": "minimax-m2.5",
-        "name": "Minimax M2.5",
-        "org": "Minimax",
+        "name": "MiniMax M2.5",
+        "org": "MiniMax",
         "access": "closed",
         "family": {
-            "name": "Minimax",
+            "name": "MiniMax",
             "ver": "2.5"
         },
         "type": "",
