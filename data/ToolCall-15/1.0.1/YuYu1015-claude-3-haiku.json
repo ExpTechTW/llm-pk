@@ -7,7 +7,9 @@
     },
     "deployment": "cloud",
     "model": {
-        "name": "anthropic/claude-3-haiku",
+        "id": "claude-3-haiku",
+        "name": "Claude 3 Haiku",
+        "org": "Anthropic",
         "access": "closed",
         "family": {
             "name": "Claude",
