@@ -13,24 +13,26 @@ import {
 } from "@/components/ui/dialog";
 import { getResults, getSubmissionById } from "@/lib/db";
 import { loadExam, type ExamPack } from "@/lib/exam";
+import { formatPass, statusKind } from "@/lib/status";
 import type { ResultEntry } from "@/lib/types";
 import { useDb } from "@/hooks/useDb";
 import { cn } from "@/lib/utils";
 
+// 狀態 → 標籤/配色,語意一律走共用的 statusKind(避免與計分分歧)
 function statusInfo(status: number | null) {
-  // null = 半對;小數(0,1)亦視為半對(相容舊資料)
-  if (status === null || (status > 0 && status < 1))
+  const kind = statusKind(status);
+  if (kind === "half")
     return { label: "半對", chip: "bg-amber-500/15 text-amber-400", dot: "bg-amber-400" };
-  if (status < 0) return { label: "未跑", chip: "bg-muted/60 text-muted-foreground", dot: "bg-muted-foreground/50" };
-  if (status >= 1) return { label: "正常", chip: "bg-primary/15 text-primary", dot: "bg-primary" };
+  if (kind === "skip")
+    return { label: "未跑", chip: "bg-muted/60 text-muted-foreground", dot: "bg-muted-foreground/50" };
+  if (kind === "pass") return { label: "正常", chip: "bg-primary/15 text-primary", dot: "bg-primary" };
   return { label: "錯誤", chip: "bg-red-500/15 text-red-400", dot: "bg-red-400" };
 }
 
 // 未通過(錯誤 + 半對),排除未跑與正常
 function isNotPassed(status: number | null): boolean {
-  if (status === null) return true;
-  if (status < 0) return false;
-  return status < 1;
+  const kind = statusKind(status);
+  return kind === "half" || kind === "fail";
 }
 
 function shortId(scenarioId: string): string {
@@ -170,7 +172,7 @@ export default function Detail() {
               <div className="gauge-fill bg-primary h-full rounded-full" style={{ width: `${score}%` }} />
             </div>
             <span className="text-muted-foreground font-data text-xs tabular-nums">
-              {row.passCount}/{row.totalCount} 通過
+              {formatPass(row.passCount, row.halfCount)}/{row.totalCount} 通過
             </span>
           </div>
         </div>
@@ -275,7 +277,10 @@ export default function Detail() {
       </div>
 
       {/* 題目結果 */}
-      <Panel title={`題目結果 · ${row.passCount}/${row.totalCount} 通過,未過 ${wrong.length} 題`} titleSize="text-sm">
+      <Panel
+        title={`題目結果 · ${formatPass(row.passCount, row.halfCount)}/${row.totalCount} 通過${row.halfCount > 0 ? `(含半對 ${row.halfCount})` : ""},未過 ${wrong.length} 題`}
+        titleSize="text-sm"
+      >
         <p className="text-muted-foreground mb-3 text-xs">點題號查看題目與評分標準</p>
         <div className="flex flex-wrap gap-1.5">
           {results.map((r) => {

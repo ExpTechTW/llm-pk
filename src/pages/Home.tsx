@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   ChevronDown,
+  Cloud,
   Cpu,
   Layers,
   Scale,
@@ -35,6 +36,34 @@ const FEATURES = [
   }
 ] as const;
 
+function LeadGroup({
+  title,
+  icon: Icon,
+  rows
+}: {
+  title: string;
+  icon: typeof Trophy;
+  rows: SubmissionRow[];
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-[0.16em] uppercase">
+        <Icon className="size-3.5" />
+        {title}
+      </div>
+      {rows.length > 0 ? (
+        rows.map((row, index) => (
+          <SubmissionCard key={row.id} row={row} rank={index + 1} index={index} />
+        ))
+      ) : (
+        <p className="text-muted-foreground/70 border-border/50 rounded-2xl border border-dashed px-4 py-6 text-center text-sm">
+          尚無投稿
+        </p>
+      )}
+    </div>
+  );
+}
+
 function StatCard({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Trophy }) {
   return (
     <div className="border-border/60 bg-card/50 flex flex-col gap-2 rounded-2xl border p-5 backdrop-blur-sm">
@@ -65,8 +94,20 @@ export default function Home() {
     };
   }, [all, packs]);
 
-  const top3 = useMemo(
-    () => [...all].sort((a, b) => b.scoreTotal - a.scoreTotal).slice(0, 3),
+  const topLocal = useMemo(
+    () =>
+      [...all]
+        .filter((r) => r.deployment !== "cloud")
+        .sort((a, b) => b.scoreTotal - a.scoreTotal)
+        .slice(0, 3),
+    [all]
+  );
+  const topCloud = useMemo(
+    () =>
+      [...all]
+        .filter((r) => r.deployment === "cloud")
+        .sort((a, b) => b.scoreTotal - a.scoreTotal)
+        .slice(0, 3),
     [all]
   );
 
@@ -157,13 +198,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 排行預覽 */}
-      {top3.length > 0 ? (
+      {/* 排行預覽:本地 / 雲端 分開 */}
+      {topLocal.length > 0 || topCloud.length > 0 ? (
         <section className="pt-20">
           <div className="mb-6 flex items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
               <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">目前領先</h2>
-              <p className="text-muted-foreground text-sm">綜合分數最高的本地模型組合。</p>
+              <p className="text-muted-foreground text-sm">本地與雲端分開排行,各取綜合分數最高的組合。</p>
             </div>
             <Link
               to="/leaderboard"
@@ -172,10 +213,9 @@ export default function Home() {
               完整排行 <ArrowRight className="size-4" />
             </Link>
           </div>
-          <div className="flex flex-col gap-3">
-            {top3.map((row, index) => (
-              <SubmissionCard key={row.id} row={row} rank={index + 1} index={index} />
-            ))}
+          <div className="grid gap-x-6 gap-y-8 lg:grid-cols-2">
+            <LeadGroup title="本地" icon={Cpu} rows={topLocal} />
+            <LeadGroup title="雲端" icon={Cloud} rows={topCloud} />
           </div>
         </section>
       ) : null}

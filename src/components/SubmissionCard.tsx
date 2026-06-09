@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Cloud, Cpu } from "lucide-react";
+import { Cloud, Cpu, Crown } from "lucide-react";
 
 import { GithubAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
@@ -45,22 +45,30 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
   const isCloud = row.deployment === "cloud";
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const isTop = rank <= 3;
+  const isChampion = rank === 1;
 
   return (
     <Link
       to={`/s/${row.id}`}
       style={{ animationDelay: `${Math.min(index, 12) * 45}ms` }}
-      className="animate-rise focus-visible:ring-ring/60 group block rounded-2xl outline-none focus-visible:ring-2"
+      className={cn(
+        "animate-rise focus-visible:ring-ring/60 group block rounded-2xl outline-none focus-visible:ring-2",
+        isChampion && "champion-glow"
+      )}
     >
       <article
         className={cn(
           "bg-card/80 border-border/60 hover:border-primary/40 relative flex items-center gap-4 overflow-hidden rounded-2xl border px-4 py-3.5 backdrop-blur-sm transition-all duration-200",
           "hover:bg-card hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.6)]",
-          isTop && "border-primary/25"
+          isTop && "border-primary/25",
+          isChampion && "champion-ring border-transparent shadow-[0_10px_40px_-12px_oklch(0.87_0.19_124/0.35)]"
         )}
       >
         {/* 名次 */}
         <div className="flex w-9 shrink-0 flex-col items-center">
+          {isChampion ? (
+            <Crown className="text-primary size-4 drop-shadow-[0_0_6px_oklch(0.87_0.19_124/0.6)]" fill="currentColor" />
+          ) : null}
           <span className={cn("font-data text-2xl leading-none font-bold", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
             {rank}
           </span>

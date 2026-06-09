@@ -155,3 +155,69 @@
   transform-origin: left;
   animation: gauge 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* ── 冠軍卡(第一名)視覺:旋轉漸層光環 + 外緣柔光 ── */
+@property --champ-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes champ-spin {
+  to {
+    --champ-angle: 360deg;
+  }
+}
+
+/* 外緣柔光:模糊的旋轉漸層,墊在卡片底下往外溢出(放在外層 Link,避免被卡片 overflow 裁掉) */
+.champion-glow {
+  position: relative;
+}
+.champion-glow::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--champ-angle),
+    oklch(0.87 0.19 124),
+    oklch(0.86 0.16 95),
+    oklch(0.75 0.13 230),
+    oklch(0.87 0.19 124)
+  );
+  filter: blur(15px);
+  opacity: 0.5;
+  animation: champ-spin 4.5s linear infinite;
+}
+
+/* 銳利漸層描邊:用 mask 只露出 1.6px 的環(放在卡片本體) */
+.champion-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.6px;
+  background: conic-gradient(
+    from var(--champ-angle),
+    oklch(0.92 0.19 124),
+    oklch(0.9 0.16 95),
+    oklch(0.8 0.14 230),
+    oklch(0.92 0.19 124)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: champ-spin 4.5s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .champion-glow::before,
+  .champion-ring::after {
+    animation: none;
+  }
+}

@@ -16,6 +16,7 @@ import {
   LmStudio,
   Meta,
   Microsoft,
+  Minimax,
   Mistral,
   Moonshot,
   Nvidia,
@@ -23,6 +24,7 @@ import {
   OpenAI,
   Qwen,
   Yi,
+  ZAI,
   Zhipu
 } from "@lobehub/icons";
 
@@ -56,9 +58,11 @@ const BRANDS: Record<string, BrandComp> = {
   "01ai": Yi,
   zhipu: Zhipu,
   zhipuai: Zhipu,
+  zai: ZAI,
   glm: ChatGLM,
   chatglm: ChatGLM,
   thudm: ChatGLM,
+  minimax: Minimax,
   moonshot: Moonshot,
   moonshotai: Moonshot,
   kimi: Kimi,
@@ -71,11 +75,15 @@ const BRANDS: Record<string, BrandComp> = {
   lmstudio: LmStudio
 };
 
-/**
- * 依廠牌名稱取得官方「彩色」圖示元件;沒有彩色變體或不認得的廠牌回傳 null,
- * 交由 OrgLogo 退回 HF 頭像 / 字母(確保白底圖示一定看得見)。
- */
-export function brandIcon(org: string): IconType | null {
+export interface BrandResult {
+  Icon: IconType;
+  mono: boolean;
+}
+
+export function brandIcon(org: string): BrandResult | null {
   const key = org.toLowerCase().replace(/[^a-z0-9]/g, "");
-  return BRANDS[key]?.Color ?? null;
+  const brand = BRANDS[key];
+  if (!brand) return null;
+  if (brand.Color) return { Icon: brand.Color, mono: false };
+  return { Icon: brand, mono: true };
 }

@@ -31,9 +31,9 @@ interface OrgLogoProps {
 export function OrgLogo({ org, avatar, size = 44, radius = "rounded-xl", className }: OrgLogoProps) {
   const [failed, setFailed] = useState(false);
   const label = org ?? "?";
-  const Brand = org ? brandIcon(org) : null;
-  const showImg = !Brand && avatar && !failed;
-  const showLetter = !Brand && !showImg;
+  const brand = org ? brandIcon(org) : null;
+  const showImg = !brand && avatar && !failed;
+  const showLetter = !brand && !showImg;
 
   return (
     <span
@@ -41,14 +41,15 @@ export function OrgLogo({ org, avatar, size = 44, radius = "rounded-xl", classNa
       className={cn(
         "ring-border/70 inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 select-none",
         radius,
-        Brand ? "bg-white" : "bg-background",
+        brand ? "bg-white" : "bg-background",
         showLetter && toneFor(label),
         className
       )}
       style={{ width: size, height: size }}
     >
-      {Brand ? (
-        <Brand size={Math.round(size * 0.64)} />
+      {brand ? (
+        // 單色品牌(OpenAI/Grok…)在白底上用深色呈現淺色模式標誌
+        <brand.Icon size={Math.round(size * 0.64)} color={brand.mono ? "#0d0d0d" : undefined} />
       ) : showImg ? (
         <img
           src={avatar}
