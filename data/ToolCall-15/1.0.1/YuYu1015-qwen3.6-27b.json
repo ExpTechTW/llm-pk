@@ -1,0 +1,154 @@
+{
+  "BenchLocal": "0.3.0",
+  "author": "whes1015",
+  "BenchPack": {
+    "name": "ToolCall-15",
+    "ver": "1.0.1"
+  },
+  "deployment": "local",
+  "model": {
+    "name": "qwen3.6-27b",
+    "access": "open",
+    "family": {
+      "name": "Qwen",
+      "ver": "3.6"
+    },
+    "type": "Dense",
+    "size": {
+      "params": "27B",
+      "active": "27B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q4_K_XL",
+      "method": "Unsloth Dynamic 2.0"
+    },
+    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
+    "args": {
+      "spec": {
+        "method": "MTP",
+        "n-max": 2
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "epeat-penalty": 1.05
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "b9544"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "NVIDIA GeForce RTX 3090",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "595.71.05",
+    "cuda": "13.2"
+  },
+  "score": {
+    "total": 93,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Tool Selection",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "B",
+        "label": "Parameter Precision",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "C",
+        "label": "Multi-Step Chains",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Restraint & Refusal",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "E",
+        "label": "Error Recovery",
+        "score": 67,
+        "weight": 20
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-09T18:19:11.419Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "TC-01": {
+      "status": 1,
+      "time": 4782
+    },
+    "TC-02": {
+      "status": 1,
+      "time": 3374
+    },
+    "TC-03": {
+      "status": 1,
+      "time": 8199
+    },
+    "TC-04": {
+      "status": 1,
+      "time": 2788
+    },
+    "TC-05": {
+      "status": 1,
+      "time": 8810
+    },
+    "TC-06": {
+      "status": 1,
+      "time": 6928
+    },
+    "TC-07": {
+      "status": 1,
+      "time": 13311
+    },
+    "TC-08": {
+      "status": 1,
+      "time": 10740
+    },
+    "TC-09": {
+      "status": 1,
+      "time": 4188
+    },
+    "TC-10": {
+      "status": 1,
+      "time": 2061
+    },
+    "TC-11": {
+      "status": 1,
+      "time": 6504
+    },
+    "TC-12": {
+      "status": 1,
+      "time": 5730
+    },
+    "TC-13": {
+      "status": 1,
+      "time": 5805
+    },
+    "TC-14": {
+      "status": 0,
+      "time": 3774
+    },
+    "TC-15": {
+      "status": 1,
+      "time": 5779
+    }
+  }
+}

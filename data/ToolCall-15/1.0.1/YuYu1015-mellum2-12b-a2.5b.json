@@ -1,0 +1,156 @@
+{
+  "BenchLocal": "0.3.0",
+  "author": "whes1015",
+  "BenchPack": {
+    "name": "ToolCall-15",
+    "ver": "1.0.1"
+  },
+  "deployment": "local",
+  "model": {
+    "name": "mellum2-12b",
+    "access": "open",
+    "family": {
+      "name": "Mellum",
+      "ver": "2"
+    },
+    "type": "MoE",
+    "size": {
+      "params": "12B",
+      "active": "2.5B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q8_0",
+      "method": ""
+    },
+    "link": "https://huggingface.co/JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
+    "args": {
+      "spec": {
+        "method": "ngram",
+        "n-match": 32,
+        "n-min": 16,
+        "n-max": 64
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "epeat-penalty": 1
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "b9519"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "Tesla P100-PCIE-16GB",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "580.159.03",
+    "cuda": "13.0"
+  },
+  "score": {
+    "total": 83,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Tool Selection",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "B",
+        "label": "Parameter Precision",
+        "score": 67,
+        "weight": 20
+      },
+      {
+        "id": "C",
+        "label": "Multi-Step Chains",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Restraint & Refusal",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "E",
+        "label": "Error Recovery",
+        "score": 50,
+        "weight": 20
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-09T18:19:11.419Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "TC-01": {
+      "status": 1,
+      "time": 7488
+    },
+    "TC-02": {
+      "status": 1,
+      "time": 5086
+    },
+    "TC-03": {
+      "status": 1,
+      "time": 12008
+    },
+    "TC-04": {
+      "status": 1,
+      "time": 5440
+    },
+    "TC-05": {
+      "status": 0,
+      "time": 28400
+    },
+    "TC-06": {
+      "status": 1,
+      "time": 7684
+    },
+    "TC-07": {
+      "status": 1,
+      "time": 25314
+    },
+    "TC-08": {
+      "status": 1,
+      "time": 16569
+    },
+    "TC-09": {
+      "status": 1,
+      "time": 11335
+    },
+    "TC-10": {
+      "status": 1,
+      "time": 3492
+    },
+    "TC-11": {
+      "status": 1,
+      "time": 2428
+    },
+    "TC-12": {
+      "status": 1,
+      "time": 3057
+    },
+    "TC-13": {
+      "status": 0,
+      "time": 7968
+    },
+    "TC-14": {
+      "status": 1,
+      "time": 5168
+    },
+    "TC-15": {
+      "status": 50,
+      "time": 17457
+    }
+  }
+}

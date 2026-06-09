@@ -1,0 +1,35 @@
+{
+  "BenchLocal": "0.3.0",
+  "author": "YuYu1015",
+  "BenchPack": { "name": "ToolCall-15", "ver": "1.0.1" },
+  "deployment": "local",
+  "model": {
+    "name": "Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound",
+    "access": "open",
+    "family": { "name": "Qwen", "ver": "3.6" },
+    "type": "MoE",
+    "size": { "params": "35B", "active": "3B" },
+    "quantization": { "format": "GGUF", "level": "int4", "method": "AutoRound" },
+    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound"
+  },
+  "backend": { "name": "llama.cpp", "ver": "b4321" },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "DGX Spark",
+    "chip": "GB10",
+    "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+    "driver": "595.71.05",
+    "cuda": "13.2"
+  },
+  "score": {
+    "total": 86.7,
+    "categories": [
+      { "id": "tool", "label": "Tool Use", "score": 90 },
+      { "id": "reason", "label": "Reasoning", "score": 83 }
+    ]
+  },
+  "run": { "date": "2026-06-10T08:30:00.000Z", "mode": "serial", "runsPerTest": 1 },
+  "results": {
+    "TC-01": { "status": 1, "time": 16000 }
+  }
+}
