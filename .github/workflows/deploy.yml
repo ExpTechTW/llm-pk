@@ -36,11 +36,21 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci # 有 package-lock.json,用 ci 更快且可重現(會用上面的 npm cache)
 
       - name: Validate score JSON (informational)
         run: npm run check
         continue-on-error: true # 單一檔案格式錯誤不擋部署;build:db 會自動跳過無效檔案
+
+      # 快取 tsc -b 的 *.tsbuildinfo,讓只改 data/ 的部署能跳過型別重新編譯。
+      # key 帶 sha 每次都存新的,restore-keys 還原上一次當作增量基底。
+      - name: Cache TypeScript incremental build
+        uses: actions/cache@v4
+        with:
+          path: "*.tsbuildinfo"
+          key: tsbuild-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            tsbuild-${{ runner.os }}-
 
       - name: Build SQLite (public/data.db) + site
         run: npm run build
