@@ -38,7 +38,7 @@
       "top_k": 20,
       "min_p": 0,
       "presence-penalty": 0,
-      "epeat-penalty": 1
+      "repeat-penalty": 1
     }
   },
   "backend": {
