@@ -1,7 +1,5 @@
 import { Search } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -9,16 +7,30 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
-    <div className="relative w-full max-w-2xl">
-      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2" />
-      <Input
-        type="search"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="搜尋模型名稱、系列或後端…"
-        aria-label="搜尋模型"
-        className="bg-card/60 h-14 rounded-2xl pl-12 text-base shadow-lg backdrop-blur md:text-base"
-      />
+    <div className="group relative w-full max-w-xl">
+      <div className="from-primary/40 absolute -inset-px rounded-2xl bg-gradient-to-r to-cyan-400/30 opacity-0 blur-md transition-opacity duration-300 group-focus-within:opacity-100" />
+      <div className="bg-card/70 border-border/70 group-focus-within:border-primary/60 relative flex items-center gap-3 rounded-2xl border px-4 py-3.5 backdrop-blur-xl transition-colors">
+        <Search className="text-muted-foreground group-focus-within:text-primary size-5 shrink-0 transition-colors" />
+        <input
+          type="search"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && value) {
+              onChange("");
+              e.currentTarget.blur();
+            }
+          }}
+          placeholder="搜尋模型、系列、作者或後端…"
+          aria-label="搜尋模型"
+          className="placeholder:text-muted-foreground/70 w-full bg-transparent text-[15px] outline-none"
+        />
+        {value ? (
+          <kbd className="text-muted-foreground border-border/70 hidden rounded border px-1.5 py-0.5 font-mono text-[10px] sm:block">
+            ESC
+          </kbd>
+        ) : null}
+      </div>
     </div>
   );
 }

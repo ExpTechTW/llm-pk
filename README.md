@@ -32,6 +32,27 @@ data/{pack}/{ver}/{author}-{name}.json
 - 點卡片進**詳細頁**:完整規格、分類分數、硬體、執行資訊,以及**每題色塊格 + 錯題清單**。
 - RWD:桌面雙欄(固定側欄 + 清單),手機篩選改為可收合。
 
+## 題庫(public/exam)
+
+題目與評分標準放在 `public/exam/{pack}/{ver}.json`(由前端直接抓取,詳細頁點題號彈窗顯示):
+
+```jsonc
+{
+  "pack": "ToolCall-15",
+  "ver": "1.0.1",
+  "scenarios": {
+    "TC-01": {
+      "title": "單一工具呼叫",
+      "category": "basic",
+      "prompt": "題目內容…",
+      "criteria": ["評分標準 1", "評分標準 2"]
+    }
+  }
+}
+```
+
+> 內附的 `ToolCall-15/1.0.1.json` 為示範題庫,請以 BenchLocal 匯出的實際題目與評分標準取代。
+
 ## 開發
 
 ```bash

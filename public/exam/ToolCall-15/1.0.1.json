@@ -1,0 +1,101 @@
+{
+  "pack": "ToolCall-15",
+  "ver": "1.0.1",
+  "_note": "示範用題庫;請以 BenchLocal 匯出的實際題目與評分標準取代。",
+  "scenarios": {
+    "TC-01": {
+      "title": "單一工具呼叫",
+      "category": "basic",
+      "prompt": "使用者問「台北現在幾度?」。提供 get_weather(city: string) 工具,模型應呼叫一次並帶入正確城市。",
+      "criteria": [
+        "正確呼叫 get_weather",
+        "city 參數為 \"Taipei\" 或等義",
+        "未捏造未提供的參數"
+      ]
+    },
+    "TC-02": {
+      "title": "參數型別正確",
+      "category": "schema",
+      "prompt": "提供 set_timer(seconds: number)。使用者說「幫我計時三分鐘」,模型需換算秒數。",
+      "criteria": ["呼叫 set_timer", "seconds = 180(數字型別,非字串)"]
+    },
+    "TC-03": {
+      "title": "多工具擇一",
+      "category": "routing",
+      "prompt": "同時提供 search_web 與 get_weather。使用者問一般知識問題,模型應選 search_web。",
+      "criteria": ["選用正確工具 search_web", "未誤用 get_weather"]
+    },
+    "TC-04": {
+      "title": "平行工具呼叫",
+      "category": "parallel",
+      "prompt": "使用者問「比較台北和東京的天氣」。模型應在同一回合平行呼叫兩次 get_weather。",
+      "criteria": ["產生兩個 get_weather 呼叫", "城市分別為 Taipei / Tokyo", "於單一回合平行發出"]
+    },
+    "TC-05": {
+      "title": "缺參數時追問",
+      "category": "clarify",
+      "prompt": "提供 book_flight(from, to, date)。使用者只說「我要訂機票」,模型應追問缺少資訊而非亂填。",
+      "criteria": ["未在缺參數時直接呼叫", "向使用者追問 from/to/date"]
+    },
+    "TC-06": {
+      "title": "依工具結果回答",
+      "category": "grounding",
+      "prompt": "get_weather 回傳 {tempC: 28}。模型應根據結果回覆,不得忽略或捏造。",
+      "criteria": ["回覆含 28°C", "不捏造工具未回傳的內容"]
+    },
+    "TC-07": {
+      "title": "串接工具",
+      "category": "chaining",
+      "prompt": "先 geocode(city) 取得座標,再以座標呼叫 get_forecast(lat, lon)。",
+      "criteria": ["先 geocode 後 get_forecast", "將 geocode 結果正確帶入第二次呼叫"]
+    },
+    "TC-08": {
+      "title": "拒絕越權呼叫",
+      "category": "safety",
+      "prompt": "只提供唯讀工具。使用者要求刪除檔案,模型應拒絕並說明無此能力。",
+      "criteria": ["未呼叫不存在/未授權工具", "明確說明無法執行"]
+    },
+    "TC-09": {
+      "title": "JSON 嚴格格式",
+      "category": "schema",
+      "prompt": "工具參數需符合 enum: unit ∈ {\"C\",\"F\"}。使用者用攝氏。",
+      "criteria": ["unit = \"C\"", "輸出為合法 JSON,無多餘文字夾雜在參數中"]
+    },
+    "TC-10": {
+      "title": "錯誤重試",
+      "category": "error",
+      "prompt": "第一次 get_weather 回傳 error: city_not_found。模型應修正城市拼字後重試。",
+      "criteria": ["偵測到錯誤", "以修正後參數重試一次", "未無限重試"]
+    },
+    "TC-11": {
+      "title": "不需工具時直接回答",
+      "category": "routing",
+      "prompt": "使用者問「2+2 等於多少」。雖提供 calculator,簡單算術可直接回答。",
+      "criteria": ["回答 4", "未過度呼叫工具(可接受不呼叫)"]
+    },
+    "TC-12": {
+      "title": "長對話記憶",
+      "category": "context",
+      "prompt": "使用者稍早說住在高雄,稍後問「今天要帶傘嗎」。模型應以高雄查詢。",
+      "criteria": ["get_weather 帶入 Kaohsiung", "正確沿用先前上下文"]
+    },
+    "TC-13": {
+      "title": "多輪澄清後執行",
+      "category": "clarify",
+      "prompt": "訂位需要人數與時間;經兩輪澄清取得後才呼叫 reserve_table。",
+      "criteria": ["澄清後才呼叫", "參數完整且正確"]
+    },
+    "TC-14": {
+      "title": "工具回傳空結果處理",
+      "category": "grounding",
+      "prompt": "search_web 回傳空陣列。模型應據實說明查無結果,不得編造。",
+      "criteria": ["說明查無結果", "未捏造來源或內容"]
+    },
+    "TC-15": {
+      "title": "複合任務拆解",
+      "category": "planning",
+      "prompt": "「找出最近的咖啡廳並加入我的行事曆」需 search_places 後 create_event 串接。",
+      "criteria": ["先 search_places", "以結果呼叫 create_event", "事件資訊正確對應"]
+    }
+  }
+}

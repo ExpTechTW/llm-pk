@@ -21,6 +21,8 @@ export interface SubmissionRow {
   id: number;
   author: string;
   benchlocal: string;
+  packName: string;
+  packVer: string;
   modelName: string;
   modelId: string | null;
   modelOrg: string | null;
@@ -39,6 +41,7 @@ export interface SubmissionRow {
   backendName: string;
   backendVer: string | null;
   hwCompany: string | null;
+  hwAvatar: string | null;
   hwDevice: string | null;
   hwChip: string | null;
   hwOs: string | null;

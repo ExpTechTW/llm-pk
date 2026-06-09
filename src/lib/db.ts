@@ -51,6 +51,8 @@ interface RawRow {
   id: number;
   author: string;
   benchlocal: string;
+  pack_name: string;
+  pack_ver: string;
   model_name: string;
   model_id: string | null;
   model_org: string | null;
@@ -69,6 +71,7 @@ interface RawRow {
   backend_name: string;
   backend_ver: string | null;
   hw_company: string | null;
+  hw_avatar: string | null;
   hw_device: string | null;
   hw_chip: string | null;
   hw_os: string | null;
@@ -98,6 +101,8 @@ function mapRow(r: RawRow): SubmissionRow {
     id: r.id,
     author: r.author,
     benchlocal: r.benchlocal,
+    packName: r.pack_name,
+    packVer: r.pack_ver,
     modelName: r.model_name,
     modelId: r.model_id,
     modelOrg: r.model_org,
@@ -116,6 +121,7 @@ function mapRow(r: RawRow): SubmissionRow {
     backendName: r.backend_name,
     backendVer: r.backend_ver,
     hwCompany: r.hw_company,
+    hwAvatar: r.hw_avatar,
     hwDevice: r.hw_device,
     hwChip: r.hw_chip,
     hwOs: r.hw_os,

@@ -1,98 +1,124 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Cloud, Cpu } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { GithubAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
 import type { SubmissionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const RANK_STYLES: Record<number, string> = {
-  1: "bg-amber-400/15 text-amber-500 ring-amber-400/30",
-  2: "bg-zinc-400/15 text-zinc-400 ring-zinc-400/30",
-  3: "bg-orange-500/15 text-orange-500 ring-orange-500/30"
+const RANK_ACCENT: Record<number, string> = {
+  1: "text-primary",
+  2: "text-foreground",
+  3: "text-amber-400/90"
 };
 
+function Chip({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "border-border/70 text-muted-foreground inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 /** 首頁概覽卡:整張卡可點擊進入詳細頁。 */
-export function SubmissionCard({ row, rank }: { row: SubmissionRow; rank: number }) {
+export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank: number; index: number }) {
   const isCloud = row.deployment === "cloud";
-  const isClosed = row.access === "closed";
+  const score = Math.max(0, Math.min(100, row.scoreTotal));
+  const isTop = rank <= 3;
 
   return (
     <Link
       to={`/s/${row.id}`}
-      className="focus-visible:ring-ring/50 block rounded-xl outline-none focus-visible:ring-[3px]"
+      style={{ animationDelay: `${Math.min(index, 12) * 45}ms` }}
+      className="animate-rise focus-visible:ring-ring/60 group block rounded-2xl outline-none focus-visible:ring-2"
     >
-      <Card className="hover:border-ring/50 hover:bg-accent/30 flex-row items-center gap-3 px-4 py-3 transition-colors sm:gap-4 sm:px-5">
-        <div
-          className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ring-1",
-            RANK_STYLES[rank] ?? "bg-muted text-muted-foreground ring-border"
-          )}
-        >
-          {rank}
+      <article
+        className={cn(
+          "bg-card/80 border-border/60 hover:border-primary/40 relative flex items-center gap-4 overflow-hidden rounded-2xl border px-4 py-3.5 backdrop-blur-sm transition-all duration-200",
+          "hover:bg-card hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.6)]",
+          isTop && "border-primary/25"
+        )}
+      >
+        {/* 名次 */}
+        <div className="flex w-9 shrink-0 flex-col items-center">
+          <span className={cn("font-data text-2xl leading-none font-bold", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
+            {rank}
+          </span>
+          {isTop ? <span className="text-muted-foreground/60 text-[9px] tracking-widest uppercase">rank</span> : null}
         </div>
 
-        <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={44} />
+        {/* 廠牌 logo */}
+        <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={46} />
 
-        {/* 重點:模型 name;副標:作者 */}
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="truncate text-base leading-tight font-semibold" title={row.modelName}>
+        {/* 名稱 + 作者 + 標籤 */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <h3
+            className="font-display truncate text-[17px] leading-tight font-bold tracking-tight"
+            title={row.modelName}
+          >
             {row.modelName}
-          </span>
-          <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
-            <GithubAvatar username={row.author} size={16} linked={false} />
-            <span className="truncate">@{row.author}</span>
+          </h3>
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1.5">
+              <GithubAvatar username={row.author} size={16} linked={false} />
+              <span className="truncate">@{row.author}</span>
+            </span>
             {row.modelId ? (
-              <>
-                <span className="text-border">·</span>
-                <span className="truncate font-mono opacity-70">{row.modelId}</span>
-              </>
+              <span className="text-muted-foreground/60 hidden truncate font-mono sm:inline">{row.modelId}</span>
             ) : null}
-          </span>
-          <div className="mt-0.5 flex flex-wrap items-center gap-1">
-            <Badge
-              variant="outline"
-              className={cn(
-                "gap-1",
-                isCloud
-                  ? "border-sky-500/30 text-sky-600 dark:text-sky-400"
-                  : "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-              )}
-            >
+          </div>
+          <div className="flex flex-wrap items-center gap-1">
+            <Chip className={isCloud ? "text-sky-300/90" : "text-primary"}>
               {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
               {isCloud ? "雲端" : "本地"}
-            </Badge>
-            <Badge variant="outline">{isClosed ? "閉源" : "開源"}</Badge>
-            {row.quantLevel ? (
-              <Badge variant="outline" className="border-blue-500/30 text-blue-600 dark:text-blue-400">
-                {[row.quantFormat, row.quantLevel].filter(Boolean).join(" ")}
-              </Badge>
-            ) : null}
-            <Badge variant="outline" className="border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
-              {row.backendName || "?"}
-            </Badge>
+            </Chip>
+            <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip>
+            {row.quantLevel ? <Chip>{[row.quantFormat, row.quantLevel].filter(Boolean).join(" ")}</Chip> : null}
+            <Chip>{row.backendName || "?"}</Chip>
             {row.hwDevice ? (
-              <Badge
-                variant="outline"
-                className="hidden border-orange-500/30 text-orange-600 sm:inline-flex dark:text-orange-400"
-              >
+              <Chip className="hidden sm:inline-flex">
+                {row.hwAvatar ? (
+                  <OrgLogo
+                    org={row.hwCompany}
+                    avatar={row.hwAvatar}
+                    size={14}
+                    radius="rounded-[3px]"
+                    className="ring-0"
+                  />
+                ) : null}
                 {row.hwDevice}
-              </Badge>
+              </Chip>
             ) : null}
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-col items-end">
-          <span className="text-2xl leading-none font-bold tabular-nums">
-            {row.scoreTotal.toFixed(1)}
-          </span>
-          <span className="text-muted-foreground mt-1 text-xs tabular-nums">
-            {row.passCount}/{row.totalCount} 通過
+        {/* 分數 + 量表 */}
+        <div className="flex w-20 shrink-0 flex-col items-end gap-1.5">
+          <div className="flex items-baseline">
+            <span className="font-data text-3xl leading-none font-bold tabular-nums">
+              {row.scoreTotal.toFixed(1).split(".")[0]}
+            </span>
+            <span className="text-muted-foreground/70 font-data text-xs">
+              .{row.scoreTotal.toFixed(1).split(".")[1]}
+            </span>
+          </div>
+          <div className="bg-muted/70 h-1 w-full overflow-hidden rounded-full">
+            <div
+              className="gauge-fill bg-primary h-full rounded-full"
+              style={{ width: `${score}%` }}
+            />
+          </div>
+          <span className="text-muted-foreground font-data text-[11px] tabular-nums">
+            {row.passCount}/{row.totalCount}
           </span>
         </div>
-      </Card>
+      </article>
     </Link>
   );
 }

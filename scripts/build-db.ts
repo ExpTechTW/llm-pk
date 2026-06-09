@@ -43,6 +43,17 @@ const HF_ORG_ALIASES: Record<string, string> = {
   gemma: "google"
 };
 
+// 硬體廠牌 → HuggingFace 組織名(NVIDIA/Apple/AMD… 在 HF 上都有官方帳號)。
+const HW_ORG_ALIASES: Record<string, string> = {
+  nvidia: "nvidia",
+  apple: "apple",
+  amd: "amd",
+  intel: "intel",
+  qualcomm: "qualcomm",
+  google: "google",
+  arm: "arm"
+};
+
 interface ValidEntry {
   relName: string;
   raw: unknown;
@@ -75,6 +86,13 @@ function resolveOrgName(s: Submission): string | null {
   const family = s.model.family?.name?.trim();
   if (family) return HF_ORG_ALIASES[family.toLowerCase()] ?? family;
   return null;
+}
+
+// 硬體廠牌 → HF 組織名(供頭像解析)。
+function resolveHwOrg(company: string | null | undefined): string | null {
+  const c = company?.trim();
+  if (!c) return null;
+  return HW_ORG_ALIASES[c.toLowerCase()] ?? c;
 }
 
 // 查 HuggingFace 組織頭像 URL;失敗 / 找不到回 null。
@@ -162,13 +180,22 @@ async function main(): Promise<void> {
 
   const { entries, skipped } = readValidEntries();
 
-  // 先解析所有不同 org 的頭像(transaction 內不能 await)。
+  // 先解析所有不同 org(模型廠牌 + 硬體廠牌)的頭像(transaction 內不能 await)。
   const orgByEntry = new Map<ValidEntry, string | null>();
+  const hwOrgByEntry = new Map<ValidEntry, string | null>();
   const distinctOrgs = new Set<string>();
   for (const entry of entries) {
     const org = resolveOrgName(entry.value);
     orgByEntry.set(entry, org);
     if (org) distinctOrgs.add(org);
+
+    const hw =
+      entry.value.deployment === "local"
+        ? (entry.value as Extract<Submission, { deployment: "local" }>).hardware
+        : undefined;
+    const hwOrg = resolveHwOrg(hw?.company);
+    hwOrgByEntry.set(entry, hwOrg);
+    if (hwOrg) distinctOrgs.add(hwOrg);
   }
   const avatarByOrg = await resolveAvatars([...distinctOrgs]);
 
@@ -201,6 +228,7 @@ async function main(): Promise<void> {
       backend_ver   TEXT,
       deployment    TEXT,
       hw_company    TEXT,
+      hw_avatar     TEXT,
       hw_device     TEXT,
       hw_chip       TEXT,
       hw_os         TEXT,
@@ -237,7 +265,7 @@ async function main(): Promise<void> {
       model_access, family_name, family_ver, model_type, size_params, size_active,
       quant_format, quant_level, quant_method, model_link,
       backend_name, backend_ver, deployment,
-      hw_company, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
+      hw_company, hw_avatar, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
       score_total, score_cats, run_date, run_mode, runs_per_test,
       pass_count, total_count, total_time, raw
     ) VALUES (
@@ -245,7 +273,7 @@ async function main(): Promise<void> {
       @model_access, @family_name, @family_ver, @model_type, @size_params, @size_active,
       @quant_format, @quant_level, @quant_method, @model_link,
       @backend_name, @backend_ver, @deployment,
-      @hw_company, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
+      @hw_company, @hw_avatar, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
       @score_total, @score_cats, @run_date, @run_mode, @runs_per_test,
       @pass_count, @total_count, @total_time, @raw
     )
@@ -296,6 +324,10 @@ async function main(): Promise<void> {
         backend_ver: s.backend.ver ?? null,
         deployment: s.deployment,
         hw_company: hw?.company ?? null,
+        hw_avatar: (() => {
+          const hwOrg = hwOrgByEntry.get(entry);
+          return hwOrg ? (avatarByOrg.get(hwOrg) ?? null) : null;
+        })(),
         hw_device: hw?.device ?? null,
         hw_chip: hw?.chip ?? null,
         hw_os: hw?.os ?? null,

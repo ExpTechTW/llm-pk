@@ -69,15 +69,19 @@ export default function Home() {
   return (
     <>
       {/* Hero + 搜尋 */}
-      <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 pt-12 pb-8">
-        <h1 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
-          本地模型{" "}
-          <span className="bg-gradient-to-r from-indigo-500 to-cyan-400 bg-clip-text text-transparent">
-            跑分排行
+      <section className="mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 pt-14 pb-9 sm:pt-20">
+        <span className="border-border/60 bg-card/50 text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs backdrop-blur">
+          <span className="bg-primary size-1.5 animate-pulse rounded-full" />
+          BenchLocal 社群跑分
+        </span>
+        <h1 className="font-display text-center text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
+          本地模型
+          <span className="from-primary block bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
+            跑分排行榜
           </span>
         </h1>
-        <p className="text-muted-foreground max-w-xl text-center text-sm">
-          比較不同模型、量化、推理後端與硬體的 BenchLocal 成績
+        <p className="text-muted-foreground max-w-md text-center text-sm leading-relaxed">
+          同一份測試,跨模型、量化、推理後端與硬體的公平對照
         </p>
         <SearchBar value={search} onChange={setSearch} />
       </section>
@@ -149,21 +153,21 @@ export default function Home() {
                 </div>
 
                 {filtered.length === 0 ? (
-                  <div className="text-muted-foreground rounded-xl border py-12 text-center text-sm">
+                  <div className="text-muted-foreground border-border/60 rounded-2xl border border-dashed py-16 text-center text-sm">
                     找不到符合條件的投稿。
                   </div>
                 ) : (
                   <>
                     {filtered.slice(0, visible).map((row, index) => (
-                      <SubmissionCard key={row.id} row={row} rank={index + 1} />
+                      <SubmissionCard key={row.id} row={row} rank={index + 1} index={index} />
                     ))}
                     {filtered.length > visible ? (
                       <Button
                         variant="outline"
                         onClick={() => setVisible((v) => v + PAGE_SIZE)}
-                        className="mt-1 self-center"
+                        className="mt-2 self-center rounded-full"
                       >
-                        顯示更多({filtered.length - visible})
+                        顯示更多 {filtered.length - visible} 筆
                       </Button>
                     ) : null}
                   </>

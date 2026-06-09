@@ -1,6 +1,5 @@
-import { Check, RotateCcw } from "lucide-react";
+import { Check, SlidersHorizontal, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   FACETS,
   SORT_OPTIONS,
@@ -32,37 +31,44 @@ export function FilterSidebar({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 排序 */}
-      <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-bold">排序</h3>
-        <div className="grid grid-cols-3 gap-1.5">
-          {SORT_OPTIONS.map((option) => (
-            <Button
-              key={option.key}
-              size="sm"
-              variant={sort === option.key ? "default" : "outline"}
-              onClick={() => onSortChange(option.key)}
-              className="px-2 text-xs"
-            >
-              {option.label}
-            </Button>
-          ))}
-        </div>
-      </section>
-
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold">篩選</h3>
+      <div className="flex items-center gap-2">
+        <SlidersHorizontal className="text-primary size-4" />
+        <span className="font-display text-sm font-bold">篩選與排序</span>
         {activeCount > 0 ? (
           <button
             type="button"
             onClick={onReset}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs"
+            className="text-muted-foreground hover:text-foreground ml-auto inline-flex items-center gap-1 text-xs"
           >
-            <RotateCcw className="size-3" />
+            <X className="size-3" />
             清除 {activeCount}
           </button>
         ) : null}
       </div>
+
+      {/* 排序 */}
+      <section className="flex flex-col gap-2">
+        <h4 className="text-muted-foreground text-[10px] font-semibold tracking-[0.16em] uppercase">
+          排序
+        </h4>
+        <div className="bg-muted/60 inline-flex rounded-lg p-0.5">
+          {SORT_OPTIONS.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => onSortChange(option.key)}
+              className={cn(
+                "flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                sort === option.key
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* 各面向 */}
       {FACETS.map((facet) => {
@@ -71,10 +77,10 @@ export function FilterSidebar({
         const chosen = selected[facet.key];
         return (
           <section key={facet.key} className="flex flex-col gap-1.5">
-            <h4 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+            <h4 className="text-muted-foreground text-[10px] font-semibold tracking-[0.16em] uppercase">
               {facet.label}
             </h4>
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-px">
               {values.map(({ value, count }) => {
                 const active = chosen?.has(value) ?? false;
                 return (
@@ -83,24 +89,29 @@ export function FilterSidebar({
                     type="button"
                     onClick={() => onToggle(facet.key, value)}
                     className={cn(
-                      "group hover:bg-accent flex items-center justify-between rounded-md px-2 py-1 text-left text-sm transition-colors",
-                      active && "bg-accent"
+                      "group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
+                      active ? "bg-primary/10 text-foreground" : "hover:bg-muted/60"
                     )}
                   >
-                    <span className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors",
-                          active
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-input group-hover:border-ring"
-                        )}
-                      >
-                        {active ? <Check className="size-3" strokeWidth={3} /> : null}
-                      </span>
-                      <span className="truncate">{value}</span>
+                    <span
+                      className={cn(
+                        "grid size-4 shrink-0 place-items-center rounded-[5px] border transition-all",
+                        active
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input group-hover:border-muted-foreground"
+                      )}
+                    >
+                      {active ? <Check className="size-3" strokeWidth={3.5} /> : null}
                     </span>
-                    <span className="text-muted-foreground tabular-nums">{count}</span>
+                    <span className="flex-1 truncate">{value}</span>
+                    <span
+                      className={cn(
+                        "font-data text-xs tabular-nums",
+                        active ? "text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      {count}
+                    </span>
                   </button>
                 );
               })}

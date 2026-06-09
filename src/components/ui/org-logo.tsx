@@ -22,11 +22,12 @@ interface OrgLogoProps {
   org: string | null;
   avatar: string | null;
   size?: number;
+  radius?: string;
   className?: string;
 }
 
-/** 模型廠牌 logo:優先用 HuggingFace 頭像,失敗 / 無資料時退回彩色字母圖示。 */
-export function OrgLogo({ org, avatar, size = 44, className }: OrgLogoProps) {
+/** 廠牌 logo:優先用 HuggingFace 頭像,失敗 / 無資料時退回彩色字母圖示。 */
+export function OrgLogo({ org, avatar, size = 44, radius = "rounded-xl", className }: OrgLogoProps) {
   const [failed, setFailed] = useState(false);
   const label = org ?? "?";
   const showImg = avatar && !failed;
@@ -35,7 +36,8 @@ export function OrgLogo({ org, avatar, size = 44, className }: OrgLogoProps) {
     <span
       title={org ?? undefined}
       className={cn(
-        "ring-border bg-background inline-flex shrink-0 items-center justify-center overflow-hidden rounded-xl ring-1 select-none",
+        "ring-border/70 bg-background inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 select-none",
+        radius,
         !showImg && toneFor(label),
         className
       )}
@@ -52,7 +54,9 @@ export function OrgLogo({ org, avatar, size = 44, className }: OrgLogoProps) {
           className="size-full object-cover"
         />
       ) : (
-        <span className="text-base font-bold">{label.slice(0, 1).toUpperCase()}</span>
+        <span className="font-display font-extrabold" style={{ fontSize: Math.round(size * 0.44) }}>
+          {label.slice(0, 1).toUpperCase()}
+        </span>
       )}
     </span>
   );
