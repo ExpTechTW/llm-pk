@@ -1,5 +1,12 @@
-import { ChevronDown, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import type { PackInfo } from "@/lib/types";
 
 export interface PackKey {
@@ -17,28 +24,32 @@ interface PackSelectProps {
   onChange: (pack: PackKey) => void;
 }
 
-/** BenchPack 下拉選單,分類顯示為 {name}-{ver}。 */
+/** BenchPack 下拉選單,分類顯示為 {name} · v{ver}。 */
 export function PackSelect({ packs, value, onChange }: PackSelectProps) {
   return (
-    <label className="group bg-card/70 border-border/70 hover:border-primary/50 relative flex items-center gap-2.5 rounded-xl border px-3.5 py-2.5 backdrop-blur-xl transition-colors">
-      <Layers className="text-primary size-4 shrink-0" />
-      <span className="text-muted-foreground text-[10px] tracking-[0.16em] uppercase">測試</span>
-      <select
-        aria-label="選擇測試類型"
-        value={value ? packId(value) : ""}
-        onChange={(e) => {
-          const [name, ver] = e.target.value.split("@@");
-          onChange({ name, ver });
-        }}
-        className="font-display cursor-pointer appearance-none bg-transparent pr-5 text-sm font-bold tracking-tight outline-none"
-      >
+    <Select
+      value={value ? packId(value) : undefined}
+      onValueChange={(v) => {
+        const [name, ver] = v.split("@@");
+        onChange({ name, ver });
+      }}
+    >
+      <SelectTrigger aria-label="選擇測試類型" className="min-w-56">
+        <Layers className="text-primary size-4 shrink-0" />
+        <span className="text-muted-foreground text-[10px] tracking-[0.16em] uppercase">測試</span>
+        <SelectValue
+          placeholder="選擇測試"
+          className="font-display text-sm font-bold tracking-tight"
+        />
+      </SelectTrigger>
+      <SelectContent>
         {packs.map((p) => (
-          <option key={packId(p)} value={packId(p)} className="bg-card font-sans font-normal">
-            {p.name} · v{p.ver}（{p.count}）
-          </option>
+          <SelectItem key={packId(p)} value={packId(p)} className="font-display font-semibold">
+            {p.name} · v{p.ver}
+            <span className="text-muted-foreground ml-1 font-sans font-normal">（{p.count}）</span>
+          </SelectItem>
         ))}
-      </select>
-      <ChevronDown className="text-muted-foreground pointer-events-none absolute right-3 size-4" />
-    </label>
+      </SelectContent>
+    </Select>
   );
 }

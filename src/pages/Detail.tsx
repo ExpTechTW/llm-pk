@@ -98,7 +98,7 @@ export default function Detail() {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
         <p className="text-sm">{error ?? "找不到這筆投稿。"}</p>
-        <Link to="/" className="text-primary mt-3 inline-block text-sm">
+        <Link to="/leaderboard" className="text-primary mt-3 inline-block text-sm">
           ← 回排行榜
         </Link>
       </div>
@@ -112,9 +112,9 @@ export default function Detail() {
   const openResult = openQ ? resultById.get(openQ) : undefined;
 
   return (
-    <main className="animate-rise mx-auto max-w-4xl px-4 pt-6 pb-12">
+    <main className="animate-rise mx-auto max-w-4xl px-4 pt-6 pb-12 space-y-6">
       <Link
-        to="/"
+        to="/leaderboard"
         className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-1.5 text-sm"
       >
         <ArrowLeft className="size-4" />

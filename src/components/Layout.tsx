@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
+import { Trophy } from "lucide-react";
 
 export function Layout() {
   return (
@@ -9,19 +10,25 @@ export function Layout() {
         <header className="border-border/50 bg-background/70 sticky top-0 z-30 border-b backdrop-blur-xl">
           <div className="mx-auto flex h-15 max-w-[1480px] items-center gap-3 px-5 py-2.5">
             <Link to="/" className="group flex items-center gap-2.5">
-              <span className="bg-primary text-primary-foreground font-display grid size-8 place-items-center rounded-lg text-base font-extrabold shadow-[0_0_20px_-4px_var(--color-primary)]">
-                ⚡
-              </span>
               <span className="flex flex-col leading-none">
-                <span className="font-display text-[15px] font-extrabold tracking-tight">LLM PK</span>
+                <span className="font-display text-2xl font-extrabold tracking-tight">
+                  LLM{" "}
+                  <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
+                    PK
+                  </span>
+                </span>
                 <span className="text-muted-foreground text-[10px] tracking-[0.18em] uppercase">
                   local bench
                 </span>
               </span>
             </Link>
-            <span className="text-muted-foreground ml-auto hidden text-xs tracking-wide sm:block">
-              本地模型 · 量化 · 後端 · 硬體 跑分排行
-            </span>
+            <Link
+              to="/leaderboard"
+              className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 ml-auto inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
+            >
+              <Trophy className="size-4" />
+              排行榜
+            </Link>
           </div>
         </header>
 

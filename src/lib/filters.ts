@@ -21,8 +21,6 @@ export const FACETS: FacetDef[] = [
   { key: "family", label: "系列", get: (r) => r.familyName },
   { key: "type", label: "架構", get: (r) => r.modelType },
   { key: "quantFormat", label: "量化格式", get: (r) => r.quantFormat },
-  { key: "backend", label: "推理後端", get: (r) => r.backendName || null },
-  { key: "company", label: "硬體廠牌", get: (r) => r.hwCompany }
 ];
 
 export type Selected = Record<string, Set<string>>;
