@@ -21,7 +21,7 @@
       "active": "3B"
     },
     "quantization": {
-      "format": "safetensors",
+      "format": "Safetensors",
       "level": "int4",
       "method": "AutoRound"
     },

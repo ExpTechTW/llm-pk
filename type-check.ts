@@ -44,7 +44,7 @@ const scoreSchema = z.object({
 });
 
 const quantizationSchema = z.object({
-  format: z.string().min(1, "quantization.format 不可為空(如 GGUF / AWQ / GPTQ / safetensors)"),
+  format: z.string().min(1, "quantization.format 不可為空(如 GGUF / AWQ / GPTQ / Safetensors)"),
   level: z.string().min(1, "quantization.level 不可為空(如 int4 / Q4_K_M / fp16)"),
   method: z.string() // AutoRound / GPTQ / AWQ / BitsAndBytes…(可空字串)
 });
