@@ -7,7 +7,9 @@
   },
   "deployment": "local",
   "model": {
-    "name": "mellum2-12b",
+    "id": "mellum2-12b-a2.5b",
+    "name": "Mellum2 12B A2.5B Thinking",
+    "org": "JetBrains",
     "access": "open",
     "family": {
       "name": "Mellum",

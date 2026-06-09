@@ -166,7 +166,7 @@ export function validateSubmission(raw: unknown): ValidationReport {
 function collectJsonFiles(target: string): string[] {
   const stat = statSync(target);
   if (stat.isDirectory()) {
-    return readdirSync(target)
+    return (readdirSync(target, { recursive: true }) as string[])
       .filter((name) => extname(name).toLowerCase() === ".json")
       .map((name) => join(target, name))
       .sort();
@@ -175,7 +175,7 @@ function collectJsonFiles(target: string): string[] {
 }
 
 function runCli(): void {
-  const arg = process.argv[2] ?? "data/json";
+  const arg = process.argv[2] ?? "data";
   let files: string[];
   try {
     files = collectJsonFiles(arg);
