@@ -7,13 +7,13 @@
     },
     "deployment": "cloud",
     "model": {
-        "id": "claude-3-haiku",
-        "name": "Claude 3 Haiku",
+        "id": "claude-3.5-haiku",
+        "name": "Claude 3.5 Haiku",
         "org": "Anthropic",
         "access": "closed",
         "family": {
             "name": "Claude",
-            "ver": "3"
+            "ver": "3.5"
         },
         "type": "",
         "size": {
@@ -27,30 +27,30 @@
         "ver": ""
     },
     "score": {
-        "total": 70,
+        "total": 97,
         "categories": [
             {
                 "id": "A",
                 "label": "Tool Selection",
-                "score": 67,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "B",
                 "label": "Parameter Precision",
-                "score": 67,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "C",
                 "label": "Multi-Step Chains",
-                "score": 67,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "D",
                 "label": "Restraint & Refusal",
-                "score": 50,
+                "score": 83,
                 "weight": 20
             },
             {
@@ -62,70 +62,70 @@
         ]
     },
     "run": {
-        "date": "2026-06-09T21:14:16.607Z",
+        "date": "2026-06-09T21:19:18.748Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "TC-01": {
             "status": 1,
-            "time": 2119
+            "time": 4292
         },
         "TC-02": {
             "status": 1,
-            "time": 2957
+            "time": 5300
         },
         "TC-03": {
-            "status": 0,
-            "time": 3210
+            "status": 1,
+            "time": 7322
         },
         "TC-04": {
             "status": 1,
-            "time": 4302
+            "time": 4253
         },
         "TC-05": {
             "status": 1,
-            "time": 3155
+            "time": 5541
         },
         "TC-06": {
-            "status": 0,
-            "time": 5394
+            "status": 1,
+            "time": 6211
         },
         "TC-07": {
-            "status": 0,
-            "time": 5445
+            "status": 1,
+            "time": 11997
         },
         "TC-08": {
             "status": 1,
-            "time": 4383
+            "time": 6457
         },
         "TC-09": {
             "status": 1,
-            "time": 4456
+            "time": 12161
         },
         "TC-10": {
             "status": 1,
-            "time": 626
+            "time": 3757
         },
         "TC-11": {
             "status": 50,
-            "time": 2014
+            "time": 4027
         },
         "TC-12": {
-            "status": 0,
-            "time": 2985
+            "status": 1,
+            "time": 5287
         },
         "TC-13": {
             "status": 1,
-            "time": 2297
+            "time": 10204
         },
         "TC-14": {
             "status": 1,
-            "time": 3445
+            "time": 7770
         },
         "TC-15": {
             "status": 1,
-            "time": 3911
+            "time": 5870
         }
     }
 }
