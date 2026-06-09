@@ -21,7 +21,7 @@ const FEATURES = [
   {
     icon: Scale,
     title: "公平對照",
-    desc: "同一份測試題組,跨模型、量化、推理後端與硬體,在一致的標準下直接比較。"
+    desc: "同一份測試題組,跨模型、量化、推理,在一致的標準下直接比較。"
   },
   {
     icon: Users,
@@ -88,7 +88,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-muted-foreground max-w-xl text-base leading-relaxed">
-              同一份測試題組,跨模型、量化、推理後端與硬體的公平對照。
+              同一份測試題組,跨模型、量化、推理的公平對照。
               由社群實測投稿,透明、可重現的本地模型跑分排行。
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3">

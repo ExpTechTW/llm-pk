@@ -51,14 +51,15 @@ export function FilterSidebar({
         <h4 className="text-muted-foreground text-[10px] font-semibold tracking-[0.16em] uppercase">
           排序
         </h4>
-        <div className="bg-muted/60 inline-flex rounded-lg p-0.5">
+        <div className="bg-muted/60 grid grid-cols-2 gap-0.5 rounded-lg p-0.5">
           {SORT_OPTIONS.map((option) => (
             <button
               key={option.key}
               type="button"
+              title={option.label}
               onClick={() => onSortChange(option.key)}
               className={cn(
-                "flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                "rounded-md px-2 py-1.5 text-center text-xs leading-tight font-medium transition-colors",
                 sort === option.key
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -90,7 +91,8 @@ export function FilterSidebar({
                     onClick={() => onToggle(facet.key, value)}
                     className={cn(
                       "group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
-                      active ? "bg-primary/10 text-foreground" : "hover:bg-muted/60"
+                      active ? "bg-primary/10 text-foreground" : "hover:bg-muted/60",
+                      !active && count === 0 && "opacity-40"
                     )}
                   >
                     <span

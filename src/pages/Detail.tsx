@@ -178,9 +178,9 @@ export default function Detail() {
         <div className="relative mt-4 flex flex-wrap items-center gap-1.5">
           <Chip className={isCloud ? "text-sky-300" : "text-primary"}>
             {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
-            {isCloud ? "雲端" : "本地"}
+            {isCloud ? "雲端" : "開源"}
           </Chip>
-          <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip>
+          {isCloud ? <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip> : null}
           {row.familyName ? <Chip>{`${row.familyName}${row.familyVer ? ` ${row.familyVer}` : ""}`}</Chip> : null}
           {row.modelType ? <Chip>{row.modelType}</Chip> : null}
           {row.sizeParams ? (

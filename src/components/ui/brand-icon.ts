@@ -1,0 +1,75 @@
+import {
+  Baichuan,
+  ChatGLM,
+  Claude,
+  Cohere,
+  DeepSeek,
+  Doubao,
+  Gemini,
+  Gemma,
+  Google,
+  Grok,
+  Hunyuan,
+  InternLM,
+  type IconType,
+  Kimi,
+  LmStudio,
+  Meta,
+  Microsoft,
+  Mistral,
+  Moonshot,
+  Nvidia,
+  Ollama,
+  OpenAI,
+  Qwen,
+  Yi,
+  Zhipu
+} from "@lobehub/icons";
+
+// 廠牌名稱(正規化後)→ Lobe 官方彩色圖示。找不到時 OrgLogo 會退回 HF 頭像 / 字母。
+const BRANDS: Record<string, IconType> = {
+  claude: Claude.Color,
+  anthropic: Claude.Color,
+  openai: OpenAI.Color,
+  gpt: OpenAI.Color,
+  gemini: Gemini.Color,
+  google: Google.Color,
+  gemma: Gemma.Color,
+  qwen: Qwen.Color,
+  alibaba: Qwen.Color,
+  meta: Meta.Color,
+  metallama: Meta.Color,
+  llama: Meta.Color,
+  mistral: Mistral.Color,
+  mistralai: Mistral.Color,
+  deepseek: DeepSeek.Color,
+  microsoft: Microsoft.Color,
+  phi: Microsoft.Color,
+  nvidia: Nvidia.Color,
+  cohere: Cohere.Color,
+  grok: Grok.Color,
+  xai: Grok.Color,
+  yi: Yi.Color,
+  "01ai": Yi.Color,
+  zhipu: Zhipu.Color,
+  zhipuai: Zhipu.Color,
+  glm: ChatGLM.Color,
+  chatglm: ChatGLM.Color,
+  thudm: ChatGLM.Color,
+  moonshot: Moonshot.Color,
+  moonshotai: Moonshot.Color,
+  kimi: Kimi.Color,
+  doubao: Doubao.Color,
+  hunyuan: Hunyuan.Color,
+  tencent: Hunyuan.Color,
+  baichuan: Baichuan.Color,
+  internlm: InternLM.Color,
+  ollama: Ollama.Color,
+  lmstudio: LmStudio.Color
+};
+
+/** 依廠牌名稱取得官方彩色圖示元件;無對應時回傳 null。 */
+export function brandIcon(org: string): IconType | null {
+  const key = org.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return BRANDS[key] ?? null;
+}

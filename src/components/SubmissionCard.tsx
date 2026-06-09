@@ -13,6 +13,19 @@ const RANK_ACCENT: Record<number, string> = {
   3: "text-amber-400/90"
 };
 
+// 量化標籤特例配色:命中關鍵字者套用指定色,其餘用預設(格式=紫、等級=青)。
+const QUANT_COLOR_RULES: { match: string[]; className: string }[] = [
+  { match: ["BF16", "Q8"], className: "text-orange-300" },
+  { match: ["GGUF"], className: "text-emerald-300" },
+  { match: ["SAFETENSORS"], className: "text-blue-300" }
+];
+
+function quantColor(value: string, fallback: string): string {
+  const up = value.toUpperCase();
+  const rule = QUANT_COLOR_RULES.find((r) => r.match.some((m) => up.includes(m)));
+  return rule ? rule.className : fallback;
+}
+
 function Chip({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <span
@@ -76,24 +89,14 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
           <div className="flex flex-wrap items-center gap-1">
             <Chip className={isCloud ? "text-sky-300/90" : "text-primary"}>
               {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
-              {isCloud ? "雲端" : "本地"}
+              {isCloud ? "雲端" : "開源"}
             </Chip>
-            <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip>
-            {row.quantLevel ? <Chip>{[row.quantFormat, row.quantLevel].filter(Boolean).join(" ")}</Chip> : null}
-            <Chip>{row.backendName || "?"}</Chip>
-            {row.hwDevice ? (
-              <Chip className="hidden sm:inline-flex">
-                {row.hwAvatar ? (
-                  <OrgLogo
-                    org={row.hwCompany}
-                    avatar={row.hwAvatar}
-                    size={14}
-                    radius="rounded-[3px]"
-                    className="ring-0"
-                  />
-                ) : null}
-                {row.hwDevice}
-              </Chip>
+            {isCloud ? <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip> : null}
+            {row.quantFormat ? (
+              <Chip className={quantColor(row.quantFormat, "text-violet-300")}>{row.quantFormat}</Chip>
+            ) : null}
+            {row.quantLevel ? (
+              <Chip className={quantColor(row.quantLevel, "text-cyan-300")}>{row.quantLevel}</Chip>
             ) : null}
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { brandIcon } from "@/components/ui/brand-icon";
 import { cn } from "@/lib/utils";
 
 const MONOGRAM_TONES = [
@@ -26,24 +27,29 @@ interface OrgLogoProps {
   className?: string;
 }
 
-/** 廠牌 logo:優先用 HuggingFace 頭像,失敗 / 無資料時退回彩色字母圖示。 */
+/** 廠牌 logo:優先用官方品牌圖示,其次 HuggingFace 頭像,最後退回彩色字母圖示。 */
 export function OrgLogo({ org, avatar, size = 44, radius = "rounded-xl", className }: OrgLogoProps) {
   const [failed, setFailed] = useState(false);
   const label = org ?? "?";
-  const showImg = avatar && !failed;
+  const Brand = org ? brandIcon(org) : null;
+  const showImg = !Brand && avatar && !failed;
+  const showLetter = !Brand && !showImg;
 
   return (
     <span
       title={org ?? undefined}
       className={cn(
-        "ring-border/70 bg-background inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 select-none",
+        "ring-border/70 inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 select-none",
         radius,
-        !showImg && toneFor(label),
+        Brand ? "bg-white" : "bg-background",
+        showLetter && toneFor(label),
         className
       )}
       style={{ width: size, height: size }}
     >
-      {showImg ? (
+      {Brand ? (
+        <Brand size={Math.round(size * 0.64)} />
+      ) : showImg ? (
         <img
           src={avatar}
           alt={label}

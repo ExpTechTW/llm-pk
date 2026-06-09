@@ -82,7 +82,7 @@ export default function Leaderboard() {
             </span>
           </h1>
           <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
-            同一份測試,跨模型、量化、推理後端與硬體的公平對照
+            同一份測試,跨模型、量化、推理的公平對照
           </p>
         </div>
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
