@@ -93,7 +93,6 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
               {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
               {isCloud ? "雲端" : "開源"}
             </Chip>
-            {isCloud ? <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip> : null}
             {row.quantFormat ? (
               <Chip className={quantColor(row.quantFormat, "text-violet-300")}>{row.quantFormat}</Chip>
             ) : null}

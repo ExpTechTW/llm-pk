@@ -24,6 +24,61 @@ export const FACETS: FacetDef[] = [
   { key: "quantLevel", label: "量化等級", get: (r) => r.quantLevel },
 ];
 
+// 價格區間篩選(用拉桿,單位 USD / 1M tokens)。
+export interface PriceFieldDef {
+  key: string;
+  label: string;
+  get: (r: SubmissionRow) => number | null;
+}
+
+export const PRICE_FIELDS: PriceFieldDef[] = [
+  { key: "priceIn", label: "輸入", get: (r) => r.priceInput },
+  { key: "priceCache", label: "快取輸入", get: (r) => r.priceCacheInput },
+  { key: "priceOut", label: "輸出", get: (r) => r.priceOutput }
+];
+
+export type PriceRange = [number, number];
+export type PriceRanges = Record<string, PriceRange>;
+export type PriceBounds = Record<string, PriceRange>;
+
+/** 每個價格欄位在整份資料的 [最低, 最高];無價格資料的欄位略過。 */
+export function computePriceBounds(rows: SubmissionRow[]): PriceBounds {
+  const out: PriceBounds = {};
+  for (const f of PRICE_FIELDS) {
+    let min = Infinity;
+    let max = -Infinity;
+    for (const r of rows) {
+      const v = f.get(r);
+      if (v === null || Number.isNaN(v)) continue;
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    if (min !== Infinity && max > min) out[f.key] = [min, max];
+  }
+  return out;
+}
+
+function rangeActive(range: PriceRange | undefined, bound: PriceRange | undefined): boolean {
+  if (!range || !bound) return false;
+  return range[0] > bound[0] || range[1] < bound[1];
+}
+
+/** 已調整(縮小)的價格區間數量。 */
+export function countPriceActive(ranges: PriceRanges, bounds: PriceBounds): number {
+  return PRICE_FIELDS.reduce((n, f) => n + (rangeActive(ranges[f.key], bounds[f.key]) ? 1 : 0), 0);
+}
+
+function matchesPrice(r: SubmissionRow, ranges: PriceRanges, bounds: PriceBounds): boolean {
+  for (const f of PRICE_FIELDS) {
+    if (!rangeActive(ranges[f.key], bounds[f.key])) continue;
+    const v = f.get(r);
+    if (v === null || Number.isNaN(v)) continue; // 無價格資料者不受價格篩選影響
+    const [lo, hi] = ranges[f.key];
+    if (v < lo || v > hi) return false;
+  }
+  return true;
+}
+
 export type Selected = Record<string, Set<string>>;
 
 export function emptySelected(): Selected {
@@ -71,10 +126,15 @@ export function applyFilters(
   rows: SubmissionRow[],
   search: string,
   selected: Selected,
-  sort: SortKey
+  sort: SortKey,
+  priceRanges: PriceRanges = {},
+  priceBounds: PriceBounds = {}
 ): SubmissionRow[] {
   const q = search.trim();
-  const filtered = rows.filter((r) => matchesSearch(r, q) && matchesFacets(r, selected));
+  const filtered = rows.filter(
+    (r) =>
+      matchesSearch(r, q) && matchesFacets(r, selected) && matchesPrice(r, priceRanges, priceBounds)
+  );
   return sortRows(filtered, sort);
 }
 

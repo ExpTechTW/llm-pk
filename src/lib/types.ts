@@ -56,4 +56,8 @@ export interface SubmissionRow {
   runDate: string;
   runMode: string | null;
   runsPerTest: number;
+  // 價格(USD / 1M tokens),由 price.csv 比對後在前端補上;無資料為 null
+  priceInput: number | null;
+  priceCacheInput: number | null;
+  priceOutput: number | null;
 }

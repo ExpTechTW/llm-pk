@@ -10,12 +10,18 @@ import { getPacks, getSubmissionsByPack } from "@/lib/db";
 import {
   applyFilters,
   computeFacets,
+  computePriceBounds,
+  countPriceActive,
   countSelected,
   emptySelected,
+  type PriceRange,
+  type PriceRanges,
   type Selected,
   type SortKey
 } from "@/lib/filters";
 import { useDb } from "@/hooks/useDb";
+import { usePrices } from "@/hooks/usePrices";
+import { priceKey } from "@/lib/price";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 15;
@@ -29,24 +35,40 @@ export default function Leaderboard() {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showFilters, setShowFilters] = useState(false);
 
+  const prices = usePrices();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
-  const rows = useMemo(
-    () => (db && pack ? getSubmissionsByPack(db, pack.name, pack.ver) : []),
-    [db, pack]
-  );
+  const rows = useMemo(() => {
+    const base = db && pack ? getSubmissionsByPack(db, pack.name, pack.ver) : [];
+    // 依 model id / name 比對 price.csv,補上價格(供「價格」篩選使用)
+    return base.map((r) => {
+      const p =
+        (r.modelId ? prices.get(priceKey(r.modelId)) : undefined) ?? prices.get(priceKey(r.modelName));
+      return p
+        ? { ...r, priceInput: p.input, priceCacheInput: p.cacheInput, priceOutput: p.output }
+        : r;
+    });
+  }, [db, pack, prices]);
+  const priceBounds = useMemo(() => computePriceBounds(rows), [rows]);
+  const [priceRanges, setPriceRanges] = useState<PriceRanges>({});
+
   const facets = useMemo(() => computeFacets(rows, search, selected), [rows, search, selected]);
   const filtered = useMemo(
-    () => applyFilters(rows, search, selected, sort),
-    [rows, search, selected, sort]
+    () => applyFilters(rows, search, selected, sort, priceRanges, priceBounds),
+    [rows, search, selected, sort, priceRanges, priceBounds]
   );
 
   useEffect(() => {
     if (!pack && packs.length > 0) setPack({ name: packs[0].name, ver: packs[0].ver });
   }, [packs, pack]);
 
+  // 價格區間預設為各欄位的完整範圍(換 pack / 價格載入後重置)
+  useEffect(() => {
+    setPriceRanges({ ...priceBounds });
+  }, [priceBounds]);
+
   useEffect(() => {
     setVisible(PAGE_SIZE);
-  }, [pack, search, selected, sort]);
+  }, [pack, search, selected, sort, priceRanges]);
 
   const changePack = (next: PackKey) => {
     setPack(next);
@@ -64,7 +86,27 @@ export default function Leaderboard() {
     });
   };
 
-  const activeFilters = countSelected(selected);
+  const changePrice = (key: string, range: PriceRange) => {
+    setPriceRanges((prev) => ({ ...prev, [key]: range }));
+    // 價格只有雲端模型才有 → 一旦縮小某個價格區間,自動勾選「部署:雲端」
+    const bound = priceBounds[key];
+    const narrowed = bound && (range[0] > bound[0] || range[1] < bound[1]);
+    if (narrowed) {
+      setSelected((prev) => {
+        if (prev.deployment?.has("雲端")) return prev;
+        const next: Selected = { ...prev };
+        next.deployment = new Set(next.deployment ?? []).add("雲端");
+        return next;
+      });
+    }
+  };
+
+  const resetAll = () => {
+    setSelected(emptySelected());
+    setPriceRanges({ ...priceBounds });
+  };
+
+  const activeFilters = countSelected(selected) + countPriceActive(priceRanges, priceBounds);
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 pt-10 pb-20 sm:pt-14">
@@ -138,9 +180,12 @@ export default function Leaderboard() {
                 facets={facets}
                 selected={selected}
                 onToggle={toggle}
-                onReset={() => setSelected(emptySelected())}
+                onReset={resetAll}
                 sort={sort}
                 onSortChange={setSort}
+                priceBounds={priceBounds}
+                priceRanges={priceRanges}
+                onPriceChange={changePrice}
               />
             </div>
           </aside>

@@ -136,7 +136,10 @@ function mapRow(r: RawRow): SubmissionRow {
     totalTime: r.total_time,
     runDate: r.run_date,
     runMode: r.run_mode,
-    runsPerTest: r.runs_per_test
+    runsPerTest: r.runs_per_test,
+    priceInput: null,
+    priceCacheInput: null,
+    priceOutput: null
   };
 }
 
