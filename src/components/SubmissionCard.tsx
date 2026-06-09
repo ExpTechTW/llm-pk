@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Cloud, Cpu, Crown } from "lucide-react";
 
-import { GithubAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
@@ -86,15 +85,9 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
           >
             {row.modelName}
           </h3>
-          <div className="text-muted-foreground flex items-center gap-2 text-xs">
-            <span className="inline-flex items-center gap-1.5">
-              <GithubAvatar username={row.author} size={16} linked={false} />
-              <span className="truncate">@{row.author}</span>
-            </span>
-            {row.modelId ? (
-              <span className="text-muted-foreground/60 hidden truncate font-mono sm:inline">{row.modelId}</span>
-            ) : null}
-          </div>
+          {row.modelId ? (
+            <div className="text-muted-foreground/70 truncate font-mono text-xs">{row.modelId}</div>
+          ) : null}
           <div className="flex flex-wrap items-center gap-1">
             <Chip className={isCloud ? "text-sky-300/90" : "text-primary"}>
               {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
