@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Crown, Lightbulb } from "lucide-react";
 
-import { modelBadges } from "@/lib/badges";
+import { modelBadges, quantColor } from "@/lib/badges";
 import { OrgLogo } from "@/components/ui/org-logo";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
@@ -13,18 +13,6 @@ const RANK_ACCENT: Record<number, string> = {
   2: "text-foreground",
   3: "text-amber-400/90"
 };
-
-// 量化標籤特例配色:命中關鍵字者套用指定色,其餘用預設(格式=紫、等級=青)。
-const QUANT_COLOR_RULES: { match: string[]; className: string }[] = [
-  { match: ["BF16", "Q8"], className: "text-orange-300" },
-  { match: ["GGUF", "SAFETENSORS"], className: "text-blue-300" }
-];
-
-function quantColor(value: string, fallback: string): string {
-  const up = value.toUpperCase();
-  const rule = QUANT_COLOR_RULES.find((r) => r.match.some((m) => up.includes(m)));
-  return rule ? rule.className : fallback;
-}
 
 function Chip({ children, className }: { children: ReactNode; className?: string }) {
   return (

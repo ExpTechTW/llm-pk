@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Check, Copy, GitCompareArrows, Layers, Loader2 } from "lucide-react";
 
 import { OrgLogo } from "@/components/ui/org-logo";
@@ -8,7 +8,7 @@ import { PackSelect } from "@/components/PackSelect";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { getPacks, getResults, getSubmissionsByPack } from "@/lib/db";
 import { useDb } from "@/hooks/useDb";
-import { modelBadges } from "@/lib/badges";
+import { modelBadges, quantColor } from "@/lib/badges";
 import { avgTime } from "@/lib/filters";
 import { loadExam, type ExamPack } from "@/lib/exam";
 import { statusKind } from "@/lib/status";
@@ -55,6 +55,8 @@ function fmtSec(ms: number): string {
 
 /* ----------------------------- 身分卡 ----------------------------- */
 
+const CHIP = "border-border/70 inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium";
+
 function IdentityCard({
   row,
   color,
@@ -66,7 +68,12 @@ function IdentityCard({
 }) {
   const badges = modelBadges(row);
   return (
-    <div className="bg-card/70 relative flex h-full flex-col items-center gap-2.5 overflow-hidden rounded-2xl border border-t-2 p-4 text-center" style={{ borderTopColor: color }}>
+    <Link
+      to={`/s/${row.id}`}
+      title={`查看 ${row.modelName} 詳細`}
+      className="bg-card/70 hover:border-primary/50 group relative flex h-full flex-col items-center gap-2.5 overflow-hidden rounded-2xl border border-t-2 p-4 text-center transition-colors"
+      style={{ borderTopColor: color }}
+    >
       <span
         className="absolute top-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-bold"
         style={{ color, backgroundColor: `${color}22` }}
@@ -77,7 +84,7 @@ function IdentityCard({
       <div className="w-full min-w-0">
         {/* 名稱固定 3 行高、上下置中,左右兩卡名稱區一樣高,分數才會對齊 */}
         <div className="flex h-[3lh] items-center justify-center text-sm leading-tight sm:text-base">
-          <span className="font-display line-clamp-3 font-bold wrap-break-word" title={row.modelName}>
+          <span className="font-display group-hover:text-primary line-clamp-3 font-bold wrap-break-word transition-colors" title={row.modelName}>
             {row.modelName}
           </span>
         </div>
@@ -96,19 +103,19 @@ function IdentityCard({
       </div>
       <div className="flex flex-wrap justify-center gap-1">
         {badges.map((b) => (
-          <span
-            key={b.label}
-            className={cn(
-              "border-border/70 inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-              b.className
-            )}
-          >
+          <span key={b.label} className={cn(CHIP, b.className)}>
             <b.Icon className="size-3" />
             {b.label}
           </span>
         ))}
+        {row.quantFormat ? (
+          <span className={cn(CHIP, quantColor(row.quantFormat, "text-violet-300"))}>{row.quantFormat}</span>
+        ) : null}
+        {row.quantLevel ? (
+          <span className={cn(CHIP, quantColor(row.quantLevel, "text-cyan-300"))}>{row.quantLevel}</span>
+        ) : null}
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -568,6 +575,9 @@ export default function Compare() {
                           {value ? (
                             <>
                               {value.modelName}
+                              {value.quantLevel ? (
+                                <span className="text-muted-foreground font-normal"> · {value.quantLevel}</span>
+                              ) : null}
                               {value.linkAuthor ? (
                                 <span className="text-muted-foreground font-normal"> · {value.linkAuthor}</span>
                               ) : null}
@@ -584,6 +594,9 @@ export default function Compare() {
                       {candidates.map((r) => (
                         <SelectItem key={r.file} value={r.file} className="[&>span]:wrap-break-word">
                           <span className="font-medium">{r.modelName}</span>
+                          {r.quantLevel ? (
+                            <span className="text-muted-foreground text-xs"> · {r.quantLevel}</span>
+                          ) : null}
                           {r.linkAuthor ? (
                             <span className="text-muted-foreground text-xs"> · {r.linkAuthor}</span>
                           ) : null}

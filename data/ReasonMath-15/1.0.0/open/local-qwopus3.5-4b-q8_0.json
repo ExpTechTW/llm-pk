@@ -2,8 +2,8 @@
     "BenchLocal": "0.3.0",
     "results_upload": "whes1015",
     "BenchPack": {
-        "name": "ToolCall-15",
-        "ver": "1.0.1"
+        "name": "ReasonMath-15",
+        "ver": "1.0.0"
     },
     "deployment": "local",
     "model": {
@@ -39,105 +39,105 @@
         "driver": ""
     },
     "score": {
-        "total": 93,
+        "total": 72,
         "categories": [
             {
                 "id": "A",
-                "label": "Tool Selection",
+                "label": "Everyday Arithmetic",
                 "score": 100,
-                "weight": 20
+                "weight": 15
             },
             {
                 "id": "B",
-                "label": "Parameter Precision",
-                "score": 100,
-                "weight": 20
+                "label": "Logic Puzzles",
+                "score": 28,
+                "weight": 25
             },
             {
                 "id": "C",
-                "label": "Multi-Step Chains",
-                "score": 100,
+                "label": "Multi-Step Word Problems",
+                "score": 85,
                 "weight": 20
             },
             {
                 "id": "D",
-                "label": "Restraint & Refusal",
-                "score": 100,
-                "weight": 20
+                "label": "Trick Questions and Traps",
+                "score": 95,
+                "weight": 25
             },
             {
                 "id": "E",
-                "label": "Error Recovery",
-                "score": 67,
-                "weight": 20
+                "label": "Applied Reasoning",
+                "score": 62,
+                "weight": 15
             }
         ]
     },
     "run": {
-        "date": "2026-06-10T11:14:05.091Z",
+        "date": "2026-06-10T11:23:41.245Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
-        "TC-01": {
+        "RM-01": {
             "status": 1,
-            "time": 3581
+            "time": 8559
         },
-        "TC-02": {
+        "RM-02": {
             "status": 1,
-            "time": 2539
+            "time": 4464
         },
-        "TC-03": {
+        "RM-03": {
             "status": 1,
-            "time": 3784
+            "time": 11059
         },
-        "TC-04": {
+        "RM-04": {
             "status": 1,
-            "time": 1765
+            "time": 73829
         },
-        "TC-05": {
-            "status": 1,
-            "time": 8166
-        },
-        "TC-06": {
-            "status": 1,
-            "time": 3373
-        },
-        "TC-07": {
-            "status": 1,
-            "time": 7919
-        },
-        "TC-08": {
-            "status": 1,
-            "time": 8079
-        },
-        "TC-09": {
-            "status": 1,
-            "time": 3985
-        },
-        "TC-10": {
-            "status": 1,
-            "time": 3197
-        },
-        "TC-11": {
-            "status": 1,
-            "time": 8000
-        },
-        "TC-12": {
-            "status": 1,
-            "time": 7988
-        },
-        "TC-13": {
-            "status": 1,
-            "time": 19852
-        },
-        "TC-14": {
+        "RM-05": {
             "status": 0,
-            "time": 7863
+            "time": 175517
         },
-        "TC-15": {
+        "RM-06": {
+            "status": 0,
+            "time": 156152
+        },
+        "RM-07": {
             "status": 1,
-            "time": 8133
+            "time": 11165
+        },
+        "RM-08": {
+            "status": 1,
+            "time": 10539
+        },
+        "RM-09": {
+            "status": 1,
+            "time": 14705
+        },
+        "RM-10": {
+            "status": 1,
+            "time": 13750
+        },
+        "RM-11": {
+            "status": 1,
+            "time": 6775
+        },
+        "RM-12": {
+            "status": 1,
+            "time": 7306
+        },
+        "RM-13": {
+            "status": 0,
+            "time": 88248
+        },
+        "RM-14": {
+            "status": 1,
+            "time": 11408
+        },
+        "RM-15": {
+            "status": 1,
+            "time": 30993
         }
     }
 }

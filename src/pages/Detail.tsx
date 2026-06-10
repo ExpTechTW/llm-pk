@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Lightbulb } from "lucide-react";
 
 import { modelBadges } from "@/lib/badges";
@@ -82,7 +82,10 @@ function Meta({ label, value }: { label: string; value: string }) {
 
 export default function Detail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { db, loading, error } = useDb();
+  // 回到來源頁(對比 / 排行榜);無上一頁就退回排行榜。
+  const goBack = () => (window.history.length > 1 ? navigate(-1) : navigate("/leaderboard"));
   const [exam, setExam] = useState<ExamPack | null>(null);
   const [openQ, setOpenQ] = useState<string | null>(null);
 
@@ -119,13 +122,14 @@ export default function Detail() {
 
   return (
     <main className="animate-rise mx-auto max-w-4xl px-4 pt-6 pb-12 space-y-6">
-      <Link
-        to="/leaderboard"
+      <button
+        type="button"
+        onClick={goBack}
         className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-1.5 text-sm"
       >
         <ArrowLeft className="size-4" />
-        排行榜
-      </Link>
+        返回
+      </button>
 
       {/* 標頭 */}
       <header className="bg-card/70 border-border/60 relative overflow-hidden rounded-3xl border p-6 backdrop-blur-sm">
