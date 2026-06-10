@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ReasonMath-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "claude-fable-5",
+        "name": "Claude Fable 5",
+        "org": "Anthropic",
+        "access": "closed",
+        "family": {
+            "name": "Claude",
+            "ver": "5"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 81,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Everyday Arithmetic",
+                "score": 95,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Logic Puzzles",
+                "score": 52,
+                "weight": 25
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Word Problems",
+                "score": 85,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Trick Questions and Traps",
+                "score": 95,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Applied Reasoning",
+                "score": 85,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T04:00:19.721Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "RM-01": {
+            "status": 1,
+            "time": 5595
+        },
+        "RM-02": {
+            "status": 1,
+            "time": 3943
+        },
+        "RM-03": {
+            "status": 1,
+            "time": 5846
+        },
+        "RM-04": {
+            "status": 0,
+            "time": 8806
+        },
+        "RM-05": {
+            "status": 1,
+            "time": 11670
+        },
+        "RM-06": {
+            "status": null,
+            "time": 8025
+        },
+        "RM-07": {
+            "status": 1,
+            "time": 4876
+        },
+        "RM-08": {
+            "status": 1,
+            "time": 6069
+        },
+        "RM-09": {
+            "status": 1,
+            "time": 6066
+        },
+        "RM-10": {
+            "status": 1,
+            "time": 4070
+        },
+        "RM-11": {
+            "status": 1,
+            "time": 4021
+        },
+        "RM-12": {
+            "status": 1,
+            "time": 5575
+        },
+        "RM-13": {
+            "status": 1,
+            "time": 11239
+        },
+        "RM-14": {
+            "status": 1,
+            "time": 4984
+        },
+        "RM-15": {
+            "status": 1,
+            "time": 6716
+        }
+    }
+}
