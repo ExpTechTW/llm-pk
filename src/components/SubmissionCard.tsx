@@ -121,7 +121,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
                 .{row.scoreTotal.toFixed(1).split(".")[1]}
               </span>
             </div>
-            <div className="bg-muted/70 h-1 w-full overflow-hidden rounded-full">
+            <div className="bg-muted/70 h-1.5 w-full overflow-hidden rounded-full ring-1 ring-white/60">
               <div
                 className="gauge-fill bg-primary h-full rounded-full"
                 style={{ width: `${score}%` }}

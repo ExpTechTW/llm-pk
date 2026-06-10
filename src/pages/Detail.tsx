@@ -197,7 +197,7 @@ export default function Detail() {
                 {row.scoreTotal.toFixed(1)}
               </span>
             </div>
-            <div className="bg-muted/70 h-1.5 w-32 overflow-hidden rounded-full">
+            <div className="bg-muted/70 h-1.5 w-32 overflow-hidden rounded-full ring-1 ring-white/60">
               <div className="gauge-fill bg-primary h-full rounded-full" style={{ width: `${score}%` }} />
             </div>
             <span className="text-muted-foreground font-data text-xs tabular-nums">

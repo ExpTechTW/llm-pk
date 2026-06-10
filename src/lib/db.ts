@@ -2,7 +2,7 @@ import initSqlJs from "sql.js";
 import type { Database } from "sql.js";
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 
-import type { PackInfo, ResultEntry, ScoreCategory, SubmissionRow } from "./types";
+import type { PackInfo, ResultEntry, SubmissionRow } from "./types";
 
 let dbPromise: Promise<Database> | null = null;
 
@@ -81,7 +81,7 @@ interface RawRow {
   hw_driver: string | null;
   hw_extra: string | null;
   score_total: number;
-  score_cats: string | null;
+  scores: string | null;
   pass_count: number;
   half_count: number;
   total_count: number;
@@ -100,7 +100,40 @@ function parseJson<T>(value: string | null, fallback: T): T {
   }
 }
 
-function mapRow(r: RawRow): SubmissionRow {
+// 還原建置期壓掉共同前綴的頭像 URL(u/ = HF CDN 上傳、a/ = HF 預設頭像)。
+function expandAvatar(s: string | null): string | null {
+  if (!s) return null;
+  if (s.startsWith("u/")) return `https://cdn-avatars.huggingface.co/v1/production/uploads/${s.slice(2)}`;
+  if (s.startsWith("a/")) return `https://huggingface.co/avatars/${s.slice(2)}`;
+  return s;
+}
+
+interface CatDef {
+  id: string;
+  label: string | null;
+  weight: number | null;
+}
+
+/** 某 pack 的類別定義(id/label/weight),依顯示順序。 */
+function getCategories(db: Database, packName: string, packVer: string): CatDef[] {
+  return queryAll<{ cat_id: string; label: string | null; weight: number | null }>(
+    db,
+    `SELECT cat_id, label, weight FROM category WHERE pack_name = $p AND pack_ver = $v ORDER BY ord`,
+    { $p: packName, $v: packVer }
+  ).map((r) => ({ id: r.cat_id, label: r.label, weight: r.weight }));
+}
+
+/** 某 pack 的題目清單,依順序。 */
+function getScenarios(db: Database, packName: string, packVer: string): string[] {
+  return queryAll<{ scenario_id: string }>(
+    db,
+    `SELECT scenario_id FROM scenario WHERE pack_name = $p AND pack_ver = $v ORDER BY ord`,
+    { $p: packName, $v: packVer }
+  ).map((r) => r.scenario_id);
+}
+
+function mapRow(r: RawRow, cats: CatDef[]): SubmissionRow {
+  const scores = parseJson<(number | null)[]>(r.scores, []);
   return {
     id: r.id,
     uploader: r.results_upload,
@@ -110,10 +143,10 @@ function mapRow(r: RawRow): SubmissionRow {
     modelName: r.model_name,
     modelId: r.model_id,
     modelOrg: r.model_org,
-    orgAvatar: r.org_avatar,
+    orgAvatar: expandAvatar(r.org_avatar),
     modelLink: r.model_link,
     linkAuthor: r.link_author,
-    linkAuthorAvatar: r.link_author_avatar,
+    linkAuthorAvatar: expandAvatar(r.link_author_avatar),
     access: r.model_access,
     deployment: r.deployment,
     familyName: r.family_name,
@@ -128,14 +161,19 @@ function mapRow(r: RawRow): SubmissionRow {
     backendName: r.backend_name,
     backendVer: r.backend_ver,
     hwCompany: r.hw_company,
-    hwAvatar: r.hw_avatar,
+    hwAvatar: expandAvatar(r.hw_avatar),
     hwDevice: r.hw_device,
     hwChip: r.hw_chip,
     hwOs: r.hw_os,
     hwDriver: r.hw_driver,
     hwExtra: parseJson<Record<string, string | number | boolean>>(r.hw_extra, {}),
     scoreTotal: r.score_total,
-    scoreCats: parseJson<ScoreCategory[]>(r.score_cats, []),
+    scoreCats: cats.map((c, i) => ({
+      id: c.id,
+      label: c.label ?? undefined,
+      score: scores[i] ?? 0,
+      weight: c.weight ?? undefined
+    })),
     passCount: r.pass_count,
     halfCount: r.half_count,
     totalCount: r.total_count,
@@ -165,7 +203,8 @@ export function getSubmissionsByPack(db: Database, packName: string, packVer: st
       ORDER BY s.score_total DESC, s.total_time ASC`,
     { $pack: packName, $ver: packVer }
   );
-  return rows.map(mapRow);
+  const cats = getCategories(db, packName, packVer);
+  return rows.map((r) => mapRow(r, cats));
 }
 
 /** 單一投稿(詳細頁用)。 */
@@ -183,19 +222,20 @@ export function getSubmissionById(db: Database, id: number): SubmissionRow | nul
       WHERE s.id = $id`,
     { $id: id }
   );
-  return rows.length ? mapRow(rows[0]) : null;
+  if (!rows.length) return null;
+  const cats = getCategories(db, rows[0].pack_name, rows[0].pack_ver);
+  return mapRow(rows[0], cats);
 }
 
-/** 單一投稿的每題結果,依題號排序。結果折存在 submission.results 的 JSON({題號:[status,time]})。 */
+/** 單一投稿的每題結果。results 是對齊 scenario 表的 [status,time] 陣列,題號從 scenario 表還原。 */
 export function getResults(db: Database, submissionId: number): ResultEntry[] {
-  const rows = queryAll<{ results: string | null }>(
+  const rows = queryAll<{ results: string | null; pack_name: string; pack_ver: string }>(
     db,
-    `SELECT results FROM submission WHERE id = $id`,
+    `SELECT results, pack_name, pack_ver FROM submission WHERE id = $id`,
     { $id: submissionId }
   );
   if (!rows.length || !rows[0].results) return [];
-  const obj = parseJson<Record<string, [number | null, number]>>(rows[0].results, {});
-  return Object.entries(obj)
-    .map(([scenarioId, [status, time]]) => ({ scenarioId, status, time }))
-    .sort((a, b) => a.scenarioId.localeCompare(b.scenarioId));
+  const arr = parseJson<[number | null, number][]>(rows[0].results, []);
+  const scenarios = getScenarios(db, rows[0].pack_name, rows[0].pack_ver);
+  return arr.map((v, i) => ({ scenarioId: scenarios[i] ?? String(i + 1), status: v[0], time: v[1] }));
 }

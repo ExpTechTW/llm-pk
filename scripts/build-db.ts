@@ -107,6 +107,22 @@ function resolveOrgName(s: Submission): string | null {
   return null;
 }
 
+// 頭像 URL 共同前綴壓縮:u/ = HF CDN 上傳、a/ = HF 預設頭像。前端用 expandAvatar 還原。
+const AV_CDN = "https://cdn-avatars.huggingface.co/v1/production/uploads/";
+const AV_DEFAULT = "https://huggingface.co/avatars/";
+function compressAvatar(url: string): string {
+  if (url.startsWith(AV_CDN)) return `u/${url.slice(AV_CDN.length)}`;
+  if (url.startsWith(AV_DEFAULT)) return `a/${url.slice(AV_DEFAULT.length)}`;
+  return url;
+}
+
+// 模型連結正規化成緊湊格式 hugging_face:user:repo(完整 HF URL → 緊湊;其他原樣)。
+function normalizeLink(link: string | null | undefined): string | null {
+  if (!link) return null;
+  const m = link.match(/^https?:\/\/huggingface\.co\/([^/]+)\/(.+?)\/?$/);
+  return m ? `hugging_face:${m[1]}:${m[2]}` : link;
+}
+
 // 硬體廠牌 → HF 組織名(供頭像解析)。
 function resolveHwOrg(company: string | null | undefined): string | null {
   const c = company?.trim();
@@ -221,7 +237,7 @@ function createSchema(db: Database.Database): void {
       hw_driver     TEXT,
       hw_extra      TEXT,
       score_total   REAL,
-      score_cats    TEXT,
+      scores        TEXT,
       run_date      TEXT,
       run_mode      TEXT,
       runs_per_test INTEGER,
@@ -230,6 +246,24 @@ function createSchema(db: Database.Database): void {
       total_count   INTEGER,
       total_time    INTEGER,
       results       TEXT
+    );
+
+    -- 類別定義(id/label/weight)每個 pack 只存一次,submission.scores 只存對齊的分數陣列。
+    CREATE TABLE category (
+      pack_name TEXT NOT NULL,
+      pack_ver  TEXT NOT NULL,
+      ord       INTEGER NOT NULL,
+      cat_id    TEXT NOT NULL,
+      label     TEXT,
+      weight    INTEGER
+    );
+
+    -- 題目清單每個 pack 只存一次,submission.results 只存對齊的 [status,time] 陣列。
+    CREATE TABLE scenario (
+      pack_name   TEXT NOT NULL,
+      pack_ver    TEXT NOT NULL,
+      ord         INTEGER NOT NULL,
+      scenario_id TEXT NOT NULL
     );
 
     CREATE TABLE meta (
@@ -243,6 +277,8 @@ function createSchema(db: Database.Database): void {
     );
 
     CREATE UNIQUE INDEX idx_sub_file ON submission(file);
+    CREATE INDEX idx_category_pack ON category(pack_name, pack_ver, ord);
+    CREATE INDEX idx_scenario_pack ON scenario(pack_name, pack_ver, ord);
   `);
   db.prepare("INSERT OR REPLACE INTO meta(key, value) VALUES('schema_version', ?)").run(SCHEMA_VERSION);
 }
@@ -325,6 +361,39 @@ async function main(): Promise<void> {
     }
   }
 
+  // 每個 pack 的類別 / 題目順序(既有的從 DB 載入,新出現的從代表性投稿推得後待插入)。
+  const packKey = (name: string, ver: string) => `${name}@@${ver}`;
+  const catOrder = new Map<string, string[]>();
+  const scenOrder = new Map<string, string[]>();
+  for (const r of db
+    .prepare("SELECT pack_name, pack_ver, cat_id FROM category ORDER BY pack_name, pack_ver, ord")
+    .all() as { pack_name: string; pack_ver: string; cat_id: string }[]) {
+    const k = packKey(r.pack_name, r.pack_ver);
+    (catOrder.get(k) ?? catOrder.set(k, []).get(k)!).push(r.cat_id);
+  }
+  for (const r of db
+    .prepare("SELECT pack_name, pack_ver, scenario_id FROM scenario ORDER BY pack_name, pack_ver, ord")
+    .all() as { pack_name: string; pack_ver: string; scenario_id: string }[]) {
+    const k = packKey(r.pack_name, r.pack_ver);
+    (scenOrder.get(k) ?? scenOrder.set(k, []).get(k)!).push(r.scenario_id);
+  }
+  const newCatRows: [string, string, number, string, string, number | null][] = [];
+  const newScenRows: [string, string, number, string][] = [];
+  for (const e of toProcess) {
+    const { name, ver } = e.value.BenchPack;
+    const k = packKey(name, ver);
+    if (!catOrder.has(k)) {
+      const cats = e.value.score.categories ?? [];
+      catOrder.set(k, cats.map((c) => c.id));
+      cats.forEach((c, i) => newCatRows.push([name, ver, i, c.id, c.label ?? c.id, c.weight ?? null]));
+    }
+    if (!scenOrder.has(k)) {
+      const sids = Object.keys(e.value.results);
+      scenOrder.set(k, sids);
+      sids.forEach((sid, i) => newScenRows.push([name, ver, i, sid]));
+    }
+  }
+
   const insertSub = db.prepare(`
     INSERT INTO submission (
       file, src_hash, benchlocal, results_upload, pack_name, pack_ver, model_name, model_id, model_org,
@@ -332,7 +401,7 @@ async function main(): Promise<void> {
       quant_format, quant_level, quant_method, model_link, link_author,
       backend_name, backend_ver, deployment,
       hw_company, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
-      score_total, score_cats, run_date, run_mode, runs_per_test,
+      score_total, scores, run_date, run_mode, runs_per_test,
       pass_count, half_count, total_count, total_time, results
     ) VALUES (
       @file, @src_hash, @benchlocal, @results_upload, @pack_name, @pack_ver, @model_name, @model_id, @model_org,
@@ -340,15 +409,25 @@ async function main(): Promise<void> {
       @quant_format, @quant_level, @quant_method, @model_link, @link_author,
       @backend_name, @backend_ver, @deployment,
       @hw_company, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
-      @score_total, @score_cats, @run_date, @run_mode, @runs_per_test,
+      @score_total, @scores, @run_date, @run_mode, @runs_per_test,
       @pass_count, @half_count, @total_count, @total_time, @results
     )
   `);
   const selIdByFile = db.prepare("SELECT id FROM submission WHERE file = ?");
   const delSub = db.prepare("DELETE FROM submission WHERE id = ?");
+  const insertCategory = db.prepare(
+    "INSERT INTO category (pack_name, pack_ver, ord, cat_id, label, weight) VALUES (?, ?, ?, ?, ?, ?)"
+  );
+  const insertScenario = db.prepare(
+    "INSERT INTO scenario (pack_name, pack_ver, ord, scenario_id) VALUES (?, ?, ?, ?)"
+  );
   const upsertAvatar = db.prepare("INSERT OR REPLACE INTO avatar_cache(name, url) VALUES(?, ?)");
 
   const tx = db.transaction(() => {
+    // 新出現的 pack:寫入類別 / 題目定義(只存一次)。
+    for (const r of newCatRows) insertCategory.run(...r);
+    for (const r of newScenRows) insertScenario.run(...r);
+
     // 先刪除:已移除的檔案 + 需重建的變更檔。
     for (const file of new Set([...toDelete, ...toProcess.map((e) => e.relName)])) {
       const row = selIdByFile.get(file) as { id: number } | undefined;
@@ -393,7 +472,7 @@ async function main(): Promise<void> {
         quant_format: quant?.format ?? null,
         quant_level: quant?.level ?? null,
         quant_method: quant?.method ?? null,
-        model_link: s.model.link ?? null,
+        model_link: normalizeLink(s.model.link),
         link_author: m.author,
         backend_name: s.backend.name,
         backend_ver: s.backend.ver ?? null,
@@ -405,7 +484,14 @@ async function main(): Promise<void> {
         hw_driver: hw?.driver ?? null,
         hw_extra: Object.keys(hwExtra).length ? JSON.stringify(hwExtra) : null,
         score_total: s.score.total,
-        score_cats: s.score.categories ? JSON.stringify(s.score.categories) : null,
+        // 分數對齊該 pack 的類別順序,只存數字陣列(類別 id/label/weight 在 category 表)。
+        scores: JSON.stringify(
+          (() => {
+            const order = catOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
+            const byId = new Map((s.score.categories ?? []).map((c) => [c.id, c.score]));
+            return order.map((id) => byId.get(id) ?? null);
+          })()
+        ),
         run_date: s.run.date,
         run_mode: s.run.mode ?? null,
         runs_per_test: s.run.runsPerTest,
@@ -413,17 +499,23 @@ async function main(): Promise<void> {
         half_count: stats.halfCount,
         total_count: stats.totalCount,
         total_time: stats.totalTime,
-        // 每題結果折成 { 題號: [status, time] } 的緊湊 JSON,取代獨立的 result 表。
+        // 每題結果對齊該 pack 的題目順序,只存 [status,time] 陣列(題號在 scenario 表)。
         results: JSON.stringify(
-          Object.fromEntries(Object.entries(s.results).map(([k, e]) => [k, [e.status, e.time]]))
+          (() => {
+            const order = scenOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
+            return order.map((sid) => {
+              const e = s.results[sid];
+              return e ? [e.status, e.time] : [null, 0];
+            });
+          })()
         )
       });
     }
 
-    // 持久化這次新解析到的頭像,供下次建置直接命中。
+    // 持久化這次新解析到的頭像(壓掉共同前綴),供下次建置直接命中。
     for (const displayKey of need.keys()) {
       const url = avatarCache.get(displayKey);
-      if (url) upsertAvatar.run(displayKey, url);
+      if (url) upsertAvatar.run(displayKey, compressAvatar(url));
     }
   });
 
