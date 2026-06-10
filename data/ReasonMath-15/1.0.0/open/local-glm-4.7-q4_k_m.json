@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "ReasonMath-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "GLM 4.7 Flash",
+        "id": "glm-4.7-flash",
+        "org": "zai-org",
+        "access": "open",
+        "family": {
+            "name": "GLM",
+            "ver": "4.7"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "30B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K_M",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:Huihui-GLM-4.7-Flash-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 74,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Everyday Arithmetic",
+                "score": 100,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Logic Puzzles",
+                "score": 57,
+                "weight": 25
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Word Problems",
+                "score": 85,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Trick Questions and Traps",
+                "score": 77,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Applied Reasoning",
+                "score": 57,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T06:06:16.767Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "RM-01": {
+            "status": 1,
+            "time": 11590
+        },
+        "RM-02": {
+            "status": 1,
+            "time": 8277
+        },
+        "RM-03": {
+            "status": 1,
+            "time": 10206
+        },
+        "RM-04": {
+            "status": 0,
+            "time": 160283
+        },
+        "RM-05": {
+            "status": 1,
+            "time": 23020
+        },
+        "RM-06": {
+            "status": null,
+            "time": 52862
+        },
+        "RM-07": {
+            "status": 1,
+            "time": 17715
+        },
+        "RM-08": {
+            "status": 1,
+            "time": 21353
+        },
+        "RM-09": {
+            "status": 1,
+            "time": 13609
+        },
+        "RM-10": {
+            "status": 0,
+            "time": 12666
+        },
+        "RM-11": {
+            "status": 1,
+            "time": 8413
+        },
+        "RM-12": {
+            "status": 1,
+            "time": 7707
+        },
+        "RM-13": {
+            "status": 0,
+            "time": 152272
+        },
+        "RM-14": {
+            "status": 1,
+            "time": 9695
+        },
+        "RM-15": {
+            "status": 1,
+            "time": 36986
+        }
+    }
+}

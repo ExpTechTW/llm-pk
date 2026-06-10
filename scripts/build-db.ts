@@ -10,12 +10,17 @@
  *
  * 增量建置:每個檔案的內容雜湊(src_hash)與已解析的頭像(avatar_cache)都存進 DB。
  * 再次執行時只重建「新增 / 變更 / 刪除」的檔案,頭像也只抓快取裡沒有的,大幅省時與省 API。
- * schema 變動時把 SCHEMA_VERSION 加一即可,偵測到版本不符會自動整庫重建。
+ * schema 有變時自行刪掉 public/data.db 再跑一次(本腳本不做版本 fallback)。
+ *
+ * 極致壓縮(資訊量不變):
+ * - 每題結果(result)折成一欄 JSON 存在 submission.results,不另開 result 表(省掉上千列與索引)。
+ * - 頭像長網址只在 avatar_cache 各存一次,前端用 JOIN 組回。
+ * - 不留前端用不到的索引;page_size 512 + VACUUM 壓實;非 WAL → 單一檔案,適合進 git。
  *
  * 用法:npx tsx scripts/build-db.ts
  */
 import Database from "better-sqlite3";
-import { readFileSync, readdirSync, mkdirSync, existsSync, rmSync } from "node:fs";
+import { readFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, dirname, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,8 +33,8 @@ const DATA_DIR = join(ROOT, "data");
 const OUT_DIR = join(ROOT, "public");
 const OUT_DB = join(OUT_DIR, "data.db");
 
-// schema 版本:欄位/索引有變就 +1,偵測到不符會整庫重建(避免增量套到舊結構)。
-const SCHEMA_VERSION = "2";
+// schema 版本(僅記錄用)。結構有變就手動刪 public/data.db 重建,本腳本不做版本 fallback。
+const SCHEMA_VERSION = "1";
 
 // family / 關鍵字 → HuggingFace 組織名(供頭像解析)。找不到映射時直接用原字串嘗試。
 const HF_ORG_ALIASES: Record<string, string> = {
@@ -72,10 +77,12 @@ interface ValidEntry {
 
 function scoreStats(results: Submission["results"]): {
   passCount: number;
+  halfCount: number;
   totalCount: number;
   totalTime: number;
 } {
   let passCount = 0;
+  let halfCount = 0;
   let totalCount = 0;
   let totalTime = 0;
   for (const entry of Object.values(results)) {
@@ -83,9 +90,10 @@ function scoreStats(results: Submission["results"]): {
     if (s !== null && s < 0) continue; // 未執行/錯誤(-1)不計入
     totalCount += 1; // 正常 / 錯誤 / 半對(null)都算作答
     if (s !== null && s >= 1) passCount += 1; // 只有正常(1)算通過
+    if (s === null || (s > 0 && s < 1)) halfCount += 1; // 半對(null 或 0~1 之間)
     totalTime += entry.time;
   }
-  return { passCount, totalCount, totalTime };
+  return { passCount, halfCount, totalCount, totalTime };
 }
 
 // 推得廠牌名稱:明確的 model.org > id 的 org 前綴 > family 別名 > family。
@@ -117,7 +125,10 @@ async function fetchHfAvatar(org: string): Promise<string | null> {
       });
       if (!res.ok) return null;
       const json = (await res.json()) as { avatarUrl?: string };
-      return json.avatarUrl ?? null;
+      const url = json.avatarUrl;
+      if (!url) return null;
+      // HF 預設頭像會回相對路徑(/avatars/xxx.svg),補上 host 才能用。
+      return url.startsWith("/") ? `https://huggingface.co${url}` : url;
     } catch {
       return null;
     } finally {
@@ -167,7 +178,8 @@ function readValidEntries(): { entries: ValidEntry[]; skipped: number } {
       }
     }
 
-    const hash = createHash("sha1").update(text).digest("hex");
+    // 只取雜湊前 5 碼做變更偵測(碰撞機率對這個資料量可忽略)。
+    const hash = createHash("sha1").update(text).digest("hex").slice(0, 5);
     entries.push({ relName, raw, value: report.value, hash });
   }
 
@@ -187,7 +199,6 @@ function createSchema(db: Database.Database): void {
       model_name    TEXT NOT NULL,
       model_id      TEXT,
       model_org     TEXT,
-      org_avatar    TEXT,
       model_access  TEXT,
       family_name   TEXT,
       family_ver    TEXT,
@@ -200,12 +211,10 @@ function createSchema(db: Database.Database): void {
       quant_method  TEXT,
       model_link    TEXT,
       link_author   TEXT,
-      link_author_avatar TEXT,
       backend_name  TEXT,
       backend_ver   TEXT,
       deployment    TEXT,
       hw_company    TEXT,
-      hw_avatar     TEXT,
       hw_device     TEXT,
       hw_chip       TEXT,
       hw_os         TEXT,
@@ -217,16 +226,10 @@ function createSchema(db: Database.Database): void {
       run_mode      TEXT,
       runs_per_test INTEGER,
       pass_count    INTEGER,
+      half_count    INTEGER,
       total_count   INTEGER,
       total_time    INTEGER,
-      raw           TEXT
-    );
-
-    CREATE TABLE result (
-      submission_id INTEGER NOT NULL,
-      scenario_id   TEXT NOT NULL,
-      status        REAL,
-      time          INTEGER
+      results       TEXT
     );
 
     CREATE TABLE meta (
@@ -239,42 +242,17 @@ function createSchema(db: Database.Database): void {
       url  TEXT
     );
 
-    CREATE UNIQUE INDEX idx_sub_file   ON submission(file);
-    CREATE INDEX idx_sub_pack       ON submission(pack_name, pack_ver);
-    CREATE INDEX idx_sub_pack_score ON submission(pack_name, pack_ver, score_total DESC);
-    CREATE INDEX idx_sub_model      ON submission(model_name);
-    CREATE INDEX idx_sub_uploader   ON submission(results_upload);
-    CREATE INDEX idx_result_sub     ON result(submission_id);
+    CREATE UNIQUE INDEX idx_sub_file ON submission(file);
   `);
   db.prepare("INSERT OR REPLACE INTO meta(key, value) VALUES('schema_version', ?)").run(SCHEMA_VERSION);
 }
 
-// 開啟既有 DB(schema 版本相符 → 增量),否則(不存在 / 版本不符)整庫重建。
+// 既有檔 → 增量;不存在 → 建立 schema。schema 有變請自行刪掉 data.db(本腳本不做版本 fallback)。
 function openDatabase(): { db: Database.Database; incremental: boolean } {
   if (existsSync(OUT_DB)) {
-    const existing = new Database(OUT_DB);
-    let ver: string | null = null;
-    try {
-      const row = existing.prepare("SELECT value FROM meta WHERE key = 'schema_version'").get() as
-        | { value: string }
-        | undefined;
-      ver = row?.value ?? null;
-    } catch {
-      ver = null;
-    }
-    if (ver === SCHEMA_VERSION) {
-      existing.pragma("journal_mode = WAL");
-      return { db: existing, incremental: true };
-    }
-    existing.close();
-    console.log(`schema 版本不符(DB=${ver ?? "無"} / 目前=${SCHEMA_VERSION})→ 整庫重建`);
-    for (const ext of ["", "-wal", "-shm"]) {
-      const p = OUT_DB + ext;
-      if (existsSync(p)) rmSync(p);
-    }
+    return { db: new Database(OUT_DB), incremental: true };
   }
   const db = new Database(OUT_DB);
-  db.pragma("journal_mode = WAL");
   createSchema(db);
   return { db, incremental: false };
 }
@@ -321,68 +299,60 @@ async function main(): Promise<void> {
   }
   const toDelete = [...existingByFile.keys()].filter((file) => !currentFiles.has(file));
 
-  // 只為「需處理」的檔案解析 org / 硬體 / 作者,且只抓快取沒有的頭像。
-  const metaByEntry = new Map<
-    ValidEntry,
-    { org: string | null; hwOrg: string | null; author: string | null }
-  >();
-  const namesNeeded = new Set<string>();
+  // 只為「需處理」的檔案解析所需頭像。avatar_cache 以「前端會持有的字面值」為 key
+  //(model_org / hw_company / link_author),前端再用 JOIN 組回 URL,避免每列重複存長網址。
+  const metaByEntry = new Map<ValidEntry, { org: string | null; author: string | null }>();
+  const need = new Map<string, string>(); // displayKey(cache 的 key)→ fetchName(打 HF API 的名稱)
   for (const e of toProcess) {
-    const org = resolveOrgName(e.value);
     const hw =
       e.value.deployment === "local"
         ? (e.value as Extract<Submission, { deployment: "local" }>).hardware
         : undefined;
-    const hwOrg = resolveHwOrg(hw?.company);
+    const org = resolveOrgName(e.value);
     const author = parseModelAuthor(e.value.model.link);
-    metaByEntry.set(e, { org, hwOrg, author });
-    for (const n of [org, hwOrg, author]) if (n && !avatarCache.has(n)) namesNeeded.add(n);
+    const hwCompany = hw?.company ?? null;
+    metaByEntry.set(e, { org, author });
+    if (org && !avatarCache.has(org)) need.set(org, org);
+    if (hwCompany && !avatarCache.has(hwCompany)) need.set(hwCompany, resolveHwOrg(hwCompany) ?? hwCompany);
+    if (author && !avatarCache.has(author)) need.set(author, author);
   }
-  if (namesNeeded.size) {
-    console.log(`解析 ${namesNeeded.size} 個新頭像(其餘走快取)…`);
-    for (const name of namesNeeded) {
-      const url = await fetchHfAvatar(name);
-      console.log(`  org「${name}」→ ${url ? "頭像 OK" : "無頭像(將用字母圖示)"}`);
-      if (url) avatarCache.set(name, url);
+  if (need.size) {
+    console.log(`解析 ${need.size} 個新頭像(其餘走快取)…`);
+    for (const [displayKey, fetchName] of need) {
+      const url = await fetchHfAvatar(fetchName);
+      console.log(`  「${displayKey}」→ ${url ? "頭像 OK" : "無頭像(將用字母圖示)"}`);
+      if (url) avatarCache.set(displayKey, url);
     }
   }
-  const avatarOf = (name: string | null) => (name ? (avatarCache.get(name) ?? null) : null);
 
   const insertSub = db.prepare(`
     INSERT INTO submission (
-      file, src_hash, benchlocal, results_upload, pack_name, pack_ver, model_name, model_id, model_org, org_avatar,
+      file, src_hash, benchlocal, results_upload, pack_name, pack_ver, model_name, model_id, model_org,
       model_access, family_name, family_ver, model_type, model_thinking, size_params, size_active,
-      quant_format, quant_level, quant_method, model_link, link_author, link_author_avatar,
+      quant_format, quant_level, quant_method, model_link, link_author,
       backend_name, backend_ver, deployment,
-      hw_company, hw_avatar, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
+      hw_company, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
       score_total, score_cats, run_date, run_mode, runs_per_test,
-      pass_count, total_count, total_time, raw
+      pass_count, half_count, total_count, total_time, results
     ) VALUES (
-      @file, @src_hash, @benchlocal, @results_upload, @pack_name, @pack_ver, @model_name, @model_id, @model_org, @org_avatar,
+      @file, @src_hash, @benchlocal, @results_upload, @pack_name, @pack_ver, @model_name, @model_id, @model_org,
       @model_access, @family_name, @family_ver, @model_type, @model_thinking, @size_params, @size_active,
-      @quant_format, @quant_level, @quant_method, @model_link, @link_author, @link_author_avatar,
+      @quant_format, @quant_level, @quant_method, @model_link, @link_author,
       @backend_name, @backend_ver, @deployment,
-      @hw_company, @hw_avatar, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
+      @hw_company, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
       @score_total, @score_cats, @run_date, @run_mode, @runs_per_test,
-      @pass_count, @total_count, @total_time, @raw
+      @pass_count, @half_count, @total_count, @total_time, @results
     )
   `);
-  const insertResult = db.prepare(
-    `INSERT INTO result (submission_id, scenario_id, status, time) VALUES (?, ?, ?, ?)`
-  );
   const selIdByFile = db.prepare("SELECT id FROM submission WHERE file = ?");
-  const delResults = db.prepare("DELETE FROM result WHERE submission_id = ?");
   const delSub = db.prepare("DELETE FROM submission WHERE id = ?");
   const upsertAvatar = db.prepare("INSERT OR REPLACE INTO avatar_cache(name, url) VALUES(?, ?)");
 
   const tx = db.transaction(() => {
-    // 先刪除:已移除的檔案 + 需重建的變更檔(舊列連同 result 一起清掉)。
+    // 先刪除:已移除的檔案 + 需重建的變更檔。
     for (const file of new Set([...toDelete, ...toProcess.map((e) => e.relName)])) {
       const row = selIdByFile.get(file) as { id: number } | undefined;
-      if (row) {
-        delResults.run(row.id);
-        delSub.run(row.id);
-      }
+      if (row) delSub.run(row.id);
     }
 
     // 插入新增/變更的投稿。
@@ -403,7 +373,7 @@ async function main(): Promise<void> {
         }
       }
 
-      const info = insertSub.run({
+      insertSub.run({
         file: entry.relName,
         src_hash: entry.hash,
         benchlocal: s.BenchLocal,
@@ -413,7 +383,6 @@ async function main(): Promise<void> {
         model_name: s.model.name,
         model_id: s.model.id ?? null,
         model_org: m.org,
-        org_avatar: avatarOf(m.org),
         model_access: s.model.access,
         family_name: s.model.family?.name ?? null,
         family_ver: s.model.family?.ver ?? null,
@@ -426,12 +395,10 @@ async function main(): Promise<void> {
         quant_method: quant?.method ?? null,
         model_link: s.model.link ?? null,
         link_author: m.author,
-        link_author_avatar: avatarOf(m.author),
         backend_name: s.backend.name,
         backend_ver: s.backend.ver ?? null,
         deployment: s.deployment,
         hw_company: hw?.company ?? null,
-        hw_avatar: avatarOf(m.hwOrg),
         hw_device: hw?.device ?? null,
         hw_chip: hw?.chip ?? null,
         hw_os: hw?.os ?? null,
@@ -443,26 +410,28 @@ async function main(): Promise<void> {
         run_mode: s.run.mode ?? null,
         runs_per_test: s.run.runsPerTest,
         pass_count: stats.passCount,
+        half_count: stats.halfCount,
         total_count: stats.totalCount,
         total_time: stats.totalTime,
-        raw: JSON.stringify(entry.raw)
+        // 每題結果折成 { 題號: [status, time] } 的緊湊 JSON,取代獨立的 result 表。
+        results: JSON.stringify(
+          Object.fromEntries(Object.entries(s.results).map(([k, e]) => [k, [e.status, e.time]]))
+        )
       });
-
-      const subId = Number(info.lastInsertRowid);
-      for (const [scenarioId, e] of Object.entries(s.results)) {
-        insertResult.run(subId, scenarioId, e.status, e.time);
-      }
     }
 
     // 持久化這次新解析到的頭像,供下次建置直接命中。
-    for (const name of namesNeeded) {
-      const url = avatarCache.get(name);
-      if (url) upsertAvatar.run(name, url);
+    for (const displayKey of need.keys()) {
+      const url = avatarCache.get(displayKey);
+      if (url) upsertAvatar.run(displayKey, url);
     }
   });
 
   tx();
-  db.exec("PRAGMA wal_checkpoint(TRUNCATE);");
+  // 壓實:非 WAL(單一檔案,適合進 git)+ 小頁面 + VACUUM 回收空間。
+  db.pragma("journal_mode = DELETE");
+  db.pragma("page_size = 512");
+  db.exec("VACUUM;");
   const total = (db.prepare("SELECT COUNT(*) AS c FROM submission").get() as { c: number }).c;
   db.close();
 

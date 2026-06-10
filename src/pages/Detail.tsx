@@ -180,7 +180,7 @@ export default function Detail() {
 
             {/* 上傳者(GitHub)— 弱化 */}
             <div className="text-muted-foreground/50 mt-1 flex items-center gap-1.5 text-xs">
-              <span>跑分上傳者</span>
+              <span>成績上傳者</span>
               <GithubAvatar username={row.uploader} size={14} linked={false} />
               <a
                 href={`https://github.com/${row.uploader}`}

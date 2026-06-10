@@ -60,35 +60,35 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
     >
       <article
         className={cn(
-          "bg-card/80 border-border/60 hover:border-primary/40 relative flex items-center gap-4 overflow-hidden rounded-2xl border px-4 py-3.5 backdrop-blur-sm transition-all duration-200",
+          "bg-card/80 border-border/60 hover:border-primary/40 relative flex items-center gap-3 overflow-hidden rounded-2xl border px-3 py-3 backdrop-blur-sm transition-all duration-200 sm:gap-4 sm:px-4 sm:py-3.5",
           "hover:bg-card hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.6)]",
           isTop && "border-primary/25",
           isChampion && "champion-ring border-transparent shadow-[0_10px_40px_-12px_oklch(0.87_0.19_124/0.35)]"
         )}
       >
         {/* 名次 */}
-        <div className="flex w-9 shrink-0 flex-col items-center">
+        <div className="flex w-6 shrink-0 flex-col items-center sm:w-9">
           {isChampion ? (
-            <Crown className="text-primary size-4 drop-shadow-[0_0_6px_oklch(0.87_0.19_124/0.6)]" fill="currentColor" />
+            <Crown className="text-primary size-3.5 drop-shadow-[0_0_6px_oklch(0.87_0.19_124/0.6)] sm:size-4" fill="currentColor" />
           ) : null}
-          <span className={cn("font-data text-2xl leading-none font-bold", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
+          <span className={cn("font-data text-xl leading-none font-bold sm:text-2xl", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
             {rank}
           </span>
-          {isTop ? <span className="text-muted-foreground/60 text-[9px] tracking-widest uppercase">rank</span> : null}
+          {isTop ? <span className="text-muted-foreground/60 hidden text-[9px] tracking-widest uppercase sm:block">rank</span> : null}
         </div>
 
         {/* 廠牌 logo */}
-        <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={46} />
+        <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={42} />
 
         {/* 名稱 + 標籤 */}
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <h3
-            className="font-display flex items-center gap-2 text-2xl leading-tight font-bold tracking-tight"
+            className="font-display flex items-center gap-1.5 text-lg leading-tight font-bold tracking-tight sm:gap-2 sm:text-2xl"
             title={row.modelName}
           >
             {row.thinking ? (
               <Lightbulb
-                className="text-amber-300/90 size-5 shrink-0"
+                className="text-amber-300/90 size-4 shrink-0 sm:size-5"
                 aria-label="支援 thinking / reasoning 模式"
               />
             ) : null}
@@ -125,9 +125,9 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
         </div>
 
         {/* 分數 + 量表 */}
-        <div className="flex w-20 shrink-0 flex-col items-end gap-1.5">
+        <div className="flex w-14 shrink-0 flex-col items-end gap-1.5 sm:w-20">
           <div className="flex items-baseline">
-            <span className="font-data text-3xl leading-none font-bold tabular-nums">
+            <span className="font-data text-2xl leading-none font-bold tabular-nums sm:text-3xl">
               {row.scoreTotal.toFixed(1).split(".")[0]}
             </span>
             <span className="text-muted-foreground/70 font-data text-xs">

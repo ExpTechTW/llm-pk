@@ -154,10 +154,13 @@ export function getSubmissionsByPack(db: Database, packName: string, packVer: st
   const rows = queryAll<RawRow>(
     db,
     `SELECT s.*,
-       (SELECT COUNT(*) FROM result r
-         WHERE r.submission_id = s.id
-           AND (r.status IS NULL OR (r.status > 0 AND r.status < 1))) AS half_count
+       ao.url AS org_avatar,
+       ah.url AS hw_avatar,
+       al.url AS link_author_avatar
        FROM submission s
+       LEFT JOIN avatar_cache ao ON ao.name = s.model_org
+       LEFT JOIN avatar_cache ah ON ah.name = s.hw_company
+       LEFT JOIN avatar_cache al ON al.name = s.link_author
       WHERE s.pack_name = $pack AND s.pack_ver = $ver
       ORDER BY s.score_total DESC, s.total_time ASC`,
     { $pack: packName, $ver: packVer }
@@ -170,20 +173,29 @@ export function getSubmissionById(db: Database, id: number): SubmissionRow | nul
   const rows = queryAll<RawRow>(
     db,
     `SELECT s.*,
-       (SELECT COUNT(*) FROM result r
-         WHERE r.submission_id = s.id
-           AND (r.status IS NULL OR (r.status > 0 AND r.status < 1))) AS half_count
-       FROM submission s WHERE s.id = $id`,
+       ao.url AS org_avatar,
+       ah.url AS hw_avatar,
+       al.url AS link_author_avatar
+       FROM submission s
+       LEFT JOIN avatar_cache ao ON ao.name = s.model_org
+       LEFT JOIN avatar_cache ah ON ah.name = s.hw_company
+       LEFT JOIN avatar_cache al ON al.name = s.link_author
+      WHERE s.id = $id`,
     { $id: id }
   );
   return rows.length ? mapRow(rows[0]) : null;
 }
 
-/** 單一投稿的每題結果,依題號排序。 */
+/** 單一投稿的每題結果,依題號排序。結果折存在 submission.results 的 JSON({題號:[status,time]})。 */
 export function getResults(db: Database, submissionId: number): ResultEntry[] {
-  return queryAll<{ scenario_id: string; status: number | null; time: number }>(
+  const rows = queryAll<{ results: string | null }>(
     db,
-    `SELECT scenario_id, status, time FROM result WHERE submission_id = $id ORDER BY scenario_id ASC`,
+    `SELECT results FROM submission WHERE id = $id`,
     { $id: submissionId }
-  ).map((r) => ({ scenarioId: r.scenario_id, status: r.status, time: r.time }));
+  );
+  if (!rows.length || !rows[0].results) return [];
+  const obj = parseJson<Record<string, [number | null, number]>>(rows[0].results, {});
+  return Object.entries(obj)
+    .map(([scenarioId, [status, time]]) => ({ scenarioId, status, time }))
+    .sort((a, b) => a.scenarioId.localeCompare(b.scenarioId));
 }
