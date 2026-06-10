@@ -35,7 +35,7 @@ const OUT_DIR = join(ROOT, "public");
 const OUT_DB = join(OUT_DIR, "data.db");
 
 // schema 版本(僅記錄用)。結構有變就手動刪 public/data.db 重建,本腳本不做版本 fallback。
-const SCHEMA_VERSION = "1";
+const SCHEMA_VERSION = "2";
 
 // family / 關鍵字 → HuggingFace 組織名(供頭像解析)。找不到映射時直接用原字串嘗試。
 const HF_ORG_ALIASES: Record<string, string> = {
@@ -243,6 +243,7 @@ function createSchema(db: Database.Database): void {
       quant_method  TEXT,
       model_link    TEXT,
       link_author   TEXT,
+      model_args    TEXT,
       backend_name  TEXT,
       backend_ver   TEXT,
       deployment    TEXT,
@@ -423,7 +424,7 @@ async function main(): Promise<void> {
     INSERT INTO submission (
       file, src_hash, benchlocal, results_upload, pack_name, pack_ver, model_name, model_id, model_org,
       model_access, family_name, family_ver, model_type, model_thinking, size_params, size_active,
-      quant_format, quant_level, quant_method, model_link, link_author,
+      quant_format, quant_level, quant_method, model_link, link_author, model_args,
       backend_name, backend_ver, deployment,
       hw_company, hw_device, hw_chip, hw_os, hw_driver, hw_extra,
       score_total, scores, run_date, run_mode, runs_per_test,
@@ -431,7 +432,7 @@ async function main(): Promise<void> {
     ) VALUES (
       @file, @src_hash, @benchlocal, @results_upload, @pack_name, @pack_ver, @model_name, @model_id, @model_org,
       @model_access, @family_name, @family_ver, @model_type, @model_thinking, @size_params, @size_active,
-      @quant_format, @quant_level, @quant_method, @model_link, @link_author,
+      @quant_format, @quant_level, @quant_method, @model_link, @link_author, @model_args,
       @backend_name, @backend_ver, @deployment,
       @hw_company, @hw_device, @hw_chip, @hw_os, @hw_driver, @hw_extra,
       @score_total, @scores, @run_date, @run_mode, @runs_per_test,
@@ -498,6 +499,7 @@ async function main(): Promise<void> {
         quant_method: quant?.method ?? null,
         model_link: normalizeLink(s.model.link),
         link_author: m.author,
+        model_args: s.model.args ? JSON.stringify(s.model.args) : null,
         backend_name: s.backend.name,
         backend_ver: s.backend.ver ?? null,
         deployment: s.deployment,

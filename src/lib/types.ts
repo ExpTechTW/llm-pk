@@ -31,6 +31,7 @@ export interface SubmissionRow {
   modelLink: string | null;
   linkAuthor: string | null; // 模型作者(HuggingFace 帳號,取自 link)
   linkAuthorAvatar: string | null; // 模型作者的 HF 頭像 URL
+  args: Record<string, unknown> | null; // 取樣 / 推測解碼參數(自由結構)
   access: "open" | "closed" | string;
   deployment: "local" | "cloud" | string;
   familyName: string | null;

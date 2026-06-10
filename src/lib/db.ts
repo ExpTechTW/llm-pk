@@ -72,6 +72,7 @@ interface RawRow {
   quant_method: string | null;
   link_author: string | null;
   link_author_avatar: string | null;
+  model_args: string | null;
   backend_name: string;
   backend_ver: string | null;
   hw_company: string | null;
@@ -155,6 +156,7 @@ function mapRow(r: RawRow, cats: CatDef[]): SubmissionRow {
     modelLink: r.model_link,
     linkAuthor: r.link_author,
     linkAuthorAvatar: expandAvatar(r.link_author_avatar),
+    args: parseJson<Record<string, unknown> | null>(r.model_args, null),
     access: r.model_access,
     deployment: r.deployment,
     familyName: r.family_name,

@@ -80,6 +80,19 @@ function Meta({ label, value }: { label: string; value: string }) {
   );
 }
 
+// 把 model.args 攤平成 [key, value](巢狀物件如 spec 展成 spec.method)。
+function flattenArgs(args: Record<string, unknown>): [string, string][] {
+  const out: [string, string][] = [];
+  for (const [k, v] of Object.entries(args)) {
+    if (v !== null && typeof v === "object" && !Array.isArray(v)) {
+      for (const [sk, sv] of Object.entries(v as Record<string, unknown>)) out.push([`${k}.${sk}`, String(sv)]);
+    } else {
+      out.push([k, Array.isArray(v) ? v.join(", ") : String(v)]);
+    }
+  }
+  return out;
+}
+
 export default function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -301,6 +314,19 @@ export default function Detail() {
             <Meta label="平均每題" value={formatTime(row.totalCount ? row.totalTime / row.totalCount : 0)} />
           </div>
         </Panel>
+
+        {row.args && Object.keys(row.args).length > 0 ? (
+          <Panel title="取樣參數" titleSize="text-sm">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {flattenArgs(row.args).map(([k, v]) => (
+                <div key={k} className="flex items-baseline justify-between gap-2 text-sm">
+                  <span className="text-muted-foreground truncate font-mono text-xs">{k}</span>
+                  <span className="font-data tabular-nums">{v}</span>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        ) : null}
       </div>
 
       {/* 題目結果 */}

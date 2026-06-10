@@ -69,7 +69,9 @@ const modelCommon = {
   type: z.string().optional(), // MoE / Dense
   thinking: z.boolean().optional(), // 是否具備 thinking / reasoning 模式
   size: z.object({ params: z.string(), active: z.string().optional() }).optional(),
-  link: z.string().optional()
+  link: z.string().optional(),
+  // 取樣 / 推測解碼參數(自由結構:temp / top_p / top_k / min_p / penalties / spec…)
+  args: z.record(z.string(), z.unknown()).optional()
 };
 
 const base = {
