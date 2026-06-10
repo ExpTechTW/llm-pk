@@ -28,8 +28,18 @@ function Chip({ children, className }: { children: ReactNode; className?: string
   );
 }
 
-/** 首頁概覽卡:整張卡可點擊進入詳細頁。 */
-export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank: number; index: number }) {
+/** 首頁概覽卡:整張卡可點擊進入詳細頁。rank 為並列名次(同分共用),seq 為實際順序編號。 */
+export function SubmissionCard({
+  row,
+  rank,
+  index,
+  seq
+}: {
+  row: SubmissionRow;
+  rank: number;
+  index: number;
+  seq?: number;
+}) {
   const { t } = useI18n();
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const isTop = rank <= 3;
@@ -61,7 +71,10 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
           <span className={cn("font-data text-xl leading-none font-bold sm:text-2xl", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
             {rank}
           </span>
-          {isTop ? <span className="text-muted-foreground/60 hidden text-[9px] tracking-widest uppercase sm:block">{t("lb.rank")}</span> : null}
+          {/* 順序編號:僅在與名次不同(即同分並列)時顯示,標出實際排序 */}
+          {seq != null && seq !== rank ? (
+            <span className="text-muted-foreground/50 font-data mt-0.5 text-[9px] leading-none tabular-nums">#{seq}</span>
+          ) : null}
         </div>
 
         {/* 資訊(3/4)+ 分數(1/4) */}
