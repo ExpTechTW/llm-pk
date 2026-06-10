@@ -1,0 +1,159 @@
+{
+  "BenchLocal": "0.3.0",
+  "results_upload": "whes1015",
+  "BenchPack": {
+    "name": "ReasonMath-15",
+    "ver": "1.0.0"
+  },
+  "deployment": "local",
+  "model": {
+    "id": "mellum2-12b-a2.5b-thinking-gguf-q8_0",
+    "name": "Mellum2 12B A2.5B Thinking",
+    "org": "JetBrains",
+    "access": "open",
+    "family": {
+      "name": "Mellum",
+      "ver": "2"
+    },
+    "type": "MoE",
+    "thinking": true,
+    "size": {
+      "params": "12B",
+      "active": "2.5B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q8_0",
+      "method": "Static"
+    },
+    "link": "hugging_face:JetBrains:Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
+    "args": {
+      "spec": {
+        "method": "ngram",
+        "n-match": 32,
+        "n-min": 16,
+        "n-max": 64
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "repeat-penalty": 1
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "9519"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "Tesla P100-PCIE-16GB",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "580.159.03",
+    "cuda": "13.0"
+  },
+  "score": {
+    "total": 63,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Everyday Arithmetic",
+        "score": 53,
+        "weight": 15
+      },
+      {
+        "id": "B",
+        "label": "Logic Puzzles",
+        "score": 47,
+        "weight": 25
+      },
+      {
+        "id": "C",
+        "label": "Multi-Step Word Problems",
+        "score": 90,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Trick Questions and Traps",
+        "score": 67,
+        "weight": 25
+      },
+      {
+        "id": "E",
+        "label": "Applied Reasoning",
+        "score": 57,
+        "weight": 15
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-10T19:11:52.189Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "RM-01": {
+      "status": 0,
+      "time": 8878
+    },
+    "RM-02": {
+      "status": 0,
+      "time": 4916
+    },
+    "RM-03": {
+      "status": 1,
+      "time": 8122
+    },
+    "RM-04": {
+      "status": 0,
+      "time": 28704
+    },
+    "RM-05": {
+      "status": null,
+      "time": 13164
+    },
+    "RM-06": {
+      "status": null,
+      "time": 24077
+    },
+    "RM-07": {
+      "status": 1,
+      "time": 8054
+    },
+    "RM-08": {
+      "status": 1,
+      "time": 7937
+    },
+    "RM-09": {
+      "status": 1,
+      "time": 8608
+    },
+    "RM-10": {
+      "status": 0,
+      "time": 6843
+    },
+    "RM-11": {
+      "status": 1,
+      "time": 3329
+    },
+    "RM-12": {
+      "status": 1,
+      "time": 4638
+    },
+    "RM-13": {
+      "status": 0,
+      "time": 46587
+    },
+    "RM-14": {
+      "status": 1,
+      "time": 6694
+    },
+    "RM-15": {
+      "status": 1,
+      "time": 7852
+    }
+  }
+}
