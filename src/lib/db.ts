@@ -193,18 +193,21 @@ function mapRow(r: RawRow, cats: CatDef[]): SubmissionRow {
   };
 }
 
-/** 某個 pack(名稱+版本)的所有投稿(已依分數排序);搜尋 / 篩選 / 分頁在前端用 in-memory 處理。 */
-export function getSubmissionsByPack(db: Database, packName: string, packVer: string): SubmissionRow[] {
-  const rows = queryAll<RawRow>(
-    db,
-    `SELECT s.*,
+// 投稿 + 頭像(model_org / hw_company / link_author 各 LEFT JOIN avatar_cache 還原 URL)。
+const SUBMISSION_SELECT = `SELECT s.*,
        ao.url AS org_avatar,
        ah.url AS hw_avatar,
        al.url AS link_author_avatar
        FROM submission s
        LEFT JOIN avatar_cache ao ON ao.name = s.model_org
        LEFT JOIN avatar_cache ah ON ah.name = s.hw_company
-       LEFT JOIN avatar_cache al ON al.name = s.link_author
+       LEFT JOIN avatar_cache al ON al.name = s.link_author`;
+
+/** 某個 pack(名稱+版本)的所有投稿(已依分數排序);搜尋 / 篩選 / 分頁在前端用 in-memory 處理。 */
+export function getSubmissionsByPack(db: Database, packName: string, packVer: string): SubmissionRow[] {
+  const rows = queryAll<RawRow>(
+    db,
+    `${SUBMISSION_SELECT}
       WHERE s.pack_name = $pack AND s.pack_ver = $ver
       ORDER BY s.score_total DESC, s.total_time ASC`,
     { $pack: packName, $ver: packVer }
@@ -215,19 +218,7 @@ export function getSubmissionsByPack(db: Database, packName: string, packVer: st
 
 /** 單一投稿(詳細頁用)。 */
 export function getSubmissionById(db: Database, id: number): SubmissionRow | null {
-  const rows = queryAll<RawRow>(
-    db,
-    `SELECT s.*,
-       ao.url AS org_avatar,
-       ah.url AS hw_avatar,
-       al.url AS link_author_avatar
-       FROM submission s
-       LEFT JOIN avatar_cache ao ON ao.name = s.model_org
-       LEFT JOIN avatar_cache ah ON ah.name = s.hw_company
-       LEFT JOIN avatar_cache al ON al.name = s.link_author
-      WHERE s.id = $id`,
-    { $id: id }
-  );
+  const rows = queryAll<RawRow>(db, `${SUBMISSION_SELECT} WHERE s.id = $id`, { $id: id });
   if (!rows.length) return null;
   const cats = getCategories(db, rows[0].pack_name, rows[0].pack_ver);
   return mapRow(rows[0], cats);

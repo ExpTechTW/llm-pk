@@ -5,13 +5,7 @@ import { Check, Copy, GitCompareArrows, Layers, Loader2 } from "lucide-react";
 import { OrgLogo } from "@/components/ui/org-logo";
 import { HfAvatar } from "@/components/ui/avatar";
 import { PackSelect } from "@/components/PackSelect";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { getPacks, getResults, getSubmissionsByPack } from "@/lib/db";
 import { useDb } from "@/hooks/useDb";
 import { modelBadges } from "@/lib/badges";
@@ -95,11 +89,10 @@ interface Metric {
 }
 
 function VersusBar({ m }: { m: Metric }) {
-  const a = m.a;
-  const b = m.b;
+  const { a, b } = m;
   const pct = (v: number | null) => (v == null ? 0 : Math.max(0, Math.min(100, (v / m.max) * 100)));
   const both = a != null && b != null && a !== b;
-  const aWin = both && (m.higherBetter ? (a as number) > (b as number) : (a as number) < (b as number));
+  const aWin = both && (m.higherBetter ? a > b : a < b);
   const bWin = both && !aWin;
 
   return (
@@ -183,11 +176,9 @@ function Radar({
       {/* 軸線 + 標籤 */}
       {labels.map((lab, i) => {
         const [x, y] = pt(100, i);
-        const [lx, ly] = (() => {
-          const r = R + 16;
-          return [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
-        })();
         const cos = Math.cos(angle(i));
+        const lx = cx + (R + 16) * cos;
+        const ly = cy + (R + 16) * Math.sin(angle(i));
         const anchor = Math.abs(cos) < 0.3 ? "middle" : cos > 0 ? "start" : "end";
         return (
           <g key={lab}>
@@ -280,6 +271,14 @@ export default function Compare() {
   const packName = sp.get("pack");
   const packVer = sp.get("ver");
 
+  // 以函式更新搜尋參數(沿用既有參數),mutate 收斂在 updater 內。
+  const updateParams = (mutate: (params: URLSearchParams) => void) =>
+    setSp((prev) => {
+      const next = new URLSearchParams(prev);
+      mutate(next);
+      return next;
+    });
+
   useEffect(() => {
     if (db && packs.length && (!packName || !packVer)) {
       const p = packs[0];
@@ -329,34 +328,23 @@ export default function Compare() {
   const candidatesFor = (fam: string) =>
     fam === "__all__" ? rows : rows.filter((r) => r.familyName === fam);
 
-  const setSide = (side: "a" | "b", id: string) =>
-    setSp((prev) => {
-      const n = new URLSearchParams(prev);
-      n.set(side, id);
-      return n;
-    });
+  const setSide = (side: "a" | "b", id: string) => updateParams((p) => p.set(side, id));
 
   // 切換系列:更新該側系列篩選,若已選模型不屬於新系列就一併 reset。
   const changeFamily = (side: "a" | "b", fam: string) => {
     (side === "a" ? setFamA : setFamB)(fam);
     const cur = side === "a" ? a : b;
     if (cur && fam !== "__all__" && cur.familyName !== fam) {
-      setSp((prev) => {
-        const n = new URLSearchParams(prev);
-        n.delete(side);
-        return n;
-      });
+      updateParams((p) => p.delete(side));
     }
   };
 
   const setPack = (name: string, ver: string) =>
-    setSp((prev) => {
-      const n = new URLSearchParams(prev);
-      n.set("pack", name);
-      n.set("ver", ver);
-      n.delete("a");
-      n.delete("b");
-      return n;
+    updateParams((p) => {
+      p.set("pack", name);
+      p.set("ver", ver);
+      p.delete("a");
+      p.delete("b");
     });
 
   const [copied, setCopied] = useState(false);
@@ -491,7 +479,21 @@ export default function Compare() {
                         aria-label={`${side.toUpperCase()} 系列篩選`}
                         className="text-muted-foreground hover:text-foreground w-full rounded-lg py-1.5 text-xs"
                       >
-                        <SelectValue className="min-w-0 flex-1 text-left" />
+                        <span className="flex min-w-0 flex-1 items-center gap-2">
+                          {fam === "__all__" || !familyMeta.get(fam) ? (
+                            <Layers className="size-3.5 shrink-0 opacity-70" />
+                          ) : (
+                            <OrgLogo
+                              org={familyMeta.get(fam)?.org ?? fam}
+                              avatar={familyMeta.get(fam)?.avatar ?? null}
+                              size={16}
+                              radius="rounded"
+                            />
+                          )}
+                          <span className="min-w-0 flex-1 truncate text-left">
+                            {fam === "__all__" ? "全部系列" : fam}
+                          </span>
+                        </span>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="__all__">
@@ -519,19 +521,30 @@ export default function Compare() {
                     onValueChange={(id) => setSide(side, id)}
                   >
                     <SelectTrigger aria-label={`選擇模型 ${side.toUpperCase()}`} className="w-full">
-                      <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                      <SelectValue placeholder={`模型 ${side.toUpperCase()}…`} className="min-w-0 flex-1 text-left text-sm font-semibold" />
+                      <span className="flex min-w-0 flex-1 items-center gap-2">
+                        <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+                        <span className="min-w-0 flex-1 truncate text-left text-sm font-semibold">
+                          {value ? (
+                            <>
+                              {value.modelName}
+                              {value.linkAuthor ? (
+                                <span className="text-muted-foreground font-normal"> · {value.linkAuthor}</span>
+                              ) : null}
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground font-normal">模型 {side.toUpperCase()}…</span>
+                          )}
+                        </span>
+                      </span>
                     </SelectTrigger>
                     <SelectContent>
                       {/* 確保已選的也在清單內(即使被系列篩掉) */}
                       {Array.from(new Set([...(value ? [value] : []), ...candidates])).map((r) => (
-                        <SelectItem key={r.id} value={String(r.id)}>
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className="truncate font-medium">{r.modelName}</span>
-                            {r.linkAuthor ? (
-                              <span className="text-muted-foreground shrink-0 text-xs">· {r.linkAuthor}</span>
-                            ) : null}
-                          </span>
+                        <SelectItem key={r.id} value={String(r.id)} className="[&>span]:truncate">
+                          <span className="font-medium">{r.modelName}</span>
+                          {r.linkAuthor ? (
+                            <span className="text-muted-foreground text-xs"> · {r.linkAuthor}</span>
+                          ) : null}
                         </SelectItem>
                       ))}
                       {candidates.length === 0 ? (

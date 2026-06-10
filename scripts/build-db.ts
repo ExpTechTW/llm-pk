@@ -26,6 +26,7 @@ import { join, dirname, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateSubmission, type Submission } from "../type-check";
 import { parseModelAuthor } from "../src/lib/modelLink";
+import { statusKind } from "../src/lib/status";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -86,11 +87,11 @@ function scoreStats(results: Submission["results"]): {
   let totalCount = 0;
   let totalTime = 0;
   for (const entry of Object.values(results)) {
-    const s = entry.status;
-    if (s !== null && s < 0) continue; // 未執行/錯誤(-1)不計入
+    const kind = statusKind(entry.status); // 與前端共用語意,避免兩邊判斷分歧
+    if (kind === "skip") continue; // 未執行/錯誤(-1)不計入
     totalCount += 1; // 正常 / 錯誤 / 半對(null)都算作答
-    if (s !== null && s >= 1) passCount += 1; // 只有正常(1)算通過
-    if (s === null || (s > 0 && s < 1)) halfCount += 1; // 半對(null 或 0~1 之間)
+    if (kind === "pass") passCount += 1; // 只有正常(1)算通過
+    if (kind === "half") halfCount += 1; // 半對(null 或 0~1 之間)
     totalTime += entry.time;
   }
   return { passCount, halfCount, totalCount, totalTime };
@@ -386,17 +387,20 @@ async function main(): Promise<void> {
   const packKey = (name: string, ver: string) => `${name}@@${ver}`;
   const catOrder = new Map<string, string[]>();
   const scenOrder = new Map<string, string[]>();
+  const pushOrdered = (map: Map<string, string[]>, key: string, value: string) => {
+    let list = map.get(key);
+    if (!list) map.set(key, (list = []));
+    list.push(value);
+  };
   for (const r of db
     .prepare("SELECT pack_name, pack_ver, cat_id FROM category ORDER BY pack_name, pack_ver, ord")
     .all() as { pack_name: string; pack_ver: string; cat_id: string }[]) {
-    const k = packKey(r.pack_name, r.pack_ver);
-    (catOrder.get(k) ?? catOrder.set(k, []).get(k)!).push(r.cat_id);
+    pushOrdered(catOrder, packKey(r.pack_name, r.pack_ver), r.cat_id);
   }
   for (const r of db
     .prepare("SELECT pack_name, pack_ver, scenario_id FROM scenario ORDER BY pack_name, pack_ver, ord")
     .all() as { pack_name: string; pack_ver: string; scenario_id: string }[]) {
-    const k = packKey(r.pack_name, r.pack_ver);
-    (scenOrder.get(k) ?? scenOrder.set(k, []).get(k)!).push(r.scenario_id);
+    pushOrdered(scenOrder, packKey(r.pack_name, r.pack_ver), r.scenario_id);
   }
   const newCatRows: [string, string, number, string, string, number | null][] = [];
   const newScenRows: [string, string, number, string][] = [];

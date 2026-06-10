@@ -36,19 +36,15 @@ export function parseSize(value: string | null): number | null {
   if (!m) return null;
   const n = parseFloat(m[1]);
   if (Number.isNaN(n)) return null;
+  // 單位(以 B 為基準):K=1e-6、M=1e-3、B=1、T=1e3,無單位視為 B。
   const mult: Record<string, number> = { K: 1e-6, M: 1e-3, B: 1, T: 1e3, "": 1 };
-  return n * (mult[m[2].toUpperCase()] ?? 1);
+  return n * mult[m[2].toUpperCase()];
 }
 
 // 數值區間篩選(用拉桿)。價格與參數量/啟用量共用同一套機制。
 export type Range = [number, number];
 export type Ranges = Record<string, Range>;
 export type Bounds = Record<string, Range>;
-
-// 向後相容的別名(原本只有價格用)。
-export type PriceRange = Range;
-export type PriceRanges = Ranges;
-export type PriceBounds = Bounds;
 
 export interface RangeFieldDef {
   key: string;
@@ -112,11 +108,6 @@ export function computeBounds(rows: SubmissionRow[], fields: RangeFieldDef[]): B
   return out;
 }
 
-/** @deprecated 用 computeBounds(rows, PRICE_FIELDS) */
-export function computePriceBounds(rows: SubmissionRow[]): Bounds {
-  return computeBounds(rows, PRICE_FIELDS);
-}
-
 function rangeActive(range: Range | undefined, bound: Range | undefined): boolean {
   if (!range || !bound) return false;
   return range[0] > bound[0] || range[1] < bound[1];
@@ -125,11 +116,6 @@ function rangeActive(range: Range | undefined, bound: Range | undefined): boolea
 /** 已調整(縮小)的區間數量。 */
 export function countRangeActive(ranges: Ranges, bounds: Bounds, fields: RangeFieldDef[]): number {
   return fields.reduce((n, f) => n + (rangeActive(ranges[f.key], bounds[f.key]) ? 1 : 0), 0);
-}
-
-/** @deprecated 用 countRangeActive(ranges, bounds, PRICE_FIELDS) */
-export function countPriceActive(ranges: Ranges, bounds: Bounds): number {
-  return countRangeActive(ranges, bounds, PRICE_FIELDS);
 }
 
 function matchesRanges(
@@ -181,24 +167,19 @@ function matchesFacets(r: SubmissionRow, selected: Selected, exceptKey?: string)
 // 同分時的排名優先度(由高到低):開源 > 閉源、小啟用 > 大啟用、小參數 > 大參數、本地 > 雲端,
 // 最後才看平均速度。
 function tiebreak(a: SubmissionRow, b: SubmissionRow): number {
-  // 1) 開源 > 閉源
-  const openA = a.access === "closed" ? 1 : 0;
-  const openB = b.access === "closed" ? 1 : 0;
-  if (openA !== openB) return openA - openB;
-  // 2) 小啟用參數 > 大啟用參數(無資料視為最大,排後面)
-  const actA = parseSize(a.sizeActive) ?? Infinity;
-  const actB = parseSize(b.sizeActive) ?? Infinity;
-  if (actA !== actB) return actA - actB;
-  // 3) 小參數 > 大參數
-  const paramA = parseSize(a.sizeParams) ?? Infinity;
-  const paramB = parseSize(b.sizeParams) ?? Infinity;
-  if (paramA !== paramB) return paramA - paramB;
-  // 4) 本地 > 雲端
-  const localA = a.deployment === "cloud" ? 1 : 0;
-  const localB = b.deployment === "cloud" ? 1 : 0;
-  if (localA !== localB) return localA - localB;
-  // 最後的決勝:平均每題速度(快者在前)
-  return avgTime(a) - avgTime(b);
+  const size = (s: string | null) => parseSize(s) ?? Infinity; // 無資料視為最大,排後面
+  return (
+    // 1) 開源 > 閉源
+    Number(a.access === "closed") - Number(b.access === "closed") ||
+    // 2) 小啟用參數 > 大啟用參數
+    size(a.sizeActive) - size(b.sizeActive) ||
+    // 3) 小參數 > 大參數
+    size(a.sizeParams) - size(b.sizeParams) ||
+    // 4) 本地 > 雲端
+    Number(a.deployment === "cloud") - Number(b.deployment === "cloud") ||
+    // 最後的決勝:平均每題速度(快者在前)
+    avgTime(a) - avgTime(b)
+  );
 }
 
 function sortRows(rows: SubmissionRow[], sort: SortKey): SubmissionRow[] {
