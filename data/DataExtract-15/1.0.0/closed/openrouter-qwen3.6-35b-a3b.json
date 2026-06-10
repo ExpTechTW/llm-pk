@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "qwen3.6-35b-a3b",
+        "name": "Qwen3.6 35B A3B",
+        "org": "Qwen",
+        "access": "closed",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 85,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 85,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 77,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 89,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 85,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 86,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T03:00:48.512Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 1,
+            "time": 40303
+        },
+        "DE-02": {
+            "status": null,
+            "time": 30285
+        },
+        "DE-03": {
+            "status": 1,
+            "time": 14651
+        },
+        "DE-04": {
+            "status": 1,
+            "time": 16596
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 183918
+        },
+        "DE-06": {
+            "status": 1,
+            "time": 148633
+        },
+        "DE-07": {
+            "status": null,
+            "time": 168329
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 17953
+        },
+        "DE-09": {
+            "status": 1,
+            "time": 7383
+        },
+        "DE-10": {
+            "status": 1,
+            "time": 31272
+        },
+        "DE-11": {
+            "status": 1,
+            "time": 10717
+        },
+        "DE-12": {
+            "status": null,
+            "time": 39030
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 124770
+        },
+        "DE-14": {
+            "status": 1,
+            "time": 51650
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 7885
+        }
+    }
+}

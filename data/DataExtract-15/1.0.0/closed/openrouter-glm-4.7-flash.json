@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "glm-4.7-flash",
+        "name": "GLM 4.7 Flash",
+        "org": "Z-AI",
+        "access": "closed",
+        "family": {
+            "name": "GLM",
+            "ver": "4.7"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 6,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 0,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 0,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 24,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 0,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 0,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T03:00:48.512Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 0,
+            "time": 16570
+        },
+        "DE-02": {
+            "status": 0,
+            "time": 14136
+        },
+        "DE-03": {
+            "status": 0,
+            "time": 34805
+        },
+        "DE-04": {
+            "status": 0,
+            "time": 43530
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 23376
+        },
+        "DE-06": {
+            "status": 0,
+            "time": 15791
+        },
+        "DE-07": {
+            "status": null,
+            "time": 16145
+        },
+        "DE-08": {
+            "status": 0,
+            "time": 17341
+        },
+        "DE-09": {
+            "status": 0,
+            "time": 9889
+        },
+        "DE-10": {
+            "status": 0,
+            "time": 16907
+        },
+        "DE-11": {
+            "status": 0,
+            "time": 7484
+        },
+        "DE-12": {
+            "status": 0,
+            "time": 18218
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 18371
+        },
+        "DE-14": {
+            "status": 0,
+            "time": 22512
+        },
+        "DE-15": {
+            "status": 0,
+            "time": 5762
+        }
+    }
+}

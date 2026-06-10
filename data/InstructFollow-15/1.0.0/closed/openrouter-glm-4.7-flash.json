@@ -1,0 +1,131 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "glm-4.7-flash",
+        "name": "GLM 4.7 Flash",
+        "org": "Z-AI",
+        "access": "closed",
+        "family": {
+            "name": "GLM",
+            "ver": "4.7"
+        },
+        "type": "",
+        "size": {
+            "params": "",
+            "active": ""
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 67,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 72,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 78,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 53,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 33,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T03:00:51.628Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": null,
+            "time": 7801
+        },
+        "IF-02": {
+            "status": 1,
+            "time": 10384
+        },
+        "IF-03": {
+            "status": 0,
+            "time": 14983
+        },
+        "IF-04": {
+            "status": 1,
+            "time": 4830
+        },
+        "IF-05": {
+            "status": 1,
+            "time": 5310
+        },
+        "IF-06": {
+            "status": 1,
+            "time": 7621
+        },
+        "IF-07": {
+            "status": 1,
+            "time": 9099
+        },
+        "IF-08": {
+            "status": 1,
+            "time": 6791
+        },
+        "IF-09": {
+            "status": 0,
+            "time": 167360
+        },
+        "IF-10": {
+            "status": -1,
+            "time": 300005
+        },
+        "IF-11": {
+            "status": null,
+            "time": 14389
+        },
+        "IF-12": {
+            "status": 1,
+            "time": 25188
+        },
+        "IF-13": {
+            "status": 1,
+            "time": 27788
+        },
+        "IF-14": {
+            "status": 0,
+            "time": 173797
+        },
+        "IF-15": {
+            "status": 0,
+            "time": 7136
+        }
+    }
+}
