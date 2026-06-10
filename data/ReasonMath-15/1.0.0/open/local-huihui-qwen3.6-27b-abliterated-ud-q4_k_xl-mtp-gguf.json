@@ -1,0 +1,157 @@
+{
+  "BenchLocal": "0.3.0",
+  "results_upload": "whes1015",
+  "BenchPack": {
+    "name": "ReasonMath-15",
+    "ver": "1.0.0"
+  },
+  "deployment": "local",
+  "model": {
+    "id": "huihui-qwen3.6-27b-abliterated-ud-q4_k_xl-mtp-gguf",
+    "name": "Huihui Qwen3.6 27B Abliterated",
+    "org": "Qwen",
+    "access": "open",
+    "family": {
+      "name": "Qwen",
+      "ver": "3.6"
+    },
+    "type": "Dense",
+    "thinking": true,
+    "size": {
+      "params": "27B",
+      "active": "27B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q4_K_XL",
+      "method": "Unsloth Dynamic 2.0"
+    },
+    "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
+    "args": {
+      "spec": {
+        "method": "MTP",
+        "n-max": 2
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "repeat-penalty": 1.05
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "9544"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "NVIDIA GeForce RTX 3090",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "595.71.05",
+    "cuda": "13.2"
+  },
+  "score": {
+    "total": 84,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Everyday Arithmetic",
+        "score": 100,
+        "weight": 15
+      },
+      {
+        "id": "B",
+        "label": "Logic Puzzles",
+        "score": 80,
+        "weight": 25
+      },
+      {
+        "id": "C",
+        "label": "Multi-Step Word Problems",
+        "score": 85,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Trick Questions and Traps",
+        "score": 90,
+        "weight": 25
+      },
+      {
+        "id": "E",
+        "label": "Applied Reasoning",
+        "score": 62,
+        "weight": 15
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-10T20:16:51.504Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "RM-01": {
+      "status": 1,
+      "time": 19949
+    },
+    "RM-02": {
+      "status": 1,
+      "time": 10996
+    },
+    "RM-03": {
+      "status": 1,
+      "time": 23189
+    },
+    "RM-04": {
+      "status": null,
+      "time": 56945
+    },
+    "RM-05": {
+      "status": 1,
+      "time": 37958
+    },
+    "RM-06": {
+      "status": null,
+      "time": 75421
+    },
+    "RM-07": {
+      "status": 1,
+      "time": 20159
+    },
+    "RM-08": {
+      "status": 1,
+      "time": 12783
+    },
+    "RM-09": {
+      "status": 1,
+      "time": 21822
+    },
+    "RM-10": {
+      "status": 1,
+      "time": 12450
+    },
+    "RM-11": {
+      "status": 1,
+      "time": 14894
+    },
+    "RM-12": {
+      "status": 1,
+      "time": 16787
+    },
+    "RM-13": {
+      "status": 0,
+      "time": 39879
+    },
+    "RM-14": {
+      "status": 1,
+      "time": 23303
+    },
+    "RM-15": {
+      "status": 1,
+      "time": 30361
+    }
+  }
+}

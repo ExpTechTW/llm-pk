@@ -1,0 +1,157 @@
+{
+  "BenchLocal": "0.3.0",
+  "results_upload": "whes1015",
+  "BenchPack": {
+    "name": "DataExtract-15",
+    "ver": "1.0.0"
+  },
+  "deployment": "local",
+  "model": {
+    "id": "huihui-qwen3.6-27b-abliterated-ud-q4_k_xl-mtp-gguf",
+    "name": "Huihui Qwen3.6 27B Abliterated",
+    "org": "Qwen",
+    "access": "open",
+    "family": {
+      "name": "Qwen",
+      "ver": "3.6"
+    },
+    "type": "Dense",
+    "thinking": true,
+    "size": {
+      "params": "27B",
+      "active": "27B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q4_K_XL",
+      "method": "Unsloth Dynamic 2.0"
+    },
+    "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
+    "args": {
+      "spec": {
+        "method": "MTP",
+        "n-max": 2
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "repeat-penalty": 1.05
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "9544"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "NVIDIA GeForce RTX 3090",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "595.71.05",
+    "cuda": "13.2"
+  },
+  "score": {
+    "total": 81,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Clean Extraction",
+        "score": 85,
+        "weight": 15
+      },
+      {
+        "id": "B",
+        "label": "Noisy and Informal",
+        "score": 74,
+        "weight": 20
+      },
+      {
+        "id": "C",
+        "label": "Multi-Entity",
+        "score": 84,
+        "weight": 25
+      },
+      {
+        "id": "D",
+        "label": "Implicit and Missing",
+        "score": 84,
+        "weight": 25
+      },
+      {
+        "id": "E",
+        "label": "Complex Documents",
+        "score": 78,
+        "weight": 15
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-10T19:55:08.128Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "DE-01": {
+      "status": 1,
+      "time": 18581
+    },
+    "DE-02": {
+      "status": null,
+      "time": 39217
+    },
+    "DE-03": {
+      "status": 1,
+      "time": 39703
+    },
+    "DE-04": {
+      "status": 1,
+      "time": 44399
+    },
+    "DE-05": {
+      "status": 0,
+      "time": 46803
+    },
+    "DE-06": {
+      "status": null,
+      "time": 50666
+    },
+    "DE-07": {
+      "status": null,
+      "time": 62133
+    },
+    "DE-08": {
+      "status": 1,
+      "time": 35144
+    },
+    "DE-09": {
+      "status": 1,
+      "time": 27943
+    },
+    "DE-10": {
+      "status": null,
+      "time": 18428
+    },
+    "DE-11": {
+      "status": 1,
+      "time": 30099
+    },
+    "DE-12": {
+      "status": 1,
+      "time": 44389
+    },
+    "DE-13": {
+      "status": 0,
+      "time": 60424
+    },
+    "DE-14": {
+      "status": 1,
+      "time": 54990
+    },
+    "DE-15": {
+      "status": 1,
+      "time": 18690
+    }
+  }
+}

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Info, Loader2, SlidersHorizontal } from "lucide-react";
+import { BookOpen, ChevronDown, Info, Loader2, SlidersHorizontal } from "lucide-react";
 
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { PackSelect, type PackKey } from "@/components/PackSelect";
 import { SearchBar } from "@/components/SearchBar";
 import { SubmissionCard } from "@/components/SubmissionCard";
+import { TestAbout } from "@/components/TestAbout";
 import { Button } from "@/components/ui/button";
 import { getPacks, getSubmissionsByPack } from "@/lib/db";
+import { loadExam, type ExamPack } from "@/lib/exam";
 import type { SubmissionRow } from "@/lib/types";
 import {
   applyFilters,
@@ -45,7 +47,7 @@ interface LbMemory {
 let lbMemory: LbMemory | null = null;
 
 export default function Leaderboard() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { db, loading, error } = useDb();
   const [pack, setPack] = useState<PackKey | null>(() => lbMemory?.pack ?? null);
   const [search, setSearch] = useState(() => lbMemory?.search ?? "");
@@ -54,6 +56,8 @@ export default function Leaderboard() {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showFilters, setShowFilters] = useState(() => lbMemory?.showFilters ?? false);
   const [showRankHelp, setShowRankHelp] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [exam, setExam] = useState<ExamPack | null>(null);
 
   const prices = usePrices();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -106,6 +110,19 @@ export default function Leaderboard() {
   useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [pack, search, selected, sort, priceRanges, sizeRanges]);
+
+  // 載入目前測試包的題庫(供「測試說明」卡片用),語言切換時重新載入。
+  useEffect(() => {
+    let alive = true;
+    if (pack) loadExam(pack.name, pack.ver, lang).then((e) => alive && setExam(e));
+    else setExam(null);
+    return () => {
+      alive = false;
+    };
+  }, [pack, lang]);
+
+  // 類別定義(id / 名稱 / 配分)對同一測試包的所有列都一致,取第一列即可。
+  const aboutCats = rows[0]?.scoreCats ?? [];
 
   // 切換測試包時保留所有篩選條件,方便用同一組條件橫向對比不同測試的結果。
   const changePack = (next: PackKey) => {
@@ -181,6 +198,26 @@ export default function Leaderboard() {
           </div>
         </div>
       </div>
+
+      {/* 測試說明:解釋目前測試包評估哪些能力(可收合) */}
+      {!loading && !error && pack && aboutCats.length > 0 ? (
+        <div className="mb-6 flex flex-col gap-3 lg:mb-8">
+          <button
+            type="button"
+            onClick={() => setShowAbout((v) => !v)}
+            aria-expanded={showAbout}
+            className="border-border/60 bg-card/40 hover:border-primary/40 hover:bg-card/70 flex items-center gap-2.5 rounded-xl border px-4 py-2.5 text-left text-sm transition-colors"
+          >
+            <BookOpen className="text-primary size-4 shrink-0" />
+            <span className="font-display font-semibold">{t("lb.about.toggle")}</span>
+            <span className="text-muted-foreground hidden text-xs sm:inline">{t("lb.about.desc")}</span>
+            <ChevronDown
+              className={cn("text-muted-foreground ml-auto size-4 shrink-0 transition-transform duration-200", !showAbout && "-rotate-90")}
+            />
+          </button>
+          {showAbout ? <TestAbout cats={aboutCats} exam={exam} /> : null}
+        </div>
+      ) : null}
 
       {loading ? (
         <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
