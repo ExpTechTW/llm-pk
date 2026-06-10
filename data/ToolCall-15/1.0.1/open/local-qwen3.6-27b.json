@@ -16,6 +16,7 @@
       "ver": "3.6"
     },
     "type": "Dense",
+    "thinking": true,
     "size": {
       "params": "27B",
       "active": "27B"

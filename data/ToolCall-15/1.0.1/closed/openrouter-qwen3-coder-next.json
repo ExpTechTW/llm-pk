@@ -16,6 +16,7 @@
             "ver": "3"
         },
         "type": "",
+        "thinking": false,
         "size": {
             "params": "",
             "active": ""

@@ -1,32 +1,32 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "author": "",
     "BenchPack": {
         "name": "ReasonMath-15",
         "ver": "1.0.0"
     },
     "deployment": "local",
     "model": {
-        "name": "GLM 4.7 Flash",
-        "id": "glm-4.7-flash",
-        "org": "Z-AI",
+        "name": "MiniCPM5 1B",
+        "id": "minicpm5-1b",
+        "org": "OpenBMB",
         "access": "open",
         "family": {
-            "name": "GLM",
-            "ver": "4.7"
+            "name": "MiniCPM",
+            "ver": "5"
         },
         "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "30B",
-            "active": "3B"
+            "params": "1B",
+            "active": "1B"
         },
         "quantization": {
             "format": "GGUF",
-            "level": "Q6_K",
+            "level": "Q8_0",
             "method": "Static"
         },
-        "link": "https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF"
+        "link": "https://huggingface.co/mradermacher/Huihui-MiniCPM5-1B-abliterated-GGUF"
     },
     "backend": {
         "name": "llama.cpp",
@@ -40,105 +40,105 @@
         "driver": ""
     },
     "score": {
-        "total": 76,
+        "total": 38,
         "categories": [
             {
                 "id": "A",
                 "label": "Everyday Arithmetic",
-                "score": 72,
+                "score": 95,
                 "weight": 15
             },
             {
                 "id": "B",
                 "label": "Logic Puzzles",
-                "score": 57,
+                "score": 0,
                 "weight": 25
             },
             {
                 "id": "C",
                 "label": "Multi-Step Word Problems",
-                "score": 85,
+                "score": 47,
                 "weight": 20
             },
             {
                 "id": "D",
                 "label": "Trick Questions and Traps",
-                "score": 100,
+                "score": 38,
                 "weight": 25
             },
             {
                 "id": "E",
                 "label": "Applied Reasoning",
-                "score": 62,
+                "score": 33,
                 "weight": 15
             }
         ]
     },
     "run": {
-        "date": "2026-06-10T03:49:26.258Z",
+        "date": "2026-06-10T04:23:19.154Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "RM-01": {
             "status": 1,
-            "time": 60419
+            "time": 10679
         },
         "RM-02": {
-            "status": 0,
-            "time": 14988
+            "status": 1,
+            "time": 3183
         },
         "RM-03": {
             "status": 1,
-            "time": 16992
+            "time": 8627
         },
         "RM-04": {
             "status": 0,
-            "time": 216719
+            "time": 44908
         },
         "RM-05": {
-            "status": 1,
-            "time": 37930
+            "status": 0,
+            "time": 24792
         },
         "RM-06": {
-            "status": null,
-            "time": 185814
+            "status": 0,
+            "time": 39117
         },
         "RM-07": {
-            "status": 1,
-            "time": 24167
+            "status": 0,
+            "time": 41743
         },
         "RM-08": {
-            "status": 1,
-            "time": 18459
+            "status": null,
+            "time": 5456
         },
         "RM-09": {
-            "status": 1,
-            "time": 28107
+            "status": null,
+            "time": 2816
         },
         "RM-10": {
-            "status": 1,
-            "time": 15891
+            "status": 0,
+            "time": 4062
         },
         "RM-11": {
             "status": 1,
-            "time": 17173
+            "time": 11680
         },
         "RM-12": {
-            "status": 1,
-            "time": 10885
+            "status": 0,
+            "time": 38050
         },
         "RM-13": {
             "status": 0,
-            "time": 29266
+            "time": 37547
         },
         "RM-14": {
-            "status": 1,
-            "time": 16093
+            "status": 0,
+            "time": 6670
         },
         "RM-15": {
             "status": 1,
-            "time": 48258
+            "time": 10748
         }
     }
 }
