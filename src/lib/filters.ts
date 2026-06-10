@@ -248,6 +248,10 @@ export function computeFacets(
       const value = facet.get(r);
       if (value !== null && value !== "") universe.add(value);
     }
+    // 已勾選但在目前測試包中不存在的值也保留(顯示計數 0),
+    // 切換測試時才看得出原本的選取狀態還在。
+    const chosen = selected[facet.key];
+    if (chosen) for (const v of chosen) universe.add(v);
 
     // 套用搜尋與「其他」面向篩選後的數量(可能為 0)
     const counts = new Map<string, number>();

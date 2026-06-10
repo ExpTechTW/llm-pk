@@ -31,15 +31,28 @@ import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 15;
 
+// 進入詳細頁再返回時,排行榜會重新掛載 → 用模組層級記憶保留使用者的篩選 / 排序 /
+// 測試包與面板開合狀態,避免回來後全部被清空(SPA 內導覽不會重整,模組狀態長存)。
+interface LbMemory {
+  pack: PackKey | null;
+  search: string;
+  selected: Selected;
+  sort: SortKey;
+  priceRanges: Ranges;
+  sizeRanges: Ranges;
+  showFilters: boolean;
+}
+let lbMemory: LbMemory | null = null;
+
 export default function Leaderboard() {
   const { t } = useI18n();
   const { db, loading, error } = useDb();
-  const [pack, setPack] = useState<PackKey | null>(null);
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<Selected>(emptySelected);
-  const [sort, setSort] = useState<SortKey>("score");
+  const [pack, setPack] = useState<PackKey | null>(() => lbMemory?.pack ?? null);
+  const [search, setSearch] = useState(() => lbMemory?.search ?? "");
+  const [selected, setSelected] = useState<Selected>(() => lbMemory?.selected ?? emptySelected());
+  const [sort, setSort] = useState<SortKey>(() => lbMemory?.sort ?? "score");
   const [visible, setVisible] = useState(PAGE_SIZE);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(() => lbMemory?.showFilters ?? false);
 
   const prices = usePrices();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -55,9 +68,9 @@ export default function Leaderboard() {
     });
   }, [db, pack, prices]);
   const priceBounds = useMemo(() => computeBounds(rows, PRICE_FIELDS), [rows]);
-  const [priceRanges, setPriceRanges] = useState<Ranges>({});
+  const [priceRanges, setPriceRanges] = useState<Ranges>(() => lbMemory?.priceRanges ?? {});
   const sizeBounds = useMemo(() => computeBounds(rows, SIZE_FIELDS), [rows]);
-  const [sizeRanges, setSizeRanges] = useState<Ranges>({});
+  const [sizeRanges, setSizeRanges] = useState<Ranges>(() => lbMemory?.sizeRanges ?? {});
 
   const facets = useMemo(() => computeFacets(rows, search, selected), [rows, search, selected]);
   const filtered = useMemo(
@@ -84,21 +97,18 @@ export default function Leaderboard() {
     if (!pack && packs.length > 0) setPack({ name: packs[0].name, ver: packs[0].ver });
   }, [packs, pack]);
 
-  // 區間預設為各欄位的完整範圍(換 pack / 資料載入後重置)
+  // 把目前狀態寫回記憶,供返回時還原(空區間 = 完整範圍,故不需預填 bounds)。
   useEffect(() => {
-    setPriceRanges({ ...priceBounds });
-  }, [priceBounds]);
-  useEffect(() => {
-    setSizeRanges({ ...sizeBounds });
-  }, [sizeBounds]);
+    lbMemory = { pack, search, selected, sort, priceRanges, sizeRanges, showFilters };
+  }, [pack, search, selected, sort, priceRanges, sizeRanges, showFilters]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [pack, search, selected, sort, priceRanges, sizeRanges]);
 
+  // 切換測試包時保留所有篩選條件,方便用同一組條件橫向對比不同測試的結果。
   const changePack = (next: PackKey) => {
     setPack(next);
-    setSelected(emptySelected());
   };
 
   const toggle = (facetKey: string, value: string) => {
@@ -131,10 +141,13 @@ export default function Leaderboard() {
     }
   };
 
+  // 重置篩選器:清空面向 / 區間 / 搜尋,並還原排序(保留目前測試包)。
   const resetAll = () => {
     setSelected(emptySelected());
-    setPriceRanges({ ...priceBounds });
-    setSizeRanges({ ...sizeBounds });
+    setPriceRanges({});
+    setSizeRanges({});
+    setSearch("");
+    setSort("score");
   };
 
   const activeFilters =

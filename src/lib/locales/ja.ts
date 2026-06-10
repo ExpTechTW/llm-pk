@@ -23,6 +23,7 @@ export const messages: Record<string, string> = {
 
   "filter.title": "絞り込みと並び替え",
   "filter.clear": "クリア {n}",
+  "filter.reset": "リセット",
   "sort.title": "並び替え",
   "sort.score": "スコア",
   "sort.recent": "最新",

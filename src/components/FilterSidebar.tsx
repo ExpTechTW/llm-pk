@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Check, ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
 
 import { Slider } from "@/components/ui/slider";
 import { useI18n } from "@/lib/i18n";
@@ -114,6 +114,12 @@ function RangeGroup({
   );
 }
 
+// 預設收合狀態 + 跨頁記憶(進詳細頁返回後保留)。
+function defaultCollapsed(): Set<string> {
+  return new Set([...FACETS.map((f) => f.key).filter((k) => k !== "deployment"), "size", "price"]);
+}
+let sectionMemory: Set<string> | null = null;
+
 export function FilterSidebar({
   facets,
   selected,
@@ -137,9 +143,11 @@ export function FilterSidebar({
   const sizeKeys = SIZE_FIELDS.filter((f) => sizeBounds[f.key]);
 
   // 各分類的收合狀態:預設只有「排序」與「部署」展開,其餘(各面向 + 價格)收起。
-  const [collapsed, setCollapsed] = useState<Set<string>>(
-    () => new Set([...FACETS.map((f) => f.key).filter((k) => k !== "deployment"), "size", "price"])
-  );
+  // 用模組層級記憶,讓進詳細頁返回後仍保留展開狀態。
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => sectionMemory ?? defaultCollapsed());
+  useEffect(() => {
+    sectionMemory = collapsed;
+  }, [collapsed]);
   const isOpen = (key: string) => !collapsed.has(key);
   const toggleSection = (key: string) =>
     setCollapsed((prev) => {
@@ -154,16 +162,14 @@ export function FilterSidebar({
       <div className="flex items-center gap-2">
         <SlidersHorizontal className="text-primary size-4" />
         <span className="font-display text-sm font-bold">{t("filter.title")}</span>
-        {activeCount > 0 ? (
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-muted-foreground hover:text-foreground ml-auto inline-flex items-center gap-1 text-xs"
-          >
-            <X className="size-3" />
-            {t("filter.clear", { n: activeCount })}
-          </button>
-        ) : null}
+        <button
+          type="button"
+          onClick={onReset}
+          className="border-border/60 text-muted-foreground hover:text-foreground hover:border-border ml-auto inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors"
+        >
+          <RotateCcw className="size-3" />
+          {activeCount > 0 ? t("filter.clear", { n: activeCount }) : t("filter.reset")}
+        </button>
       </div>
 
       {/* 排序 */}

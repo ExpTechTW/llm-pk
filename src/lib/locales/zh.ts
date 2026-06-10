@@ -23,6 +23,7 @@ export const messages: Record<string, string> = {
 
   "filter.title": "篩選與排序",
   "filter.clear": "清除 {n}",
+  "filter.reset": "重置",
   "sort.title": "排序",
   "sort.score": "分數",
   "sort.recent": "最新",

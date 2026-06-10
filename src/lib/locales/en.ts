@@ -23,6 +23,7 @@ export const messages: Record<string, string> = {
 
   "filter.title": "Filter & sort",
   "filter.clear": "Clear {n}",
+  "filter.reset": "Reset",
   "sort.title": "Sort",
   "sort.score": "Score",
   "sort.recent": "Recent",
