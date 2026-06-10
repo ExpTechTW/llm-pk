@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Crown, Lightbulb } from "lucide-react";
 
-import { accessBadge, archBadge, deployBadge, paramsBadge } from "@/lib/badges";
+import { modelBadges } from "@/lib/badges";
 import { OrgLogo } from "@/components/ui/org-logo";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
@@ -44,10 +44,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const isTop = rank <= 3;
   const isChampion = rank === 1;
-  const deploy = deployBadge(row.deployment);
-  const access = accessBadge(row.access);
-  const params = paramsBadge(row.sizeParams);
-  const arch = archBadge(row.modelType, row.sizeActive, row.sizeParams);
+  const badges = modelBadges(row);
 
   return (
     <Link
@@ -67,7 +64,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
         )}
       >
         {/* 名次 */}
-        <div className="flex w-6 shrink-0 flex-col items-center sm:w-9">
+        <div className="flex w-6 shrink-0 flex-col items-center justify-center sm:w-9">
           {isChampion ? (
             <Crown className="text-primary size-3.5 drop-shadow-[0_0_6px_oklch(0.87_0.19_124/0.6)] sm:size-4" fill="currentColor" />
           ) : null}
@@ -77,72 +74,63 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
           {isTop ? <span className="text-muted-foreground/60 hidden text-[9px] tracking-widest uppercase sm:block">rank</span> : null}
         </div>
 
-        {/* 廠牌 logo */}
-        <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={42} />
+        {/* 資訊(3/4)+ 分數(1/4) */}
+        <div className="flex min-w-0 flex-1 items-stretch gap-3">
+          {/* 資訊(3/4):上=模型資訊、下=徽章 */}
+          <div className="flex w-3/4 min-w-0 flex-col justify-center gap-2">
+            {/* 模型資訊:左 icon、右 model name */}
+            <div className="flex min-w-0 items-center gap-2.5">
+              <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={42} className="shrink-0" />
+              <h3
+                className="font-display flex min-w-0 flex-1 items-center gap-1.5 text-lg leading-tight font-bold tracking-tight sm:gap-2 sm:text-2xl"
+                title={row.modelName}
+              >
+                {row.thinking ? (
+                  <Lightbulb
+                    className="text-amber-300/90 size-4 shrink-0 sm:size-5"
+                    aria-label="支援 thinking / reasoning 模式"
+                  />
+                ) : null}
+                <span className="truncate">{row.modelName}</span>
+              </h3>
+            </div>
+            {/* 徽章 */}
+            <div className="flex flex-wrap items-center gap-1">
+              {badges.map((b) => (
+                <Chip key={b.label} className={b.className}>
+                  <b.Icon className="size-3" />
+                  {b.label}
+                </Chip>
+              ))}
+              {row.quantFormat ? (
+                <Chip className={quantColor(row.quantFormat, "text-violet-300")}>{row.quantFormat}</Chip>
+              ) : null}
+              {row.quantLevel ? (
+                <Chip className={quantColor(row.quantLevel, "text-cyan-300")}>{row.quantLevel}</Chip>
+              ) : null}
+            </div>
+          </div>
 
-        {/* 名稱 + 標籤 */}
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <h3
-            className="font-display flex items-center gap-1.5 text-lg leading-tight font-bold tracking-tight sm:gap-2 sm:text-2xl"
-            title={row.modelName}
-          >
-            {row.thinking ? (
-              <Lightbulb
-                className="text-amber-300/90 size-4 shrink-0 sm:size-5"
-                aria-label="支援 thinking / reasoning 模式"
+          {/* 分數(1/4) */}
+          <div className="flex w-1/4 shrink-0 flex-col items-end justify-center gap-1.5">
+            <div className="flex items-baseline">
+              <span className="font-data text-2xl leading-none font-bold tabular-nums sm:text-3xl">
+                {row.scoreTotal.toFixed(1).split(".")[0]}
+              </span>
+              <span className="text-muted-foreground/70 font-data text-xs">
+                .{row.scoreTotal.toFixed(1).split(".")[1]}
+              </span>
+            </div>
+            <div className="bg-muted/70 h-1 w-full overflow-hidden rounded-full">
+              <div
+                className="gauge-fill bg-primary h-full rounded-full"
+                style={{ width: `${score}%` }}
               />
-            ) : null}
-            <span className="truncate">{row.modelName}</span>
-          </h3>
-          <div className="flex flex-wrap items-center gap-1">
-            <Chip className={access.className}>
-              <access.Icon className="size-3" />
-              {access.label}
-            </Chip>
-            {params ? (
-              <Chip className={params.className}>
-                <params.Icon className="size-3" />
-                {params.label}
-              </Chip>
-            ) : null}
-            {arch ? (
-              <Chip className={arch.className}>
-                <arch.Icon className="size-3" />
-                {arch.label}
-              </Chip>
-            ) : null}
-            <Chip className={deploy.className}>
-              <deploy.Icon className="size-3" />
-              {deploy.label}
-            </Chip>
-            {row.quantFormat ? (
-              <Chip className={quantColor(row.quantFormat, "text-violet-300")}>{row.quantFormat}</Chip>
-            ) : null}
-            {row.quantLevel ? (
-              <Chip className={quantColor(row.quantLevel, "text-cyan-300")}>{row.quantLevel}</Chip>
-            ) : null}
-          </div>
-        </div>
-
-        {/* 分數 + 量表 */}
-        <div className="flex w-14 shrink-0 flex-col items-end gap-1.5 sm:w-20">
-          <div className="flex items-baseline">
-            <span className="font-data text-2xl leading-none font-bold tabular-nums sm:text-3xl">
-              {row.scoreTotal.toFixed(1).split(".")[0]}
-            </span>
-            <span className="text-muted-foreground/70 font-data text-xs">
-              .{row.scoreTotal.toFixed(1).split(".")[1]}
+            </div>
+            <span className="text-muted-foreground font-data text-[11px] tabular-nums">
+              {formatPass(row.passCount, row.halfCount)}/{row.totalCount}
             </span>
           </div>
-          <div className="bg-muted/70 h-1 w-full overflow-hidden rounded-full">
-            <div
-              className="gauge-fill bg-primary h-full rounded-full"
-              style={{ width: `${score}%` }}
-            />
-          </div>
-          <span className="text-muted-foreground font-data text-[11px] tabular-nums">
-            {formatPass(row.passCount, row.halfCount)}/{row.totalCount}
-          </span>
         </div>
       </article>
     </Link>

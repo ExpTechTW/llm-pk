@@ -1,5 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
-import { Trophy } from "lucide-react";
+import { GitCompareArrows, Trophy } from "lucide-react";
 
 export function Layout() {
   return (
@@ -22,13 +22,22 @@ export function Layout() {
                 </span>
               </span>
             </Link>
-            <Link
-              to="/leaderboard"
-              className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 ml-auto inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
-            >
-              <Trophy className="size-4" />
-              排行榜
-            </Link>
+            <nav className="ml-auto flex items-center gap-2">
+              <Link
+                to="/leaderboard"
+                className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
+              >
+                <Trophy className="size-4" />
+                <span className="hidden sm:inline">排行榜</span>
+              </Link>
+              <Link
+                to="/compare"
+                className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
+              >
+                <GitCompareArrows className="size-4" />
+                <span className="hidden sm:inline">對比</span>
+              </Link>
+            </nav>
           </div>
         </header>
 

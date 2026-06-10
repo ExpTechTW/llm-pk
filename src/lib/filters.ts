@@ -178,17 +178,22 @@ function matchesFacets(r: SubmissionRow, selected: Selected, exceptKey?: string)
   return true;
 }
 
-// 同分時的排名優先度(由高到低):開源 > 閉源、小參數 > 大參數、本地 > 雲端,最後才看平均速度。
+// 同分時的排名優先度(由高到低):開源 > 閉源、小啟用 > 大啟用、小參數 > 大參數、本地 > 雲端,
+// 最後才看平均速度。
 function tiebreak(a: SubmissionRow, b: SubmissionRow): number {
   // 1) 開源 > 閉源
   const openA = a.access === "closed" ? 1 : 0;
   const openB = b.access === "closed" ? 1 : 0;
   if (openA !== openB) return openA - openB;
-  // 2) 小參數 > 大參數(無參數資料視為最大,排後面)
+  // 2) 小啟用參數 > 大啟用參數(無資料視為最大,排後面)
+  const actA = parseSize(a.sizeActive) ?? Infinity;
+  const actB = parseSize(b.sizeActive) ?? Infinity;
+  if (actA !== actB) return actA - actB;
+  // 3) 小參數 > 大參數
   const paramA = parseSize(a.sizeParams) ?? Infinity;
   const paramB = parseSize(b.sizeParams) ?? Infinity;
   if (paramA !== paramB) return paramA - paramB;
-  // 3) 本地 > 雲端
+  // 4) 本地 > 雲端
   const localA = a.deployment === "cloud" ? 1 : 0;
   const localB = b.deployment === "cloud" ? 1 : 0;
   if (localA !== localB) return localA - localB;
