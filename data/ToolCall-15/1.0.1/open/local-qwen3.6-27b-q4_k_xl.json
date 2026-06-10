@@ -7,7 +7,7 @@
   },
   "deployment": "local",
   "model": {
-    "id": "qwen3.6-27b",
+    "id": "huihui-qwen3.6-27b-abliterated-ud-q4_k_xl-mtp-gguf",
     "name": "Huihui Qwen3.6 27B Abliterated",
     "org": "Qwen",
     "access": "open",

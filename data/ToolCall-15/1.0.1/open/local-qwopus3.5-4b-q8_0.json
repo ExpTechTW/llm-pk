@@ -1,32 +1,31 @@
 {
     "BenchLocal": "0.3.0",
-    "results_upload": "whes1015",
+    "author": "",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
     },
     "deployment": "local",
     "model": {
-        "name": "GLM 4.7 Flash",
-        "id": "huihui-glm-4.7-flash-abliterated-gguf-q6_k",
-        "org": "zai-org",
+        "name": "Huihui Qwopus3.5 4B v3 Abliterated",
+        "id": "huihui-qwopus3.5-4b-v3-abliterated-gguf-q8_0",
+        "org": "Qwen",
         "access": "open",
         "family": {
-            "name": "GLM",
-            "ver": "4.7"
+            "name": "Qwen",
+            "ver": "3.5"
         },
-        "type": "MoE",
-        "thinking": true,
+        "type": "Dense",
         "size": {
-            "params": "30B",
-            "active": "3B"
+            "params": "4B",
+            "active": "4B"
         },
         "quantization": {
             "format": "GGUF",
-            "level": "Q6_K",
+            "level": "Q8_0",
             "method": "Static"
         },
-        "link": "hugging_face:mradermacher:Huihui-GLM-4.7-Flash-abliterated-GGUF"
+        "link": "hugging_face:Abiray:Huihui-Qwopus3.5-4B-v3-abliterated-GGUF"
     },
     "backend": {
         "name": "llama.cpp",
@@ -40,7 +39,7 @@
         "driver": ""
     },
     "score": {
-        "total": 100,
+        "total": 93,
         "categories": [
             {
                 "id": "A",
@@ -69,76 +68,76 @@
             {
                 "id": "E",
                 "label": "Error Recovery",
-                "score": 100,
+                "score": 67,
                 "weight": 20
             }
         ]
     },
     "run": {
-        "date": "2026-06-10T03:47:23.401Z",
+        "date": "2026-06-10T11:14:05.091Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "TC-01": {
             "status": 1,
-            "time": 4653
+            "time": 3581
         },
         "TC-02": {
             "status": 1,
-            "time": 3267
+            "time": 2539
         },
         "TC-03": {
             "status": 1,
-            "time": 5672
+            "time": 3784
         },
         "TC-04": {
             "status": 1,
-            "time": 2670
+            "time": 1765
         },
         "TC-05": {
             "status": 1,
-            "time": 5898
+            "time": 8166
         },
         "TC-06": {
             "status": 1,
-            "time": 5038
+            "time": 3373
         },
         "TC-07": {
             "status": 1,
-            "time": 11654
+            "time": 7919
         },
         "TC-08": {
             "status": 1,
-            "time": 7662
+            "time": 8079
         },
         "TC-09": {
             "status": 1,
-            "time": 8165
+            "time": 3985
         },
         "TC-10": {
             "status": 1,
-            "time": 5182
+            "time": 3197
         },
         "TC-11": {
             "status": 1,
-            "time": 2166
+            "time": 8000
         },
         "TC-12": {
             "status": 1,
-            "time": 5473
+            "time": 7988
         },
         "TC-13": {
             "status": 1,
-            "time": 8546
+            "time": 19852
         },
         "TC-14": {
-            "status": 1,
-            "time": 3980
+            "status": 0,
+            "time": 7863
         },
         "TC-15": {
             "status": 1,
-            "time": 10090
+            "time": 8133
         }
     }
 }

@@ -49,6 +49,7 @@ export function getPacks(db: Database): PackInfo[] {
 
 interface RawRow {
   id: number;
+  file: string;
   results_upload: string;
   benchlocal: string;
   pack_name: string;
@@ -142,6 +143,7 @@ function mapRow(r: RawRow, cats: CatDef[]): SubmissionRow {
   const scores = parseNums(r.scores);
   return {
     id: r.id,
+    file: r.file,
     uploader: r.results_upload,
     benchlocal: r.benchlocal,
     packName: r.pack_name,

@@ -7,7 +7,7 @@
   },
   "deployment": "local",
   "model": {
-    "id": "gemma4-e2b",
+    "id": "huihui-gemma4-e2b-abliterated-q4_0-qat-gguf",
     "name": "Huihui Gemma4 E2B IT Abliterated",
     "org": "Google",
     "access": "open",

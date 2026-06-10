@@ -8,7 +8,7 @@
     "deployment": "local",
     "model": {
         "name": "GLM 4.7 Flash",
-        "id": "glm-4.7-flash",
+        "id": "huihui-glm-4.7-flash-abliterated-gguf-q6_k",
         "org": "zai-org",
         "access": "open",
         "family": {

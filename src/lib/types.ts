@@ -19,6 +19,7 @@ export interface ScoreCategory {
 
 export interface SubmissionRow {
   id: number;
+  file: string; // 穩定唯一鍵(檔名去目錄/副檔名),重建 DB 不變,供分享連結用
   uploader: string; // results_upload:上傳跑分結果者的 GitHub 帳號
   benchlocal: string;
   packName: string;

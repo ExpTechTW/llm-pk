@@ -19,6 +19,35 @@ import { cn } from "@/lib/utils";
 const COLOR_A = "#22d3ee"; // cyan-400
 const COLOR_B = "#f59e0b"; // amber-500
 
+// 類別名稱顯示用中文(資料端為英文);查無對照則沿用原文。
+const CATEGORY_ZH: Record<string, string> = {
+  // DataExtract-15
+  "Clean Extraction": "乾淨抽取",
+  "Noisy and Informal": "雜訊口語",
+  "Multi-Entity": "多實體",
+  "Implicit and Missing": "隱含缺漏",
+  "Complex Documents": "複雜文件",
+  // InstructFollow-15
+  "Format Constraints": "格式限制",
+  "Ordering and Sorting": "排序",
+  "Multi-Domain": "跨領域",
+  "Precision Under Pressure": "高壓精準",
+  Adversarial: "對抗性",
+  // ReasonMath-15
+  "Everyday Arithmetic": "日常運算",
+  "Logic Puzzles": "邏輯謎題",
+  "Multi-Step Word Problems": "多步應用題",
+  "Trick Questions and Traps": "陷阱題",
+  "Applied Reasoning": "應用推理",
+  // ToolCall-15
+  "Tool Selection": "工具選擇",
+  "Parameter Precision": "參數精準",
+  "Multi-Step Chains": "多步串接",
+  "Restraint & Refusal": "克制拒絕",
+  "Error Recovery": "錯誤復原"
+};
+const zhCategory = (label: string) => CATEGORY_ZH[label] ?? label;
+
 function fmtSec(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) return "—";
   return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
@@ -37,7 +66,7 @@ function IdentityCard({
 }) {
   const badges = modelBadges(row);
   return (
-    <div className="bg-card/70 relative flex flex-col items-center gap-2.5 overflow-hidden rounded-2xl border border-t-2 p-4 text-center" style={{ borderTopColor: color }}>
+    <div className="bg-card/70 relative flex h-full flex-col items-center gap-2.5 overflow-hidden rounded-2xl border border-t-2 p-4 text-center" style={{ borderTopColor: color }}>
       <span
         className="absolute top-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-bold"
         style={{ color, backgroundColor: `${color}22` }}
@@ -45,8 +74,11 @@ function IdentityCard({
         {side}
       </span>
       <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={52} radius="rounded-2xl" />
-      <div className="min-w-0">
-        <div className="font-display truncate text-sm leading-tight font-bold sm:text-base" title={row.modelName}>
+      <div className="w-full min-w-0">
+        <div
+          className="font-display min-h-[2lh] text-sm leading-tight font-bold wrap-break-word sm:text-base"
+          title={row.modelName}
+        >
           {row.modelName}
         </div>
         {row.linkAuthor ? (
@@ -106,7 +138,7 @@ function VersusBar({ m }: { m: Metric }) {
 
       <div className="flex flex-col items-center gap-1">
         <span className="text-muted-foreground text-[10px] tracking-wide sm:text-[11px]">{m.label}</span>
-        <div className="flex h-2.5 w-full items-center">
+        <div className="bg-muted/30 flex h-2.5 w-full items-center overflow-hidden rounded-full ring-1 ring-white/50">
           {/* 左半:A 由中線往左長 */}
           <div className="flex h-full w-1/2 justify-end">
             <div
@@ -298,9 +330,10 @@ export default function Compare() {
     () => (db && packName && packVer ? getSubmissionsByPack(db, packName, packVer) : []),
     [db, packName, packVer]
   );
-  const byId = useMemo(() => new Map(rows.map((r) => [String(r.id), r])), [rows]);
-  const a = byId.get(sp.get("a") ?? "") ?? null;
-  const b = byId.get(sp.get("b") ?? "") ?? null;
+  // 用穩定的檔名鍵(file)定位模型 —— 重建 DB 不變,分享連結才不會失效。
+  const byFile = useMemo(() => new Map(rows.map((r) => [r.file, r])), [rows]);
+  const a = byFile.get(sp.get("a") ?? "") ?? null;
+  const b = byFile.get(sp.get("b") ?? "") ?? null;
 
   // 系列只是大篩選器(避免選項過多),左右各自獨立,可比不同系列。
   const families = useMemo(() => {
@@ -316,35 +349,39 @@ export default function Compare() {
     }
     return m;
   }, [rows]);
-  const [famA, setFamA] = useState("__all__");
-  const [famB, setFamB] = useState("__all__");
 
-  // 換 pack 時候選清單會變,重置兩側系列篩選。
-  useEffect(() => {
-    setFamA("__all__");
-    setFamB("__all__");
-  }, [packName, packVer]);
+  // 系列篩選也帶在 URL(fa/fb),分享連結可完整還原「系列 + 模型」。
+  const famA = sp.get("fa") ?? "__all__";
+  const famB = sp.get("fb") ?? "__all__";
 
+  // 必須先選系列才列出模型(空系列 → 無候選,模型選單停用)。
   const candidatesFor = (fam: string) =>
-    fam === "__all__" ? rows : rows.filter((r) => r.familyName === fam);
+    fam === "__all__" ? [] : rows.filter((r) => r.familyName === fam);
 
-  const setSide = (side: "a" | "b", id: string) => updateParams((p) => p.set(side, id));
+  const setSide = (side: "a" | "b", fileKey: string) => {
+    const row = byFile.get(fileKey);
+    updateParams((p) => {
+      p.set(side, fileKey);
+      if (row?.familyName) p.set(side === "a" ? "fa" : "fb", row.familyName);
+    });
+  };
 
-  // 切換系列:更新該側系列篩選,若已選模型不屬於新系列就一併 reset。
+  // 切換系列:更新該側系列;若已選模型不屬於新系列就一併清掉。
   const changeFamily = (side: "a" | "b", fam: string) => {
-    (side === "a" ? setFamA : setFamB)(fam);
     const cur = side === "a" ? a : b;
-    if (cur && fam !== "__all__" && cur.familyName !== fam) {
-      updateParams((p) => p.delete(side));
-    }
+    updateParams((p) => {
+      const fkey = side === "a" ? "fa" : "fb";
+      if (fam === "__all__") p.delete(fkey);
+      else p.set(fkey, fam);
+      if (cur && cur.familyName !== fam) p.delete(side);
+    });
   };
 
   const setPack = (name: string, ver: string) =>
     updateParams((p) => {
       p.set("pack", name);
       p.set("ver", ver);
-      p.delete("a");
-      p.delete("b");
+      for (const k of ["a", "b", "fa", "fb"]) p.delete(k);
     });
 
   const [copied, setCopied] = useState(false);
@@ -388,7 +425,7 @@ export default function Compare() {
     if (!a || !b) return [] as { label: string; a: number; b: number }[];
     const bById = new Map(b.scoreCats.map((c) => [c.id, c]));
     return a.scoreCats.map((c) => ({
-      label: c.label ?? c.id,
+      label: zhCategory(c.label ?? c.id),
       a: c.score,
       b: bById.get(c.id)?.score ?? 0
     }));
@@ -517,8 +554,9 @@ export default function Compare() {
                     </Select>
                   ) : null}
                   <Select
-                    value={value ? String(value.id) : undefined}
-                    onValueChange={(id) => setSide(side, id)}
+                    value={value ? value.file : undefined}
+                    onValueChange={(fileKey) => setSide(side, fileKey)}
+                    disabled={fam === "__all__"}
                   >
                     <SelectTrigger aria-label={`選擇模型 ${side.toUpperCase()}`} className="w-full">
                       <span className="flex min-w-0 flex-1 items-center gap-2">
@@ -532,15 +570,16 @@ export default function Compare() {
                               ) : null}
                             </>
                           ) : (
-                            <span className="text-muted-foreground font-normal">模型 {side.toUpperCase()}…</span>
+                            <span className="text-muted-foreground font-normal">
+                              {fam === "__all__" ? "先選系列…" : `模型 ${side.toUpperCase()}…`}
+                            </span>
                           )}
                         </span>
                       </span>
                     </SelectTrigger>
                     <SelectContent>
-                      {/* 確保已選的也在清單內(即使被系列篩掉) */}
-                      {Array.from(new Set([...(value ? [value] : []), ...candidates])).map((r) => (
-                        <SelectItem key={r.id} value={String(r.id)} className="[&>span]:truncate">
+                      {candidates.map((r) => (
+                        <SelectItem key={r.file} value={r.file} className="[&>span]:wrap-break-word">
                           <span className="font-medium">{r.modelName}</span>
                           {r.linkAuthor ? (
                             <span className="text-muted-foreground text-xs"> · {r.linkAuthor}</span>

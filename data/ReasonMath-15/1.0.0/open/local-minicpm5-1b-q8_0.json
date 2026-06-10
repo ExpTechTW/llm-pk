@@ -8,7 +8,7 @@
     "deployment": "local",
     "model": {
         "name": "MiniCPM5 1B",
-        "id": "minicpm5-1b",
+        "id": "huihui-minicpm5-1b-abliterated-gguf-q8_0",
         "org": "OpenBMB",
         "access": "open",
         "family": {
