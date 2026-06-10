@@ -151,7 +151,7 @@ export default function Leaderboard() {
             <span className="bg-primary size-1.5 animate-pulse rounded-full" />
             {t("lb.badge")}
           </span>
-          <h1 className="font-display text-4xl leading-[1.03] font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="hero-title font-display font-extrabold tracking-tight">
             {t("lb.title.pre")}{" "}
             <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
               {t("lb.title.accent")}

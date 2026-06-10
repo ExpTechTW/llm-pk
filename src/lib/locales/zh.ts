@@ -9,7 +9,7 @@ export const messages: Record<string, string> = {
   "dialog.close": "關閉",
 
   "lb.badge": "BenchLocal 社群跑分",
-  "lb.title.pre": "本地模型",
+  "lb.title.pre": "模型",
   "lb.title.accent": "跑分排行榜",
   "lb.error.title": "無法載入排行榜",
   "lb.error.hint": "請先執行 npm run build:db 產生 public/data.db。",
@@ -113,7 +113,7 @@ export const messages: Record<string, string> = {
   "detail.q.noData": "尚無此題的題目資料。請在 public/exam/{pack}/{ver}.{lang}.json 補上。",
 
   "home.empty": "尚無投稿",
-  "home.hero.l1": "本地模型,",
+  "home.hero.l1": "所有模型,",
   "home.hero.l2": "一份測試見真章",
   "home.hero.desc": "同一份測試題組,跨模型、量化、推理的公平對照。由社群實測投稿,透明、可重現的本地模型跑分排行。",
   "home.cta.leaderboard": "查看排行榜",

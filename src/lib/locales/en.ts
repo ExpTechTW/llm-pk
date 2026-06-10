@@ -9,7 +9,7 @@ export const messages: Record<string, string> = {
   "dialog.close": "Close",
 
   "lb.badge": "BenchLocal community runs",
-  "lb.title.pre": "Local model",
+  "lb.title.pre": "Model",
   "lb.title.accent": "leaderboard",
   "lb.error.title": "Failed to load leaderboard",
   "lb.error.hint": "Run npm run build:db to generate public/data.db first.",
@@ -113,7 +113,7 @@ export const messages: Record<string, string> = {
   "detail.q.noData": "No prompt data for this question. Add it in public/exam/{pack}/{ver}.{lang}.json.",
 
   "home.empty": "No submissions yet",
-  "home.hero.l1": "Local models,",
+  "home.hero.l1": "Every model,",
   "home.hero.l2": "one test to rule them",
   "home.hero.desc":
     "One shared test set for a fair, cross-model / quant / runtime comparison — community-submitted, transparent and reproducible.",

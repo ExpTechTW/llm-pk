@@ -113,7 +113,7 @@ export default function Home() {
               <span className="bg-primary size-1.5 animate-pulse rounded-full" />
               {t("lb.badge")}
             </span>
-            <h1 className="font-display max-w-3xl text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
+            <h1 className="hero-title font-display max-w-3xl font-extrabold tracking-tight">
               {t("home.hero.l1")}
               <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
                 {t("home.hero.l2")}

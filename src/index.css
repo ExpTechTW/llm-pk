@@ -89,6 +89,46 @@
     font-feature-settings: normal;
   }
 
+  /* CJK 在窄容器內以較嚴格規則斷行,避免標點落首 / 破碎換行 */
+  :lang(zh),
+  :lang(ja) {
+    line-break: strict;
+  }
+
+  /*
+   * 大標題依語言調整字級:日文片假名為全形、字串較長,
+   * 桌機被工具列擠壓時容易換行溢出 → 縮一級;
+   * 並用 balance 讓多行標題左右平衡,而非孤字落單。
+   */
+  .hero-title {
+    font-size: 2.25rem; /* 36px,對應 text-4xl */
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+  @media (min-width: 40rem) {
+    .hero-title {
+      font-size: 3rem; /* 48px */
+    }
+  }
+  @media (min-width: 64rem) {
+    .hero-title {
+      font-size: 3.75rem; /* 60px,對應 text-6xl */
+    }
+  }
+  :lang(ja) .hero-title {
+    font-size: 1.875rem; /* 30px */
+  }
+  @media (min-width: 40rem) {
+    :lang(ja) .hero-title {
+      font-size: 2.5rem; /* 40px */
+    }
+  }
+  @media (min-width: 64rem) {
+    :lang(ja) .hero-title {
+      font-size: 3rem; /* 48px */
+    }
+  }
+
   ::selection {
     background: oklch(0.87 0.19 124 / 28%);
   }

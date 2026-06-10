@@ -9,7 +9,7 @@ export const messages: Record<string, string> = {
   "dialog.close": "閉じる",
 
   "lb.badge": "BenchLocal コミュニティ計測",
-  "lb.title.pre": "ローカルモデル",
+  "lb.title.pre": "モデル",
   "lb.title.accent": "ランキング",
   "lb.error.title": "ランキングを読み込めません",
   "lb.error.hint": "まず npm run build:db を実行して public/data.db を生成してください。",
@@ -113,7 +113,7 @@ export const messages: Record<string, string> = {
   "detail.q.noData": "この問題のデータがありません。public/exam/{pack}/{ver}.{lang}.json に追加してください。",
 
   "home.empty": "投稿はまだありません",
-  "home.hero.l1": "ローカルモデル、",
+  "home.hero.l1": "すべてのモデル、",
   "home.hero.l2": "同じテストで真価を",
   "home.hero.desc":
     "同一テストセットでモデル・量子化・推論を公平比較。コミュニティ投稿による透明で再現可能なランキング。",
