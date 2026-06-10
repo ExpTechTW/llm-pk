@@ -422,7 +422,7 @@ export default function Detail() {
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">
-              {t("detail.q.noData", { pack: row.packName, ver: row.packVer })}
+              {t("detail.q.noData", { pack: row.packName, ver: row.packVer, lang })}
             </p>
           )}
         </DialogContent>

@@ -1,7 +1,7 @@
 /** 模型價格(讀自 public/price.csv,單位:USD / 1M tokens)。 */
 export interface PriceInfo {
   input: number;
-  cacheInput: number;
+  cacheInput: number | null; // 該模型無 prompt caching → 留空(null),不參與快取價篩選
   output: number;
 }
 
@@ -22,9 +22,10 @@ function parseCsv(text: string): PriceMap {
   for (const line of lines.slice(1)) {
     const [name, input, cacheInput, output] = line.split(",");
     if (!name) continue;
+    const cache = cacheInput?.trim();
     map.set(priceKey(name), {
       input: Number(input) || 0,
-      cacheInput: Number(cacheInput) || 0,
+      cacheInput: cache ? Number(cache) || 0 : null, // 空白 → null(無快取價)
       output: Number(output) || 0
     });
   }

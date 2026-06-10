@@ -170,7 +170,21 @@ async function fetchHfAvatar(org: string): Promise<string | null> {
   return (await tryUrl("organizations")) ?? (await tryUrl("users"));
 }
 
+// 讀 public/price.csv 的名稱欄(小寫)當作「有價格」的鍵集合。
+function loadPriceKeys(): Set<string> {
+  const keys = new Set<string>();
+  const p = join(OUT_DIR, "price.csv");
+  if (!existsSync(p)) return keys;
+  const lines = readFileSync(p, "utf8").split(/\r?\n/);
+  for (const line of lines.slice(1)) {
+    const name = line.split(",")[0]?.trim().toLowerCase();
+    if (name) keys.add(name);
+  }
+  return keys;
+}
+
 function readValidEntries(): { entries: ValidEntry[]; skipped: number } {
+  const priceKeys = loadPriceKeys();
   const files = (readdirSync(DATA_DIR, { recursive: true }) as string[])
     .filter((name) => extname(name).toLowerCase() === ".json")
     .map((name) => name.split(sep).join("/"))
@@ -218,6 +232,15 @@ function readValidEntries(): { entries: ValidEntry[]; skipped: number } {
       const expected = `${prefix}-${id.replace(/\//g, "-")}`;
       if (base !== expected) {
         console.warn(`  ${relName}: 檔名與 model.id 不一致(預期 ${expected}.json)`);
+      }
+    }
+
+    // 雲端模型缺少價格(price.csv 無對應 model.id / name)時警告。
+    if (report.value.deployment === "cloud") {
+      const idKey = report.value.model.id?.trim().toLowerCase();
+      const nameKey = report.value.model.name.trim().toLowerCase();
+      if (!(idKey && priceKeys.has(idKey)) && !priceKeys.has(nameKey)) {
+        console.warn(`  ${relName}: 缺少價格(price.csv 找不到「${report.value.model.id ?? nameKey}」)`);
       }
     }
 

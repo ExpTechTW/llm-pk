@@ -3,10 +3,14 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 export type Lang = "zh" | "en" | "ja";
 
 export const LANGS: { code: Lang; label: string }[] = [
-  { code: "zh", label: "中" },
-  { code: "en", label: "EN" },
-  { code: "ja", label: "日" }
+  { code: "zh", label: "中文" },
+  { code: "ja", label: "日本語" },
+  { code: "en", label: "English" }
 ];
+
+export function isLang(v: unknown): v is Lang {
+  return v === "zh" || v === "en" || v === "ja";
+}
 
 const STORAGE_KEY = "llm-pk-lang";
 
@@ -27,10 +31,26 @@ function interpolate(s: string, vars?: Record<string, string | number>): string 
   return s.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`));
 }
 
-function detectLang(): Lang {
+// 從網址讀 ?lang(HashRouter 下查詢字串在 # 之後),供分享連結指定語言。
+function langFromUrl(): Lang | null {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (saved === "zh" || saved === "en" || saved === "ja") return saved;
+    const hash = window.location.hash;
+    const qi = hash.indexOf("?");
+    const search = qi >= 0 ? hash.slice(qi + 1) : window.location.search;
+    const v = new URLSearchParams(search).get("lang");
+    return isLang(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+// 偵測優先序:網址 ?lang → localStorage → 瀏覽器語言。
+function detectLang(): Lang {
+  const fromUrl = langFromUrl();
+  if (fromUrl) return fromUrl;
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (isLang(saved)) return saved;
   } catch {
     /* 無 localStorage */
   }

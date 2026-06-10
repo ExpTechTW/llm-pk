@@ -1,28 +1,52 @@
-import { Link, Outlet } from "react-router-dom";
-import { Download, GitCompareArrows, Trophy } from "lucide-react";
+import { useEffect } from "react";
+import { Link, Outlet, useSearchParams } from "react-router-dom";
+import { Download, GitCompareArrows, Languages, Trophy } from "lucide-react";
 
-import { LANGS, useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { LANGS, isLang, useI18n, type Lang } from "@/lib/i18n";
 
 function LangSwitcher() {
   const { lang, setLang } = useI18n();
+  const [sp, setSp] = useSearchParams();
+
+  // 分享連結帶 ?lang 進來時套用該語言。
+  useEffect(() => {
+    const p = sp.get("lang");
+    if (isLang(p) && p !== lang) setLang(p);
+  }, [sp, lang, setLang]);
+
+  const change = (code: Lang) => {
+    setLang(code);
+    setSp(
+      (prev) => {
+        const n = new URLSearchParams(prev);
+        n.set("lang", code);
+        return n;
+      },
+      { replace: true }
+    );
+  };
+
   return (
-    <div className="border-border/60 bg-card/50 inline-flex items-center rounded-full border p-0.5">
-      {LANGS.map((l) => (
-        <button
-          key={l.code}
-          type="button"
-          onClick={() => setLang(l.code)}
-          aria-pressed={lang === l.code}
-          className={cn(
-            "rounded-full px-2 py-0.5 text-xs font-medium transition-colors",
-            lang === l.code ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {l.label}
-        </button>
-      ))}
-    </div>
+    <Select value={lang} onValueChange={(v) => change(v as Lang)}>
+      <SelectTrigger aria-label="Language" className="rounded-full px-2.5 py-1.5">
+        <Languages className="text-muted-foreground size-4 shrink-0" />
+        <SelectValue className="text-sm font-medium" />
+      </SelectTrigger>
+      <SelectContent>
+        {LANGS.map((l) => (
+          <SelectItem key={l.code} value={l.code} className="font-medium">
+            {l.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
