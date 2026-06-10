@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, SlidersHorizontal } from "lucide-react";
+import { Info, Loader2, SlidersHorizontal } from "lucide-react";
 
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { PackSelect, type PackKey } from "@/components/PackSelect";
@@ -53,6 +53,7 @@ export default function Leaderboard() {
   const [sort, setSort] = useState<SortKey>(() => lbMemory?.sort ?? "score");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showFilters, setShowFilters] = useState(() => lbMemory?.showFilters ?? false);
+  const [showRankHelp, setShowRankHelp] = useState(false);
 
   const prices = usePrices();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -237,13 +238,32 @@ export default function Leaderboard() {
           {/* 排行清單(概覽) */}
           <div className="flex flex-col gap-3">
             <div className="text-muted-foreground flex items-center justify-between px-1 text-xs">
-              <span>
+              <span className="inline-flex items-center gap-1.5">
                 {search.trim() || activeFilters > 0
                   ? t("lb.count.matched", { n: filtered.length })
                   : t("lb.count.all", { n: filtered.length })}
+                <button
+                  type="button"
+                  onClick={() => setShowRankHelp((v) => !v)}
+                  aria-label={t("lb.rank.help.title")}
+                  aria-expanded={showRankHelp}
+                  className={cn(
+                    "hover:text-foreground inline-flex items-center transition-colors",
+                    showRankHelp && "text-foreground"
+                  )}
+                >
+                  <Info className="size-3.5" />
+                </button>
               </span>
               <span>{t("lb.count.total", { n: rows.length })}</span>
             </div>
+
+            {showRankHelp ? (
+              <div className="border-border/60 bg-card/50 text-muted-foreground rounded-xl border px-3.5 py-2.5 text-xs leading-relaxed">
+                <p className="text-foreground mb-1 font-semibold">{t("lb.rank.help.title")}</p>
+                {t("lb.rank.help.body")}
+              </div>
+            ) : null}
 
             {filtered.length === 0 ? (
               <div className="text-muted-foreground border-border/60 rounded-2xl border border-dashed py-16 text-center text-sm">

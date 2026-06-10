@@ -17,6 +17,8 @@ export const messages: Record<string, string> = {
   "lb.count.matched": "該当 {n} 件",
   "lb.count.all": "全 {n} 件",
   "lb.count.total": "計 {n} 件",
+  "lb.rank.help.title": "順位の仕組み",
+  "lb.rank.help.body": "順位は総合スコア基準。同点の場合は実効パラメータが少ない方、次に総パラメータが少ない方が上位で、3つすべて同じなら同順位です。同順位ではカードの # が実際の並び順を示します(さらにオープン優先・ローカル優先・速度の順で決定)。",
   "lb.noMatch": "該当する投稿がありません。",
   "lb.showMore": "さらに {n} 件",
   "lb.rank": "順位",

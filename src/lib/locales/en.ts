@@ -17,6 +17,8 @@ export const messages: Record<string, string> = {
   "lb.count.matched": "{n} matched",
   "lb.count.all": "{n} submissions",
   "lb.count.total": "{n} total",
+  "lb.rank.help.title": "How ranking works",
+  "lb.rank.help.body": "Rank is by overall score. On equal scores, fewer active params ranks higher, then fewer total params; only when all three match do models share a rank. For a shared rank, the # on the card shows the actual order (broken further by open-weight first, local first, then speed).",
   "lb.noMatch": "No submissions match.",
   "lb.showMore": "Show {n} more",
   "lb.rank": "rank",

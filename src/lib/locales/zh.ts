@@ -17,6 +17,8 @@ export const messages: Record<string, string> = {
   "lb.count.matched": "符合條件 {n} 筆",
   "lb.count.all": "全部投稿 {n} 筆",
   "lb.count.total": "共 {n} 筆",
+  "lb.rank.help.title": "排名說明",
+  "lb.rank.help.body": "名次以綜合分數為主。分數相同時,啟用參數較少者較前,其次比總參數;三者皆相同才並列同名次。並列時,卡片左下的 # 會標出實際順序(再依開源優先、本地優先、速度較快排序)。",
   "lb.noMatch": "找不到符合條件的投稿。",
   "lb.showMore": "顯示更多 {n} 筆",
   "lb.rank": "rank",

@@ -1,0 +1,159 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "mellum2-12b-a2.5b-thinking-gguf-q8_0",
+        "name": "Mellum2 12B A2.5B Thinking",
+        "org": "JetBrains",
+        "access": "open",
+        "family": {
+            "name": "Mellum",
+            "ver": "2"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "12B",
+            "active": "2.5B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q8_0",
+            "method": "Static"
+        },
+        "link": "hugging_face:JetBrains:Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
+        "args": {
+            "spec": {
+                "method": "ngram",
+                "n-match": 32,
+                "n-min": 16,
+                "n-max": 64
+            },
+            "temp": 0.6,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0,
+            "presence-penalty": 0,
+            "repeat-penalty": 1
+        }
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9519"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "Tesla P100-PCIE-16GB",
+        "chip": "",
+        "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+        "driver": "580.159.03",
+        "cuda": "13.0"
+    },
+    "score": {
+        "total": 78,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 81,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 65,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 79,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 88,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 74,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T18:50:29.186Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 1,
+            "time": 19499
+        },
+        "DE-02": {
+            "status": 0,
+            "time": 19332
+        },
+        "DE-03": {
+            "status": 1,
+            "time": 27102
+        },
+        "DE-04": {
+            "status": null,
+            "time": 47370
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 35717
+        },
+        "DE-06": {
+            "status": null,
+            "time": 32025
+        },
+        "DE-07": {
+            "status": null,
+            "time": 48367
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 15532
+        },
+        "DE-09": {
+            "status": null,
+            "time": 47716
+        },
+        "DE-10": {
+            "status": null,
+            "time": 26658
+        },
+        "DE-11": {
+            "status": 1,
+            "time": 23468
+        },
+        "DE-12": {
+            "status": 1,
+            "time": 44525
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 44237
+        },
+        "DE-14": {
+            "status": null,
+            "time": 18657
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 6561
+        }
+    }
+}
