@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "YuYu1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "Huihui Qwen3.6 35B A3B Abliterated",
+        "id": "huihui-qwen3.6-35b-a3b-abliterated-q8_0",
+        "org": "Qwen",
+        "access": "open",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "35B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q8_0",
+            "method": "Static"
+        },
+        "link": "hugging_face:Abiray:Huihui-Qwen3.6-35B-A3B-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 93,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T16:06:59.366Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 7221
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 3506
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 6032
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2690
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 8096
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 5657
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 10436
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 9778
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 4004
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 3282
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 16996
+        },
+        "TC-12": {
+            "status": 0,
+            "time": 28412
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 5988
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 8620
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 6886
+        }
+    }
+}
