@@ -2,8 +2,8 @@
     "BenchLocal": "0.3.0",
     "results_upload": "YuYu1015",
     "BenchPack": {
-        "name": "ToolCall-15",
-        "ver": "1.0.1"
+        "name": "ReasonMath-15",
+        "ver": "1.0.0"
     },
     "deployment": "local",
     "model": {
