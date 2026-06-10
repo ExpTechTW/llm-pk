@@ -1,0 +1,143 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "GLM 4.7 Flash",
+        "id": "glm-4.7-flash",
+        "org": "Z-AI",
+        "access": "open",
+        "family": {
+            "name": "GLM",
+            "ver": "4.7"
+        },
+        "type": "MoE",
+        "size": {
+            "params": "30B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K_M",
+            "method": "Static"
+        },
+        "link": "https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 100,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T03:47:23.401Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 4653
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 3267
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 5672
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2670
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 5898
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 5038
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 11654
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 7662
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 8165
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 5182
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 2166
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 5473
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 8546
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 3980
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 10090
+        }
+    }
+}

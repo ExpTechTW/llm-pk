@@ -23,7 +23,7 @@
     "quantization": {
       "format": "GGUF",
       "level": "Q8_0",
-      "method": ""
+      "method": "Static"
     },
     "link": "https://huggingface.co/JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
     "args": {
