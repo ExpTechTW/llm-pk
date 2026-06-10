@@ -123,6 +123,21 @@ function normalizeLink(link: string | null | undefined): string | null {
   return m ? `hugging_face:${m[1]}:${m[2]}` : link;
 }
 
+// 路徑 ↔ 檔名:DB 只存「不含目錄與副檔名的檔名」,完整路徑由 pack/ver/deployment 還原。
+//   data/{pack}/{ver}/{open|closed}/{name}.json,其中 open=local、closed=cloud。
+function fileKey(relName: string): string {
+  return relName.split("/").pop()!.replace(/\.json$/i, "");
+}
+function relNameOf(packName: string, packVer: string, deployment: string, name: string): string {
+  const folder = deployment === "cloud" ? "closed" : "open";
+  return `${packName}/${packVer}/${folder}/${name}.json`;
+}
+
+// scores / results 改用逗號分隔的純數字字串(去掉 JSON 中括號,省空間)。null → 空字串。
+function encodeNums(arr: (number | null)[]): string {
+  return arr.map((v) => (v == null ? "" : v)).join(",");
+}
+
 // 硬體廠牌 → HF 組織名(供頭像解析)。
 function resolveHwOrg(company: string | null | undefined): string | null {
   const c = company?.trim();
@@ -276,7 +291,7 @@ function createSchema(db: Database.Database): void {
       url  TEXT
     );
 
-    CREATE UNIQUE INDEX idx_sub_file ON submission(file);
+    CREATE UNIQUE INDEX idx_sub_file ON submission(pack_name, pack_ver, deployment, file);
     CREATE INDEX idx_category_pack ON category(pack_name, pack_ver, ord);
     CREATE INDEX idx_scenario_pack ON scenario(pack_name, pack_ver, ord);
   `);
@@ -304,14 +319,20 @@ async function main(): Promise<void> {
   const { db, incremental } = openDatabase();
   console.log(incremental ? "增量模式:沿用既有 data.db" : "全量模式:重新建立 data.db");
 
-  // 既有資料:file → { id, hash };以及頭像快取(只保留有 URL 的)。
+  // 既有資料:還原出完整 relName → { id, hash };以及頭像快取(只保留有 URL 的)。
   const existingByFile = new Map<string, { id: number; hash: string | null }>();
-  for (const r of db.prepare("SELECT id, file, src_hash FROM submission").all() as {
+  for (const r of db
+    .prepare("SELECT id, file, pack_name, pack_ver, deployment, src_hash FROM submission")
+    .all() as {
     id: number;
     file: string;
+    pack_name: string;
+    pack_ver: string;
+    deployment: string;
     src_hash: string | null;
   }[]) {
-    existingByFile.set(r.file, { id: r.id, hash: r.src_hash });
+    const rel = relNameOf(r.pack_name, r.pack_ver, r.deployment, r.file);
+    existingByFile.set(rel, { id: r.id, hash: r.src_hash });
   }
   const avatarCache = new Map<string, string>();
   for (const r of db.prepare("SELECT name, url FROM avatar_cache").all() as {
@@ -413,7 +434,6 @@ async function main(): Promise<void> {
       @pass_count, @half_count, @total_count, @total_time, @results
     )
   `);
-  const selIdByFile = db.prepare("SELECT id FROM submission WHERE file = ?");
   const delSub = db.prepare("DELETE FROM submission WHERE id = ?");
   const insertCategory = db.prepare(
     "INSERT INTO category (pack_name, pack_ver, ord, cat_id, label, weight) VALUES (?, ?, ?, ?, ?, ?)"
@@ -428,10 +448,10 @@ async function main(): Promise<void> {
     for (const r of newCatRows) insertCategory.run(...r);
     for (const r of newScenRows) insertScenario.run(...r);
 
-    // 先刪除:已移除的檔案 + 需重建的變更檔。
-    for (const file of new Set([...toDelete, ...toProcess.map((e) => e.relName)])) {
-      const row = selIdByFile.get(file) as { id: number } | undefined;
-      if (row) delSub.run(row.id);
+    // 先刪除:已移除的檔案 + 需重建的變更檔(用既有 relName→id 對照)。
+    for (const rel of new Set([...toDelete, ...toProcess.map((e) => e.relName)])) {
+      const ex = existingByFile.get(rel);
+      if (ex) delSub.run(ex.id);
     }
 
     // 插入新增/變更的投稿。
@@ -453,7 +473,7 @@ async function main(): Promise<void> {
       }
 
       insertSub.run({
-        file: entry.relName,
+        file: fileKey(entry.relName),
         src_hash: entry.hash,
         benchlocal: s.BenchLocal,
         results_upload: s.results_upload,
@@ -484,14 +504,12 @@ async function main(): Promise<void> {
         hw_driver: hw?.driver ?? null,
         hw_extra: Object.keys(hwExtra).length ? JSON.stringify(hwExtra) : null,
         score_total: s.score.total,
-        // 分數對齊該 pack 的類別順序,只存數字陣列(類別 id/label/weight 在 category 表)。
-        scores: JSON.stringify(
-          (() => {
-            const order = catOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
-            const byId = new Map((s.score.categories ?? []).map((c) => [c.id, c.score]));
-            return order.map((id) => byId.get(id) ?? null);
-          })()
-        ),
+        // 分數對齊該 pack 的類別順序,逗號分隔數字(類別 id/label/weight 在 category 表)。
+        scores: (() => {
+          const order = catOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
+          const byId = new Map((s.score.categories ?? []).map((c) => [c.id, c.score]));
+          return encodeNums(order.map((id) => byId.get(id) ?? null));
+        })(),
         run_date: s.run.date,
         run_mode: s.run.mode ?? null,
         runs_per_test: s.run.runsPerTest,
@@ -499,16 +517,16 @@ async function main(): Promise<void> {
         half_count: stats.halfCount,
         total_count: stats.totalCount,
         total_time: stats.totalTime,
-        // 每題結果對齊該 pack 的題目順序,只存 [status,time] 陣列(題號在 scenario 表)。
-        results: JSON.stringify(
-          (() => {
-            const order = scenOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
-            return order.map((sid) => {
-              const e = s.results[sid];
-              return e ? [e.status, e.time] : [null, 0];
-            });
-          })()
-        )
+        // 每題結果對齊該 pack 的題目順序,逗號分隔的 status,time,status,time…(題號在 scenario 表)。
+        results: (() => {
+          const order = scenOrder.get(packKey(s.BenchPack.name, s.BenchPack.ver)) ?? [];
+          const flat: (number | null)[] = [];
+          for (const sid of order) {
+            const e = s.results[sid];
+            flat.push(e ? e.status : null, e ? e.time : 0);
+          }
+          return encodeNums(flat);
+        })()
       });
     }
 

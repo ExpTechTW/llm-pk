@@ -100,6 +100,12 @@ function parseJson<T>(value: string | null, fallback: T): T {
   }
 }
 
+// 逗號分隔數字字串 → 陣列(空字串視為 null)。scores / results 用此緊湊編碼取代 JSON。
+function parseNums(s: string | null): (number | null)[] {
+  if (!s) return [];
+  return s.split(",").map((x) => (x === "" ? null : Number(x)));
+}
+
 // 還原建置期壓掉共同前綴的頭像 URL(u/ = HF CDN 上傳、a/ = HF 預設頭像)。
 function expandAvatar(s: string | null): string | null {
   if (!s) return null;
@@ -133,7 +139,7 @@ function getScenarios(db: Database, packName: string, packVer: string): string[]
 }
 
 function mapRow(r: RawRow, cats: CatDef[]): SubmissionRow {
-  const scores = parseJson<(number | null)[]>(r.scores, []);
+  const scores = parseNums(r.scores);
   return {
     id: r.id,
     uploader: r.results_upload,
@@ -235,7 +241,15 @@ export function getResults(db: Database, submissionId: number): ResultEntry[] {
     { $id: submissionId }
   );
   if (!rows.length || !rows[0].results) return [];
-  const arr = parseJson<[number | null, number][]>(rows[0].results, []);
+  const flat = parseNums(rows[0].results); // status,time,status,time…
   const scenarios = getScenarios(db, rows[0].pack_name, rows[0].pack_ver);
-  return arr.map((v, i) => ({ scenarioId: scenarios[i] ?? String(i + 1), status: v[0], time: v[1] }));
+  const out: ResultEntry[] = [];
+  for (let i = 0; i < flat.length; i += 2) {
+    out.push({
+      scenarioId: scenarios[i / 2] ?? String(i / 2 + 1),
+      status: flat[i],
+      time: flat[i + 1] ?? 0
+    });
+  }
+  return out;
 }

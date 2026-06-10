@@ -304,61 +304,40 @@ export default function Detail() {
         title={`題目結果 · ${formatPass(row.passCount, row.halfCount)}/${row.totalCount} 通過${row.halfCount > 0 ? `(含半對 ${row.halfCount})` : ""},未過 ${wrong.length} 題`}
         titleSize="text-sm"
       >
-        <p className="text-muted-foreground mb-3 text-xs">點題號查看題目與評分標準</p>
-        <div className="flex flex-wrap gap-1.5">
+        <p className="text-muted-foreground mb-3 text-xs">每題顯示測試重點,點卡片看完整題目與評分標準</p>
+        <div className="grid gap-1.5 sm:grid-cols-2">
           {results.map((r) => {
             const info = statusInfo(r.status);
+            const sc = exam?.scenarios[r.scenarioId];
             return (
               <button
                 key={r.scenarioId}
                 type="button"
                 onClick={() => setOpenQ(r.scenarioId)}
-                title={`${r.scenarioId} · ${info.label} · ${formatTime(r.time)}`}
-                className={cn(
-                  "font-data hover:ring-primary/60 grid h-10 w-10 place-items-center rounded-lg text-sm font-semibold tabular-nums transition-all hover:scale-105 hover:ring-2",
-                  info.chip
-                )}
+                className="group border-border/60 bg-card/40 hover:border-primary/50 hover:bg-muted/40 flex items-center gap-2.5 rounded-xl border px-2.5 py-2 text-left transition-colors"
               >
-                {shortId(r.scenarioId)}
+                <span
+                  className={cn(
+                    "font-data grid h-8 w-9 shrink-0 place-items-center rounded-lg text-xs font-bold tabular-nums",
+                    info.chip
+                  )}
+                >
+                  {shortId(r.scenarioId)}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium" title={sc?.title}>
+                    {sc?.title ?? r.scenarioId}
+                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
+                    <span className={cn("size-1.5 shrink-0 rounded-full", info.dot)} />
+                    {info.label}
+                    {sc?.category ? ` · ${sc.category}` : ""} · {formatTime(r.time)}
+                  </span>
+                </span>
               </button>
             );
           })}
         </div>
-
-        {wrong.length > 0 ? (
-          <div className="mt-5 flex flex-col gap-1">
-            <span className="text-muted-foreground mb-1 text-[10px] font-semibold tracking-[0.16em] uppercase">
-              未過題目(錯誤 / 半對)
-            </span>
-            <div className="divide-border/60 flex flex-col divide-y">
-              {wrong.map((r) => {
-                const info = statusInfo(r.status);
-                return (
-                  <button
-                    key={r.scenarioId}
-                    type="button"
-                    onClick={() => setOpenQ(r.scenarioId)}
-                    className="hover:bg-muted/40 -mx-2 flex items-center justify-between gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className={cn("size-1.5 rounded-full", info.dot)} />
-                      <span className="font-mono">{r.scenarioId}</span>
-                      <span className="text-muted-foreground truncate">
-                        {exam?.scenarios[r.scenarioId]?.title ?? ""}
-                      </span>
-                    </span>
-                    <span className="flex items-center gap-3">
-                      <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", info.chip)}>{info.label}</span>
-                      <span className="text-muted-foreground font-data text-xs tabular-nums">{formatTime(r.time)}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <p className="text-muted-foreground mt-4 text-sm">全部題目通過 🎉</p>
-        )}
       </Panel>
 
       {/* 題目詳細 modal */}

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Check, Copy, GitCompareArrows, Loader2, Search } from "lucide-react";
+import { Check, Copy, GitCompareArrows, Layers, Loader2 } from "lucide-react";
 
 import { OrgLogo } from "@/components/ui/org-logo";
+import { HfAvatar } from "@/components/ui/avatar";
 import { PackSelect } from "@/components/PackSelect";
 import {
   Select,
@@ -11,10 +12,12 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { getPacks, getSubmissionsByPack } from "@/lib/db";
+import { getPacks, getResults, getSubmissionsByPack } from "@/lib/db";
 import { useDb } from "@/hooks/useDb";
 import { modelBadges } from "@/lib/badges";
 import { avgTime } from "@/lib/filters";
+import { loadExam, type ExamPack } from "@/lib/exam";
+import { statusKind } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +55,12 @@ function IdentityCard({
         <div className="font-display truncate text-sm leading-tight font-bold sm:text-base" title={row.modelName}>
           {row.modelName}
         </div>
-        <div className="text-muted-foreground/70 truncate text-xs">@{row.uploader}</div>
+        {row.linkAuthor ? (
+          <div className="text-muted-foreground/70 mt-0.5 flex items-center justify-center gap-1 text-xs">
+            <HfAvatar handle={row.linkAuthor} avatarUrl={row.linkAuthorAvatar} size={14} linked={false} />
+            <span className="truncate">{row.linkAuthor}</span>
+          </div>
+        ) : null}
       </div>
       <div className="font-data text-3xl leading-none font-bold tabular-nums" style={{ color }}>
         {row.scoreTotal.toFixed(1)}
@@ -203,6 +211,65 @@ function Radar({
   );
 }
 
+/* --------------------------- 逐題對比卡片 --------------------------- */
+
+function statusTone(status: number | null): { label: string; cls: string } {
+  switch (statusKind(status)) {
+    case "pass":
+      return { label: "通過", cls: "text-emerald-300 border-emerald-400/30 bg-emerald-400/10" };
+    case "half":
+      return { label: "半對", cls: "text-amber-300 border-amber-400/30 bg-amber-400/10" };
+    case "fail":
+      return { label: "未過", cls: "text-red-300 border-red-400/30 bg-red-400/10" };
+    default:
+      return { label: "未測", cls: "text-muted-foreground border-border/50 bg-muted/40" };
+  }
+}
+
+function SideStatus({ side, color, status }: { side: string; color: string; status: number | null }) {
+  const t = statusTone(status);
+  return (
+    <div className={cn("flex items-center justify-between gap-1.5 rounded-lg border px-2 py-1", t.cls)}>
+      <span className="inline-flex items-center gap-1.5 font-medium">
+        <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
+        {side}
+      </span>
+      <span className="font-semibold">{t.label}</span>
+    </div>
+  );
+}
+
+function ScenarioCard({
+  sid,
+  q,
+  aStatus,
+  bStatus
+}: {
+  sid: string;
+  q: ExamPack["scenarios"][string] | undefined;
+  aStatus: number | null;
+  bStatus: number | null;
+}) {
+  return (
+    <div className="bg-card/50 border-border/60 flex flex-col gap-2 rounded-xl border p-3">
+      <div className="flex items-center gap-2">
+        <span className="font-data bg-muted shrink-0 rounded px-1.5 py-0.5 text-[11px] font-semibold">{sid}</span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold" title={q?.title}>
+          {q?.title ?? sid}
+        </span>
+        {q?.category ? (
+          <span className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">{q.category}</span>
+        ) : null}
+      </div>
+      {q?.prompt ? <p className="text-muted-foreground text-xs leading-relaxed">{q.prompt}</p> : null}
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SideStatus side="A" color={COLOR_A} status={aStatus} />
+        <SideStatus side="B" color={COLOR_B} status={bStatus} />
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ 主頁面 ------------------------------ */
 
 export default function Compare() {
@@ -236,29 +303,31 @@ export default function Compare() {
   const a = byId.get(sp.get("a") ?? "") ?? null;
   const b = byId.get(sp.get("b") ?? "") ?? null;
 
-  // 初步篩選:系列 + 文字搜尋(縮小兩個選擇器的候選清單)。
-  const [family, setFamily] = useState<string>("__all__");
-  const [query, setQuery] = useState("");
+  // 系列只是大篩選器(避免選項過多),左右各自獨立,可比不同系列。
   const families = useMemo(() => {
     const s = new Set<string>();
     rows.forEach((r) => r.familyName && s.add(r.familyName));
     return [...s].sort();
   }, [rows]);
+  // 系列 → 代表性廠牌(取該系列第一筆的 org / 頭像)當作系列圖示。
+  const familyMeta = useMemo(() => {
+    const m = new Map<string, { org: string | null; avatar: string | null }>();
+    for (const r of rows) {
+      if (r.familyName && !m.has(r.familyName)) m.set(r.familyName, { org: r.modelOrg, avatar: r.orgAvatar });
+    }
+    return m;
+  }, [rows]);
+  const [famA, setFamA] = useState("__all__");
+  const [famB, setFamB] = useState("__all__");
 
-  // 換 pack 時候選清單會變,重置篩選。
+  // 換 pack 時候選清單會變,重置兩側系列篩選。
   useEffect(() => {
-    setFamily("__all__");
-    setQuery("");
+    setFamA("__all__");
+    setFamB("__all__");
   }, [packName, packVer]);
 
-  const candidates = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return rows.filter((r) => {
-      if (family !== "__all__" && r.familyName !== family) return false;
-      if (q && !`${r.modelName} ${r.uploader}`.toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [rows, family, query]);
+  const candidatesFor = (fam: string) =>
+    fam === "__all__" ? rows : rows.filter((r) => r.familyName === fam);
 
   const setSide = (side: "a" | "b", id: string) =>
     setSp((prev) => {
@@ -266,6 +335,19 @@ export default function Compare() {
       n.set(side, id);
       return n;
     });
+
+  // 切換系列:更新該側系列篩選,若已選模型不屬於新系列就一併 reset。
+  const changeFamily = (side: "a" | "b", fam: string) => {
+    (side === "a" ? setFamA : setFamB)(fam);
+    const cur = side === "a" ? a : b;
+    if (cur && fam !== "__all__" && cur.familyName !== fam) {
+      setSp((prev) => {
+        const n = new URLSearchParams(prev);
+        n.delete(side);
+        return n;
+      });
+    }
+  };
 
   const setPack = (name: string, ver: string) =>
     setSp((prev) => {
@@ -287,6 +369,31 @@ export default function Compare() {
       /* 忽略 */
     }
   };
+
+  // 題庫(題目說明 + 評分標準),逐題對比用。
+  const [exam, setExam] = useState<ExamPack | null>(null);
+  useEffect(() => {
+    let alive = true;
+    if (packName && packVer) loadExam(packName, packVer).then((e) => alive && setExam(e));
+    else setExam(null);
+    return () => {
+      alive = false;
+    };
+  }, [packName, packVer]);
+
+  // A / B 的逐題結果,對齊成卡片資料。
+  const aResults = useMemo(() => (db && a ? getResults(db, a.id) : []), [db, a]);
+  const bResults = useMemo(() => (db && b ? getResults(db, b.id) : []), [db, b]);
+  const scenarioRows = useMemo(() => {
+    if (!a || !b) return [];
+    const bMap = new Map(bResults.map((r) => [r.scenarioId, r.status]));
+    return aResults.map((r) => ({
+      sid: r.scenarioId,
+      q: exam?.scenarios[r.scenarioId],
+      aStatus: r.status,
+      bStatus: bMap.get(r.scenarioId) ?? null
+    }));
+  }, [a, b, aResults, bResults, exam]);
 
   // 類別(兩邊同 pack → 一致),以 A 的順序對齊 B。
   const cats = useMemo(() => {
@@ -358,70 +465,81 @@ export default function Compare() {
         </div>
       ) : (
         <>
-          {/* 初步篩選:測試 + 系列 + 搜尋 */}
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-            {packs.length > 0 ? (
+          {/* 測試(pack)共用 */}
+          {packs.length > 0 ? (
+            <div className="mb-4">
               <PackSelect
                 packs={packs}
                 value={packName && packVer ? { name: packName, ver: packVer } : null}
                 onChange={(p) => setPack(p.name, p.ver)}
               />
-            ) : null}
-            {families.length > 0 ? (
-              <Select value={family} onValueChange={setFamily}>
-                <SelectTrigger aria-label="依系列篩選" className="sm:w-44">
-                  <span className="text-muted-foreground text-[10px] tracking-[0.16em] uppercase">系列</span>
-                  <SelectValue className="text-sm font-semibold" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">全部系列</SelectItem>
-                  {families.map((f) => (
-                    <SelectItem key={f} value={f}>
-                      {f}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : null}
-            <div className="border-border/60 bg-card/50 flex flex-1 items-center gap-2 rounded-lg border px-3 py-2 sm:min-w-48">
-              <Search className="text-muted-foreground size-4 shrink-0" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="搜尋模型 / 上傳者…"
-                className="placeholder:text-muted-foreground/60 w-full bg-transparent text-sm outline-none"
-              />
             </div>
-          </div>
+          ) : null}
 
-          {/* 左右選擇器 */}
+          {/* 左右選擇器:各自有系列篩選(大分類)+ 模型選擇,可比不同系列 */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {(["a", "b"] as const).map((side) => {
               const value = side === "a" ? a : b;
               const color = side === "a" ? COLOR_A : COLOR_B;
+              const fam = side === "a" ? famA : famB;
+              const candidates = candidatesFor(fam);
               return (
-                <Select
-                  key={side}
-                  value={value ? String(value.id) : undefined}
-                  onValueChange={(id) => setSide(side, id)}
-                >
-                  <SelectTrigger aria-label={`選擇模型 ${side.toUpperCase()}`} className="w-full">
-                    <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                    <SelectValue placeholder={`選擇模型 ${side.toUpperCase()}…`} className="truncate text-sm font-semibold" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* 確保已選的也在清單內(即使被篩掉) */}
-                    {Array.from(new Set([...(value ? [value] : []), ...candidates])).map((r) => (
-                      <SelectItem key={r.id} value={String(r.id)} className="font-medium">
-                        {r.modelName}
-                        <span className="text-muted-foreground ml-1 font-normal">@{r.uploader}</span>
-                      </SelectItem>
-                    ))}
-                    {candidates.length === 0 ? (
-                      <div className="text-muted-foreground px-2 py-1.5 text-xs">無符合的模型</div>
-                    ) : null}
-                  </SelectContent>
-                </Select>
+                <div key={side} className="flex min-w-0 flex-col gap-1.5">
+                  {families.length > 0 ? (
+                    <Select value={fam} onValueChange={(f) => changeFamily(side, f)}>
+                      <SelectTrigger
+                        aria-label={`${side.toUpperCase()} 系列篩選`}
+                        className="text-muted-foreground hover:text-foreground w-full rounded-lg py-1.5 text-xs"
+                      >
+                        <SelectValue className="min-w-0 flex-1 text-left" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__all__">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Layers className="size-3.5 shrink-0 opacity-70" />
+                            <span className="truncate">全部系列</span>
+                          </span>
+                        </SelectItem>
+                        {families.map((f) => {
+                          const meta = familyMeta.get(f);
+                          return (
+                            <SelectItem key={f} value={f}>
+                              <span className="flex min-w-0 items-center gap-2">
+                                <OrgLogo org={meta?.org ?? f} avatar={meta?.avatar ?? null} size={18} radius="rounded-md" />
+                                <span className="truncate">{f}</span>
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  ) : null}
+                  <Select
+                    value={value ? String(value.id) : undefined}
+                    onValueChange={(id) => setSide(side, id)}
+                  >
+                    <SelectTrigger aria-label={`選擇模型 ${side.toUpperCase()}`} className="w-full">
+                      <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+                      <SelectValue placeholder={`模型 ${side.toUpperCase()}…`} className="min-w-0 flex-1 text-left text-sm font-semibold" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* 確保已選的也在清單內(即使被系列篩掉) */}
+                      {Array.from(new Set([...(value ? [value] : []), ...candidates])).map((r) => (
+                        <SelectItem key={r.id} value={String(r.id)}>
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className="truncate font-medium">{r.modelName}</span>
+                            {r.linkAuthor ? (
+                              <span className="text-muted-foreground shrink-0 text-xs">· {r.linkAuthor}</span>
+                            ) : null}
+                          </span>
+                        </SelectItem>
+                      ))}
+                      {candidates.length === 0 ? (
+                        <div className="text-muted-foreground px-2 py-1.5 text-xs">無符合的模型</div>
+                      ) : null}
+                    </SelectContent>
+                  </Select>
+                </div>
               );
             })}
           </div>
@@ -444,14 +562,14 @@ export default function Compare() {
                     aVals={cats.map((c) => c.a)}
                     bVals={cats.map((c) => c.b)}
                   />
-                  <div className="text-muted-foreground mt-2 flex items-center justify-center gap-4 text-xs">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-full" style={{ backgroundColor: COLOR_A }} />
-                      {a.modelName}
+                  <div className="text-muted-foreground mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs">
+                    <span className="inline-flex min-w-0 items-center gap-1.5">
+                      <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: COLOR_A }} />
+                      <span className="truncate">{a.modelName}</span>
                     </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-full" style={{ backgroundColor: COLOR_B }} />
-                      {b.modelName}
+                    <span className="inline-flex min-w-0 items-center gap-1.5">
+                      <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: COLOR_B }} />
+                      <span className="truncate">{b.modelName}</span>
                     </span>
                   </div>
                 </div>
@@ -462,10 +580,31 @@ export default function Compare() {
                   <VersusBar key={m.label} m={m} />
                 ))}
               </div>
+
+              {/* 逐題對比:題目說明 + 評分標準 + A/B 結果(放最下,RWD 卡片) */}
+              {scenarioRows.length > 0 ? (
+                <section className="mt-8">
+                  <h2 className="font-display text-lg font-bold">逐題對比</h2>
+                  <p className="text-muted-foreground mt-0.5 mb-3 text-xs">
+                    每題的測試重點與評分標準,以及 A / B 各自的結果
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {scenarioRows.map((s) => (
+                      <ScenarioCard
+                        key={s.sid}
+                        sid={s.sid}
+                        q={s.q}
+                        aStatus={s.aStatus}
+                        bStatus={s.bStatus}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ) : null}
             </>
           ) : (
             <p className="text-muted-foreground/70 mt-6 text-center text-sm">
-              在上方左右各選一個模型即可對比 · 可用「系列 / 搜尋」縮小清單 · 選好後「複製連結」分享
+              在上方左右各選一個模型即可對比 · 可用「系列」縮小清單 · 選好後「複製連結」分享
             </p>
           )}
         </>
