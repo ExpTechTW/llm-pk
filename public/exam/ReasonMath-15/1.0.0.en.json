@@ -1,0 +1,157 @@
+{
+  "pack": "ReasonMath-15",
+  "ver": "1.0.0",
+  "lang": "en",
+  "scenarios": {
+    "RM-01": {
+      "title": "Bill Splitting with Tax and Tip",
+      "category": "A",
+      "prompt": "Three friends had dinner. The food total was $84.00 before tax. Tax is 8.5%. They want to leave a 20% tip calculated on the pre-tax amount. How much does each person owe in total?",
+      "criteria": [
+        "Multi-step percentage arithmetic with an explicit tip base and a per-person total.",
+        "✓ Uses the right tax and tip bases, then ends with the published per-person answer line.",
+        "✗ Calculates tip on the wrong base or omits the required final answer line."
+      ]
+    },
+    "RM-02": {
+      "title": "Unit Conversion Chain",
+      "category": "A",
+      "prompt": "A recipe calls for 2.5 cups of flour. I only have a kitchen scale. If 1 cup of flour weighs approximately 125 grams, how many kilograms of flour do I need?",
+      "criteria": [
+        "Two-step conversion from cups to grams to kilograms with a published partial-credit endpoint.",
+        "✓ Converts to kilograms and ends with the required answer format.",
+        "✗ Stops at grams or omits the answer line entirely."
+      ]
+    },
+    "RM-03": {
+      "title": "Percentage Change — Not What You Think",
+      "category": "A",
+      "prompt": "A shirt was originally $80. It went on sale for 25% off. After you bought it on sale, the store raised the original price by 25%. What is the new original price, and did you save money compared to the new price?\n\nReturn the final line exactly in this format:\nANSWER: new_original_price=<money>; saved_money=<yes|no>",
+      "criteria": [
+        "A percentage-increase trap where decrease and increase are not symmetric.",
+        "✓ Separates the sale price from the later new original price and reports both requested outputs.",
+        "✗ Claims the price simply returns to $80 or misses one of the requested values."
+      ]
+    },
+    "RM-04": {
+      "title": "Constraint Consistency Check",
+      "category": "B",
+      "prompt": "There are 5 houses in a row. Each house is painted a different color: red, blue, green, yellow, white. Given these clues:\n1. The red house is immediately to the left of the blue house.\n2. The green house is in the middle (position 3).\n3. The yellow house is not next to the green house.\n4. The white house is at one of the ends (position 1 or 5).\n\nWhat is the order of the houses from left to right?",
+      "criteria": [
+        "An intentionally unsatisfiable logic puzzle that should be rejected cleanly.",
+        "✓ Detects that the clues are inconsistent and ends with `ANSWER: status=unsat` or an accepted equivalent.",
+        "✗ Forces an invalid arrangement instead of reporting the contradiction."
+      ]
+    },
+    "RM-05": {
+      "title": "Scheduling Conflict Resolution",
+      "category": "B",
+      "prompt": "I need to schedule 4 meetings today. Each meeting is 45 minutes long with 15 minutes of buffer between meetings. My available time starts at 9:00 AM and ends at 1:00 PM. I also have a fixed lunch break from 12:00 PM to 12:30 PM that cannot be moved.\n\nCan I fit all 4 meetings? If yes, what are the time slots? If no, how many can I fit?\n\nReturn the final line exactly in this format:\nANSWER: fit=<yes|no>; max_meetings=<integer>\n\nDo not include the slots in the final ANSWER line.",
+      "criteria": [
+        "Scheduling arithmetic with buffers, a fixed lunch block, and a max-fit conclusion.",
+        "✓ Counts the usable minutes correctly and reports that only three meetings fit.",
+        "✗ Ignores buffers or lunch and overstates capacity."
+      ]
+    },
+    "RM-06": {
+      "title": "Monty Hall Variant with Explicit Host Rule",
+      "category": "B",
+      "prompt": "You're on a game show with 4 doors. Behind one door is a car. Behind the other 3 doors are goats. You pick Door 1.\n\nThe host knows where the car is. The host always opens exactly 2 goat doors among the 3 doors you did not choose, leaving exactly 1 unopened alternative door besides your original choice. If the host has more than one valid pair of goat doors to open, the host chooses uniformly at random among those valid pairs.\n\nIn this run, the host opens Door 3 and Door 4, both goats, and offers you the chance to switch to Door 2.\n\nWhat is the probability of winning the car if you switch to Door 2? What if you stay with Door 1?",
+      "criteria": [
+        "Conditional probability with a nonstandard four-door host rule.",
+        "✓ Applies the stated host rule and reports the 75%/25% split.",
+        "✗ Treats the host choice as random noise or collapses to the wrong probability."
+      ]
+    },
+    "RM-07": {
+      "title": "Speed, Distance, Time with a Twist",
+      "category": "C",
+      "prompt": "Alice drives from City A to City B at 60 km/h. The trip takes 3 hours. She then drives back from City B to City A, but hits traffic and averages only 40 km/h on the return.\n\nWhat is her average speed for the entire round trip?",
+      "criteria": [
+        "Round-trip average speed where arithmetic must be done over total distance and total time.",
+        "✓ Computes both trip legs and reports the combined average speed.",
+        "✗ Averages 60 and 40 directly instead of using total distance over total time."
+      ]
+    },
+    "RM-08": {
+      "title": "Rate and Proportion Problem",
+      "category": "C",
+      "prompt": "A bathtub has two faucets. Faucet A alone fills the tub in 12 minutes. Faucet B alone fills it in 18 minutes. There's also a drain that empties the full tub in 36 minutes. If both faucets are open and the drain is open, how long does it take to fill the tub?\n\nReturn the final line exactly in this format:\nANSWER: fill_time=<number> minutes",
+      "criteria": [
+        "Combines positive fill rates and a negative drain rate into one net-fill calculation.",
+        "✓ Adds the rates correctly and inverts the combined rate for the time.",
+        "✗ Adds or subtracts times directly instead of rates."
+      ]
+    },
+    "RM-09": {
+      "title": "Age Problem with Temporal Reasoning",
+      "category": "C",
+      "prompt": "Five years ago, Maria was 3 times as old as her son. In 5 years from now, Maria will be twice as old as her son. How old is Maria now?",
+      "criteria": [
+        "Temporal algebra with two age relationships anchored at different times.",
+        "✓ Sets up the two time-shifted equations and solves them consistently.",
+        "✗ Confuses the time offsets or solves only one equation."
+      ]
+    },
+    "RM-10": {
+      "title": "The Classic Bat and Ball — Extended",
+      "category": "D",
+      "prompt": "A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. A glove costs twice as much as the bat. How much does the glove cost?",
+      "criteria": [
+        "The classic price trap with one more dependent step added for the glove.",
+        "✓ Solves the original bat-and-ball relation correctly before doubling the bat price.",
+        "✗ Falls for the $0.10 ball trap and propagates the wrong price."
+      ]
+    },
+    "RM-11": {
+      "title": "The Lily Pad Problem — Backward Reasoning",
+      "category": "D",
+      "prompt": "A lake has lily pads growing on it. The area covered by lily pads doubles every day. On day 30, the entire lake is covered. On what day was the lake half covered?\n\nReturn the final line exactly in this format:\nANSWER: day=<integer>",
+      "criteria": [
+        "A classic backward-reasoning check on doubling growth.",
+        "✓ Reasons backward one day from the fully covered state.",
+        "✗ Treats the growth as linear instead of doubling."
+      ]
+    },
+    "RM-12": {
+      "title": "Family-Relation Riddle",
+      "category": "D",
+      "prompt": "A man points to a photograph and says, \"Brothers and sisters I have none, but that man's father is my father's son.\" Who is in the photograph?\n\nUse the relationship from the speaker's point of view.\nReturn the final line exactly in this format:\nANSWER: person=<relationship>",
+      "criteria": [
+        "Relation-logic parsing with a self-reference trap.",
+        "✓ Resolves the self-reference and ends with his son as the answer.",
+        "✗ Misreads `my father's son` as someone other than the speaker."
+      ]
+    },
+    "RM-13": {
+      "title": "Compound Interest Calculation",
+      "category": "E",
+      "prompt": "I invest $5,000 in a savings account that earns 4.5% annual interest, compounded monthly. How much will I have after 3 years? What is the total interest earned?\n\nReturn the final line exactly in this format:\nANSWER: amount=<money>; interest=<money>",
+      "criteria": [
+        "Practical finance math with monthly compounding and a required total-interest output.",
+        "✓ Uses the compound-interest formula and reports both the balance and interest earned.",
+        "✗ Uses simple interest or omits one of the requested outputs."
+      ]
+    },
+    "RM-14": {
+      "title": "Conversion with Multiple Systems",
+      "category": "E",
+      "prompt": "A European recipe says to bake at 180°C for 45 minutes in a regular oven. I have a convection oven and I'm in the US. What temperature should I set in Fahrenheit, and for how long? Convection ovens should be set 25°F lower than the regular-oven equivalent, and baking time should be reduced by about 25%.\n\nRound the baking time to the nearest whole minute.\n\nReturn the final line exactly in this format:\nANSWER: temp_f=<integer>; time_min=<integer>",
+      "criteria": [
+        "Temperature and time conversion across metric, imperial, and convection-oven adjustments.",
+        "✓ Converts to Fahrenheit, applies the convection adjustment, and shortens the baking time correctly.",
+        "✗ Misses one of the conversion steps or rounds the wrong value."
+      ]
+    },
+    "RM-15": {
+      "title": "Combinatorial Reasoning — PIN Possibilities",
+      "category": "E",
+      "prompt": "A website requires a 4-digit PIN, where each digit is 0–9. How many possible PINs are there if:\n1. All 4 digits must be different\n2. The PIN must start with a non-zero digit\n3. The digits must be in strictly increasing order\n\nReturn the final line exactly in this format:\nANSWER: count=<integer>",
+      "criteria": [
+        "A counting problem that combines uniqueness, leading-digit, and strict-order constraints.",
+        "✓ Recognizes that strict ordering collapses arrangements to combinations and excludes zero correctly.",
+        "✗ Counts permutations instead of the valid ordered digit sets."
+      ]
+    }
+  }
+}

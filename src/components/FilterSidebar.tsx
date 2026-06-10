@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 
 import { Slider } from "@/components/ui/slider";
+import { useI18n } from "@/lib/i18n";
 import {
   FACETS,
   PRICE_FIELDS,
@@ -10,6 +11,7 @@ import {
   countRangeActive,
   countSelected,
   type Bounds,
+  type FacetDef,
   type FacetValueCount,
   type Range,
   type RangeFieldDef,
@@ -32,6 +34,11 @@ interface FilterSidebarProps {
   sizeBounds: Bounds;
   sizeRanges: Ranges;
   onSizeChange: (key: string, range: Range) => void;
+}
+
+// facet 值的顯示文字:有 valueKey 就翻譯,否則直接用 token(系列 / 量化等 data 值)。
+function facetValueLabel(facet: FacetDef, value: string, t: ReturnType<typeof useI18n>["t"]): string {
+  return facet.valueKey ? t(facet.valueKey(value)) : value;
 }
 
 // 可展開 / 縮起的分類區塊。
@@ -77,15 +84,17 @@ function RangeGroup({
   ranges: Ranges;
   onChange: (key: string, range: Range) => void;
 }) {
+  const { t } = useI18n();
   return (
     <>
       {fields.map((f) => {
         const [lo, hi] = bounds[f.key];
         const range = ranges[f.key] ?? [lo, hi];
+        const label = t(f.labelKey);
         return (
           <div key={f.key} className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{f.label}</span>
+              <span className="text-muted-foreground">{label}</span>
               <span className="font-data text-foreground tabular-nums">
                 {f.format(range[0])} – {f.format(range[1])}
               </span>
@@ -96,7 +105,7 @@ function RangeGroup({
               step={f.step(lo, hi)}
               value={range}
               onValueChange={(v) => onChange(f.key, [v[0], v[1]])}
-              aria-label={`${f.label}區間`}
+              aria-label={label}
             />
           </div>
         );
@@ -119,6 +128,7 @@ export function FilterSidebar({
   sizeRanges,
   onSizeChange
 }: FilterSidebarProps) {
+  const { t } = useI18n();
   const activeCount =
     countSelected(selected) +
     countRangeActive(priceRanges, priceBounds, PRICE_FIELDS) +
@@ -143,7 +153,7 @@ export function FilterSidebar({
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
         <SlidersHorizontal className="text-primary size-4" />
-        <span className="font-display text-sm font-bold">篩選與排序</span>
+        <span className="font-display text-sm font-bold">{t("filter.title")}</span>
         {activeCount > 0 ? (
           <button
             type="button"
@@ -151,30 +161,33 @@ export function FilterSidebar({
             className="text-muted-foreground hover:text-foreground ml-auto inline-flex items-center gap-1 text-xs"
           >
             <X className="size-3" />
-            清除 {activeCount}
+            {t("filter.clear", { n: activeCount })}
           </button>
         ) : null}
       </div>
 
       {/* 排序 */}
-      <Section title="排序" titleSize="text-sm" open={isOpen("sort")} onToggle={() => toggleSection("sort")} bodyGap="gap-2">
+      <Section title={t("sort.title")} titleSize="text-sm" open={isOpen("sort")} onToggle={() => toggleSection("sort")} bodyGap="gap-2">
         <div className="bg-muted/60 grid grid-cols-2 gap-0.5 rounded-lg p-0.5">
-          {SORT_OPTIONS.map((option) => (
-            <button
-              key={option.key}
-              type="button"
-              title={option.label}
-              onClick={() => onSortChange(option.key)}
-              className={cn(
-                "rounded-md px-2 py-1.5 text-center text-xs leading-tight font-medium transition-colors",
-                sort === option.key
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
+          {SORT_OPTIONS.map((option) => {
+            const label = t(option.labelKey);
+            return (
+              <button
+                key={option.key}
+                type="button"
+                title={label}
+                onClick={() => onSortChange(option.key)}
+                className={cn(
+                  "rounded-md px-2 py-1.5 text-center text-xs leading-tight font-medium transition-colors",
+                  sort === option.key
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </Section>
 
@@ -186,7 +199,7 @@ export function FilterSidebar({
         return (
           <Section
             key={facet.key}
-            title={facet.label}
+            title={t(facet.labelKey)}
             titleSize="text-sm"
             open={isOpen(facet.key)}
             onToggle={() => toggleSection(facet.key)}
@@ -215,7 +228,7 @@ export function FilterSidebar({
                     >
                       {active ? <Check className="size-3" strokeWidth={3.5} /> : null}
                     </span>
-                    <span className="flex-1 truncate">{value}</span>
+                    <span className="flex-1 truncate">{facetValueLabel(facet, value, t)}</span>
                     <span
                       className={cn(
                         "font-data text-xs tabular-nums",
@@ -235,7 +248,7 @@ export function FilterSidebar({
       {/* 規模區間(參數量 / 啟用量,拉桿) */}
       {sizeKeys.length > 0 ? (
         <Section
-          title="規模"
+          title={t("facet.size")}
           titleSize="text-sm"
           open={isOpen("size")}
           onToggle={() => toggleSection("size")}
@@ -248,7 +261,7 @@ export function FilterSidebar({
       {/* 價格區間(拉桿) */}
       {priceKeys.length > 0 ? (
         <Section
-          title="價格"
+          title={t("facet.price")}
           titleSize="text-sm"
           open={isOpen("price")}
           onToggle={() => toggleSection("price")}

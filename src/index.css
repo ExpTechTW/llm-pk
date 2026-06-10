@@ -4,9 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* Latin 字型在前,後面接 CJK 系統字型,確保中文 / 日文有對應字形、字級一致不溢出。 */
+  --font-cjk: "PingFang TC", "PingFang SC", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Noto Sans TC", "Noto Sans JP", "Microsoft JhengHei", "Yu Gothic", "Meiryo", sans-serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, var(--font-cjk);
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
-  --font-display: "Bricolage Grotesque", "Hanken Grotesk", sans-serif;
+  --font-display: "Bricolage Grotesque", "Hanken Grotesk", var(--font-cjk);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -77,6 +80,13 @@
     font-feature-settings: "ss01", "cv01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* 長英文 / URL 在窄容器自動斷行,避免不同語系下溢出 */
+    overflow-wrap: break-word;
+  }
+
+  /* 日文不使用連字 / ss 特性,避免字距異常 */
+  :lang(ja) {
+    font-feature-settings: normal;
   }
 
   ::selection {

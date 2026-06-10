@@ -1,5 +1,6 @@
 import { Boxes, Cloud, Cpu, Lock, LockOpen, Network, type LucideIcon } from "lucide-react";
 
+import type { TFn } from "./i18n";
 import type { SubmissionRow } from "./types";
 
 export interface BadgeInfo {
@@ -21,17 +22,17 @@ export function quantColor(value: string, fallback: string): string {
 }
 
 // 部署:雲端(藍)/ 本地(橘)
-export function deployBadge(deployment: SubmissionRow["deployment"]): BadgeInfo {
+export function deployBadge(deployment: SubmissionRow["deployment"], t: TFn): BadgeInfo {
   return deployment === "cloud"
-    ? { label: "雲端", className: "text-sky-300", Icon: Cloud }
-    : { label: "本地", className: "text-orange-300", Icon: Cpu };
+    ? { label: t("badge.cloud"), className: "text-sky-300", Icon: Cloud }
+    : { label: t("badge.local"), className: "text-orange-300", Icon: Cpu };
 }
 
 // 權重:開源(綠)/ 閉源(紅)
-export function accessBadge(access: SubmissionRow["access"]): BadgeInfo {
+export function accessBadge(access: SubmissionRow["access"], t: TFn): BadgeInfo {
   return access === "closed"
-    ? { label: "閉源", className: "text-red-300", Icon: Lock }
-    : { label: "開源", className: "text-emerald-300", Icon: LockOpen };
+    ? { label: t("badge.closed"), className: "text-red-300", Icon: Lock }
+    : { label: t("badge.open"), className: "text-emerald-300", Icon: LockOpen };
 }
 
 // 參數量:如「35B」。無資料回 null。
@@ -57,11 +58,11 @@ type BadgeSource = Pick<
 >;
 
 // 統一的徽章順序:權重 → 參數量 → 架構(含啟用)→ 部署。空的(無資料)自動略過。
-export function modelBadges(row: BadgeSource): BadgeInfo[] {
+export function modelBadges(row: BadgeSource, t: TFn): BadgeInfo[] {
   return [
-    accessBadge(row.access),
+    accessBadge(row.access, t),
     paramsBadge(row.sizeParams),
     archBadge(row.modelType, row.sizeActive, row.sizeParams),
-    deployBadge(row.deployment)
+    deployBadge(row.deployment, t)
   ].filter((b): b is BadgeInfo => b !== null);
 }

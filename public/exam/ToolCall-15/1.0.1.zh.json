@@ -1,0 +1,127 @@
+{
+  "pack": "ToolCall-15",
+  "ver": "1.0.1",
+  "lang": "zh",
+  "scenarios": {
+    "TC-01": {
+      "title": "直接匹配專用工具",
+      "category": "A",
+      "prompt": "柏林現在的天氣如何？",
+      "criteria": [
+        "使用 get_weather，而非退而求其次改用 web_search。"
+      ]
+    },
+    "TC-02": {
+      "title": "抗干擾項",
+      "category": "A",
+      "prompt": "AAPL 股票目前的價格是多少？",
+      "criteria": [
+        "使用 get_stock_price，且不額外呼叫其他工具。"
+      ]
+    },
+    "TC-03": {
+      "title": "隱含的工具需求",
+      "category": "A",
+      "prompt": "我需要通知 Sarah 會議改到下午 3 點。",
+      "criteria": [
+        "推論出先呼叫 get_contacts，再呼叫 send_email。"
+      ]
+    },
+    "TC-04": {
+      "title": "單位處理",
+      "category": "B",
+      "prompt": "東京的氣溫是幾華氏度？",
+      "criteria": [
+        "傳入要求的 units 參數，而非忽略它。"
+      ]
+    },
+    "TC-05": {
+      "title": "日期與時間解析",
+      "category": "B",
+      "prompt": "幫我安排下週一上午 9:30 的團隊站立會議，時長 30 分鐘，與會者為 Alex 和 Jamie。",
+      "criteria": [
+        "正確解析相對日期與結構化的事件參數。"
+      ]
+    },
+    "TC-06": {
+      "title": "多值擷取",
+      "category": "B",
+      "prompt": "把「最近的醫院在哪裡？」從英文翻譯成西班牙文和日文。",
+      "criteria": [
+        "將一對多的翻譯請求拆分為兩次工具呼叫。"
+      ]
+    },
+    "TC-07": {
+      "title": "搜尋 → 讀取 → 執行",
+      "category": "C",
+      "prompt": "找出第三季的預算報告，並把總額寄給我的主管。",
+      "criteria": [
+        "將檔案搜尋、檔案讀取、聯絡人查詢與 send_email 端到端串接起來。"
+      ]
+    },
+    "TC-08": {
+      "title": "條件分支",
+      "category": "C",
+      "prompt": "查一下巴黎的天氣。如果在下雨，就在明天上午 8 點提醒我帶傘。",
+      "criteria": [
+        "依天氣結果進行分支判斷，而非未經判斷就直接設定提醒。"
+      ]
+    },
+    "TC-09": {
+      "title": "並行獨立任務",
+      "category": "C",
+      "prompt": "倫敦的天氣如何？還有 MSFT 的股價是多少？",
+      "criteria": [
+        "處理兩個獨立的請求，且不遺漏任何一個。"
+      ]
+    },
+    "TC-10": {
+      "title": "常識性知識",
+      "category": "D",
+      "prompt": "第二次世界大戰是哪一年結束的？",
+      "criteria": [
+        "對於基本常識避免使用工具。"
+      ]
+    },
+    "TC-11": {
+      "title": "簡單數學",
+      "category": "D",
+      "prompt": "200 的 15% 是多少？",
+      "criteria": [
+        "對於簡單的算術避免使用計算機工具。"
+      ]
+    },
+    "TC-12": {
+      "title": "無法完成的請求",
+      "category": "D",
+      "prompt": "刪除我上個月的所有電子郵件。",
+      "criteria": [
+        "在沒有合適工具時乾脆地拒絕。"
+      ]
+    },
+    "TC-13": {
+      "title": "空結果",
+      "category": "E",
+      "prompt": "找出 Johnson 的提案文件。",
+      "criteria": [
+        "當第一次搜尋沒有結果時，重試或請求澄清。"
+      ]
+    },
+    "TC-14": {
+      "title": "格式錯誤的回應",
+      "category": "E",
+      "prompt": "Apple 的股價是多少？",
+      "criteria": [
+        "如實呈現工具錯誤，而非憑空捏造一個價格。"
+      ]
+    },
+    "TC-15": {
+      "title": "資訊衝突",
+      "category": "E",
+      "prompt": "搜尋冰島的人口，並計算其 2% 是多少。",
+      "criteria": [
+        "將搜尋到的確切數值傳入計算機。"
+      ]
+    }
+  }
+}

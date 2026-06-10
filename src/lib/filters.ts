@@ -3,30 +3,42 @@ import type { SubmissionRow } from "./types";
 // 速度排行沒有意義(不同 device 無法比較),故只提供分數 / 最新。
 export type SortKey = "score" | "recent";
 
-export const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "score", label: "分數" },
-  { key: "recent", label: "最新" }
+export const SORT_OPTIONS: { key: SortKey; labelKey: string }[] = [
+  { key: "score", labelKey: "sort.score" },
+  { key: "recent", labelKey: "sort.recent" }
 ];
 
 export interface FacetDef {
   key: string;
-  label: string;
-  get: (r: SubmissionRow) => string | null;
+  labelKey: string; // i18n 鍵
+  get: (r: SubmissionRow) => string | null; // 回傳穩定 token(篩選/計數用),非顯示字串
+  valueKey?: (value: string) => string; // token → i18n 鍵(無則 token 即顯示值,如系列 / 量化)
 }
 
-// 篩選面向。值即顯示文字,篩選與計數都用同一個 getter。
+// 篩選面向。get 回傳穩定 token(語言切換不影響選取),顯示再經 valueKey 翻譯。
 export const FACETS: FacetDef[] = [
-  { key: "deployment", label: "部署", get: (r) => (r.deployment === "cloud" ? "雲端" : "本地") },
-  { key: "access", label: "權重", get: (r) => (r.access === "closed" ? "閉源" : "開源") },
+  {
+    key: "deployment",
+    labelKey: "facet.deployment",
+    get: (r) => r.deployment,
+    valueKey: (v) => (v === "cloud" ? "val.cloud" : "val.local")
+  },
+  {
+    key: "access",
+    labelKey: "facet.access",
+    get: (r) => r.access,
+    valueKey: (v) => (v === "closed" ? "val.closed" : "val.open")
+  },
   {
     key: "thinking",
-    label: "思考模式",
-    get: (r) => (r.thinking === null ? null : r.thinking ? "思考" : "非思考")
+    labelKey: "facet.thinking",
+    get: (r) => (r.thinking === null ? null : r.thinking ? "thinking" : "non"),
+    valueKey: (v) => (v === "thinking" ? "val.thinking" : "val.nonThinking")
   },
-  { key: "family", label: "系列", get: (r) => r.familyName },
-  { key: "type", label: "架構", get: (r) => r.modelType },
-  { key: "quantFormat", label: "量化格式", get: (r) => r.quantFormat },
-  { key: "quantLevel", label: "量化等級", get: (r) => r.quantLevel },
+  { key: "family", labelKey: "facet.family", get: (r) => r.familyName },
+  { key: "type", labelKey: "facet.type", get: (r) => r.modelType },
+  { key: "quantFormat", labelKey: "facet.quantFormat", get: (r) => r.quantFormat },
+  { key: "quantLevel", labelKey: "facet.quantLevel", get: (r) => r.quantLevel },
 ];
 
 // 把參數量字串(如 "30B"、"2.5B"、"550M"、"1.6T")換算成數值(以 B 為單位)。
@@ -48,7 +60,7 @@ export type Bounds = Record<string, Range>;
 
 export interface RangeFieldDef {
   key: string;
-  label: string;
+  labelKey: string; // i18n 鍵
   get: (r: SubmissionRow) => number | null;
   format: (v: number) => string; // 拉桿端點顯示格式
   step: (min: number, max: number) => number; // 拉桿步進
@@ -80,15 +92,15 @@ function sizeStep(min: number, max: number): number {
 
 // 價格區間(單位 USD / 1M tokens)。
 export const PRICE_FIELDS: RangeFieldDef[] = [
-  { key: "priceIn", label: "輸入", get: (r) => r.priceInput, format: fmtPrice, step: priceStep },
-  { key: "priceCache", label: "快取輸入", get: (r) => r.priceCacheInput, format: fmtPrice, step: priceStep },
-  { key: "priceOut", label: "輸出", get: (r) => r.priceOutput, format: fmtPrice, step: priceStep }
+  { key: "priceIn", labelKey: "field.priceIn", get: (r) => r.priceInput, format: fmtPrice, step: priceStep },
+  { key: "priceCache", labelKey: "field.priceCache", get: (r) => r.priceCacheInput, format: fmtPrice, step: priceStep },
+  { key: "priceOut", labelKey: "field.priceOut", get: (r) => r.priceOutput, format: fmtPrice, step: priceStep }
 ];
 
 // 規模區間(以 B 為單位換算自字串)。
 export const SIZE_FIELDS: RangeFieldDef[] = [
-  { key: "sizeParams", label: "參數量", get: (r) => parseSize(r.sizeParams), format: fmtSize, step: sizeStep },
-  { key: "sizeActive", label: "啟用量", get: (r) => parseSize(r.sizeActive), format: fmtSize, step: sizeStep }
+  { key: "sizeParams", labelKey: "field.sizeParams", get: (r) => parseSize(r.sizeParams), format: fmtSize, step: sizeStep },
+  { key: "sizeActive", labelKey: "field.sizeActive", get: (r) => parseSize(r.sizeActive), format: fmtSize, step: sizeStep }
 ];
 
 /** 每個欄位在整份資料的 [最低, 最高];無資料或無區間(min==max)的欄位略過。 */

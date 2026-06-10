@@ -12,8 +12,9 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { getResults, getSubmissionById } from "@/lib/db";
+import { getResults, getSubmissionByFile } from "@/lib/db";
 import { loadExam, type ExamPack } from "@/lib/exam";
+import { useI18n, type TFn } from "@/lib/i18n";
 import { parseModelLink } from "@/lib/modelLink";
 import { formatPass, statusKind } from "@/lib/status";
 import type { ResultEntry } from "@/lib/types";
@@ -21,14 +22,14 @@ import { useDb } from "@/hooks/useDb";
 import { cn } from "@/lib/utils";
 
 // 狀態 → 標籤/配色,語意一律走共用的 statusKind(避免與計分分歧)
-function statusInfo(status: number | null) {
+function statusInfo(status: number | null, t: TFn) {
   const kind = statusKind(status);
   if (kind === "half")
-    return { label: "半對", chip: "bg-amber-500/15 text-amber-400", dot: "bg-amber-400" };
+    return { label: t("status.half"), chip: "bg-amber-500/15 text-amber-400", dot: "bg-amber-400" };
   if (kind === "skip")
-    return { label: "未跑", chip: "bg-muted/60 text-muted-foreground", dot: "bg-muted-foreground/50" };
-  if (kind === "pass") return { label: "正常", chip: "bg-primary/15 text-primary", dot: "bg-primary" };
-  return { label: "錯誤", chip: "bg-red-500/15 text-red-400", dot: "bg-red-400" };
+    return { label: t("status.skipLong"), chip: "bg-muted/60 text-muted-foreground", dot: "bg-muted-foreground/50" };
+  if (kind === "pass") return { label: t("status.passLong"), chip: "bg-primary/15 text-primary", dot: "bg-primary" };
+  return { label: t("status.failLong"), chip: "bg-red-500/15 text-red-400", dot: "bg-red-400" };
 }
 
 // 未通過(錯誤 + 半對),排除未跑與正常
@@ -94,39 +95,43 @@ function flattenArgs(args: Record<string, unknown>): [string, string][] {
 }
 
 export default function Detail() {
-  const { id } = useParams();
+  const { pack, ver, file } = useParams();
   const navigate = useNavigate();
   const { db, loading, error } = useDb();
+  const { lang, t, catLabel } = useI18n();
   // 回到來源頁(對比 / 排行榜);無上一頁就退回排行榜。
   const goBack = () => (window.history.length > 1 ? navigate(-1) : navigate("/leaderboard"));
   const [exam, setExam] = useState<ExamPack | null>(null);
   const [openQ, setOpenQ] = useState<string | null>(null);
 
-  const row = useMemo(() => (db && id ? getSubmissionById(db, Number(id)) : null), [db, id]);
-  const results = useMemo<ResultEntry[]>(() => (db && id ? getResults(db, Number(id)) : []), [db, id]);
+  const row = useMemo(
+    () => (db && pack && ver && file ? getSubmissionByFile(db, pack, ver, file) : null),
+    [db, pack, ver, file]
+  );
+  const results = useMemo<ResultEntry[]>(() => (db && row ? getResults(db, row.id) : []), [db, row]);
   const wrong = results.filter((r) => isNotPassed(r.status));
   const resultById = useMemo(() => new Map(results.map((r) => [r.scenarioId, r])), [results]);
 
   useEffect(() => {
-    if (row) loadExam(row.packName, row.packVer).then(setExam);
-  }, [row]);
+    if (row) loadExam(row.packName, row.packVer, lang).then(setExam);
+  }, [row, lang]);
 
   if (loading) {
-    return <p className="text-muted-foreground py-20 text-center text-sm">載入中…</p>;
+    return <p className="text-muted-foreground py-20 text-center text-sm">{t("loading")}</p>;
   }
   if (error || !row) {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <p className="text-sm">{error ?? "找不到這筆投稿。"}</p>
+        <p className="text-sm">{error ?? t("detail.notFound")}</p>
         <Link to="/leaderboard" className="text-primary mt-3 inline-block text-sm">
-          ← 回排行榜
+          {t("detail.backToLb")}
         </Link>
       </div>
     );
   }
 
   const isCloud = row.deployment === "cloud";
-  const badges = modelBadges(row);
+  const badges = modelBadges(row, t);
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const hwExtra = Object.entries(row.hwExtra);
   const modelLink = parseModelLink(row.modelLink);
@@ -141,7 +146,7 @@ export default function Detail() {
         className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-1.5 text-sm"
       >
         <ArrowLeft className="size-4" />
-        返回
+        {t("detail.back")}
       </button>
 
       {/* 標頭 */}
@@ -154,7 +159,7 @@ export default function Detail() {
               {row.thinking ? (
                 <Lightbulb
                   className="text-amber-300/90 size-5 shrink-0"
-                  aria-label="支援 thinking / reasoning 模式"
+                  aria-label={t("facet.thinking")}
                 />
               ) : null}
               <span>{row.modelName}</span>
@@ -186,7 +191,7 @@ export default function Detail() {
                   className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                   title={modelLink.label}
                 >
-                  模型頁 <ExternalLink className="size-3" />
+                  {t("detail.modelPage")} <ExternalLink className="size-3" />
                 </a>
               ) : null}
             </div>
@@ -194,7 +199,7 @@ export default function Detail() {
 
             {/* 上傳者(GitHub)— 弱化 */}
             <div className="text-muted-foreground/50 mt-1 flex items-center gap-1.5 text-xs">
-              <span>成績上傳者</span>
+              <span>{t("detail.uploader")}</span>
               <GithubAvatar username={row.uploader} size={14} linked={false} />
               <a
                 href={`https://github.com/${row.uploader}`}
@@ -218,7 +223,7 @@ export default function Detail() {
               <div className="gauge-fill bg-primary h-full rounded-full" style={{ width: `${score}%` }} />
             </div>
             <span className="text-muted-foreground font-data text-xs tabular-nums">
-              {formatPass(row.passCount, row.halfCount)}/{row.totalCount} 通過
+              {t("detail.q.passInfo", { pass: formatPass(row.passCount, row.halfCount), total: row.totalCount })}
             </span>
           </div>
         </div>
@@ -246,12 +251,12 @@ export default function Detail() {
       {/* 資訊區塊 */}
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {row.scoreCats.length > 0 ? (
-          <Panel title="分類分數" titleSize="text-sm">
+          <Panel title={t("detail.panel.cats")} titleSize="text-sm">
             <div className="flex flex-col gap-3">
               {row.scoreCats.map((cat) => (
                 <div key={cat.id} className="flex flex-col gap-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{cat.label ?? cat.id}</span>
+                    <span className="text-muted-foreground">{catLabel(cat.label ?? cat.id)}</span>
                     <span className="font-data font-semibold tabular-nums">{cat.score}</span>
                   </div>
                   <div className="bg-muted/70 h-1 overflow-hidden rounded-full">
@@ -266,10 +271,10 @@ export default function Detail() {
           </Panel>
         ) : null}
 
-        <Panel title={isCloud ? "供應商" : "硬體"} titleSize="text-sm">
+        <Panel title={isCloud ? t("detail.panel.provider") : t("detail.panel.hardware")} titleSize="text-sm">
           <div className="grid grid-cols-2 gap-3">
             {isCloud ? (
-              <Meta label="後端 / API" value={`${row.backendName}${row.backendVer ? ` ${row.backendVer}` : ""}`} />
+              <Meta label={t("detail.meta.backend")} value={`${row.backendName}${row.backendVer ? ` ${row.backendVer}` : ""}`} />
             ) : (
               <>
                 {row.hwCompany ? (
@@ -280,9 +285,9 @@ export default function Detail() {
                     </span>
                   </div>
                 ) : null}
-                {row.hwChip ? <Meta label="晶片" value={row.hwChip} /> : null}
-                {row.hwDriver ? <Meta label="驅動" value={row.hwDriver} /> : null}
-                {row.hwOs ? <Meta label="OS" value={row.hwOs} /> : null}
+                {row.hwChip ? <Meta label={t("detail.meta.chip")} value={row.hwChip} /> : null}
+                {row.hwDriver ? <Meta label={t("detail.meta.driver")} value={row.hwDriver} /> : null}
+                {row.hwOs ? <Meta label={t("detail.meta.os")} value={row.hwOs} /> : null}
                 {hwExtra.map(([k, v]) => (
                   <Meta key={k} label={k} value={String(v)} />
                 ))}
@@ -292,31 +297,31 @@ export default function Detail() {
         </Panel>
 
         {row.sizeActive || row.sizeParams ? (
-          <Panel title="啟動參數" titleSize="text-sm">
+          <Panel title={t("detail.panel.active")} titleSize="text-sm">
             <div className="flex items-baseline gap-2">
               <span className="font-data text-3xl leading-none font-bold tabular-nums">
                 {row.sizeActive ?? row.sizeParams}
               </span>
               {row.sizeParams && row.sizeActive && row.sizeActive !== row.sizeParams ? (
-                <span className="text-muted-foreground text-sm">/ {row.sizeParams} 總參數</span>
+                <span className="text-muted-foreground text-sm">{t("detail.active.total", { x: row.sizeParams })}</span>
               ) : null}
             </div>
-            <p className="text-muted-foreground mt-1.5 text-xs">每次推理實際啟動的參數量</p>
+            <p className="text-muted-foreground mt-1.5 text-xs">{t("detail.active.hint")}</p>
           </Panel>
         ) : null}
 
-        <Panel title="執行資訊" titleSize="text-sm">
+        <Panel title={t("detail.panel.run")} titleSize="text-sm">
           <div className="grid grid-cols-2 gap-3">
-            <Meta label="日期" value={row.runDate.slice(0, 10)} />
-            {row.runMode ? <Meta label="模式" value={row.runMode} /> : null}
-            <Meta label="每題次數" value={`${row.runsPerTest}x`} />
+            <Meta label={t("detail.meta.date")} value={row.runDate.slice(0, 10)} />
+            {row.runMode ? <Meta label={t("detail.meta.mode")} value={row.runMode} /> : null}
+            <Meta label={t("detail.meta.runs")} value={`${row.runsPerTest}x`} />
             <Meta label="BenchLocal" value={row.benchlocal} />
-            <Meta label="平均每題" value={formatTime(row.totalCount ? row.totalTime / row.totalCount : 0)} />
+            <Meta label={t("detail.meta.avg")} value={formatTime(row.totalCount ? row.totalTime / row.totalCount : 0)} />
           </div>
         </Panel>
 
         {row.args && Object.keys(row.args).length > 0 ? (
-          <Panel title="取樣參數" titleSize="text-sm">
+          <Panel title={t("detail.panel.args")} titleSize="text-sm">
             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
               {flattenArgs(row.args).map(([k, v]) => (
                 <div key={k} className="flex items-baseline justify-between gap-2 text-sm">
@@ -331,13 +336,16 @@ export default function Detail() {
 
       {/* 題目結果 */}
       <Panel
-        title={`題目結果 · ${formatPass(row.passCount, row.halfCount)}/${row.totalCount} 通過${row.halfCount > 0 ? `(含半對 ${row.halfCount})` : ""},未過 ${wrong.length} 題`}
+        title={`${t("detail.q.title")} · ${t("detail.q.passInfo", {
+          pass: formatPass(row.passCount, row.halfCount),
+          total: row.totalCount
+        })}${row.halfCount > 0 ? t("detail.q.half", { n: row.halfCount }) : ""} · ${t("detail.q.wrong", { n: wrong.length })}`}
         titleSize="text-sm"
       >
-        <p className="text-muted-foreground mb-3 text-xs">每題顯示測試重點,點卡片看完整題目與評分標準</p>
+        <p className="text-muted-foreground mb-3 text-xs">{t("detail.q.hint")}</p>
         <div className="grid gap-1.5 sm:grid-cols-2">
           {results.map((r) => {
-            const info = statusInfo(r.status);
+            const info = statusInfo(r.status, t);
             const sc = exam?.scenarios[r.scenarioId];
             return (
               <button
@@ -377,14 +385,14 @@ export default function Detail() {
             <div className="flex items-center gap-2">
               <span className="bg-muted font-data rounded-md px-2 py-0.5 text-xs font-semibold">{openQ}</span>
               {openResult ? (
-                <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", statusInfo(openResult.status).chip)}>
-                  {statusInfo(openResult.status).label} · {formatTime(openResult.time)}
+                <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", statusInfo(openResult.status, t).chip)}>
+                  {statusInfo(openResult.status, t).label} · {formatTime(openResult.time)}
                 </span>
               ) : null}
             </div>
-            <DialogTitle>{openExam?.title ?? "題目"}</DialogTitle>
+            <DialogTitle>{openExam?.title ?? t("detail.q.dialogTitle")}</DialogTitle>
             {openExam?.category ? (
-              <DialogDescription>分類:{openExam.category}</DialogDescription>
+              <DialogDescription>{t("detail.q.category", { x: openExam.category })}</DialogDescription>
             ) : null}
           </DialogHeader>
 
@@ -392,14 +400,14 @@ export default function Detail() {
             <div className="flex flex-col gap-4 text-sm">
               <div>
                 <h4 className="text-muted-foreground mb-1 text-[10px] font-semibold tracking-[0.16em] uppercase">
-                  題目
+                  {t("detail.q.prompt")}
                 </h4>
                 <p className="leading-relaxed">{openExam.prompt}</p>
               </div>
               {openExam.criteria && openExam.criteria.length > 0 ? (
                 <div>
                   <h4 className="text-muted-foreground mb-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase">
-                    評分標準
+                    {t("detail.q.criteria")}
                   </h4>
                   <ul className="flex flex-col gap-1.5">
                     {openExam.criteria.map((c, i) => (
@@ -414,7 +422,7 @@ export default function Detail() {
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">
-              尚無此題的題目資料。請在 <code className="font-mono text-xs">public/exam/{row.packName}/{row.packVer}.json</code> 補上。
+              {t("detail.q.noData", { pack: row.packName, ver: row.packVer })}
             </p>
           )}
         </DialogContent>

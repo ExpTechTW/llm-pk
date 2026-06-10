@@ -4,6 +4,7 @@ import { Crown, Lightbulb } from "lucide-react";
 
 import { modelBadges, quantColor } from "@/lib/badges";
 import { OrgLogo } from "@/components/ui/org-logo";
+import { useI18n } from "@/lib/i18n";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -29,14 +30,15 @@ function Chip({ children, className }: { children: ReactNode; className?: string
 
 /** 首頁概覽卡:整張卡可點擊進入詳細頁。 */
 export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank: number; index: number }) {
+  const { t } = useI18n();
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const isTop = rank <= 3;
   const isChampion = rank === 1;
-  const badges = modelBadges(row);
+  const badges = modelBadges(row, t);
 
   return (
     <Link
-      to={`/s/${row.id}`}
+      to={`/s/${encodeURIComponent(row.packName)}/${encodeURIComponent(row.packVer)}/${encodeURIComponent(row.file)}`}
       style={{ animationDelay: `${Math.min(index, 12) * 45}ms` }}
       className={cn(
         "animate-rise focus-visible:ring-ring/60 group block rounded-2xl outline-none focus-visible:ring-2",
@@ -59,7 +61,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
           <span className={cn("font-data text-xl leading-none font-bold sm:text-2xl", RANK_ACCENT[rank] ?? "text-muted-foreground")}>
             {rank}
           </span>
-          {isTop ? <span className="text-muted-foreground/60 hidden text-[9px] tracking-widest uppercase sm:block">rank</span> : null}
+          {isTop ? <span className="text-muted-foreground/60 hidden text-[9px] tracking-widest uppercase sm:block">{t("lb.rank")}</span> : null}
         </div>
 
         {/* 資訊(3/4)+ 分數(1/4) */}
@@ -76,7 +78,7 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
                 {row.thinking ? (
                   <Lightbulb
                     className="text-amber-300/90 size-4 shrink-0 sm:size-5"
-                    aria-label="支援 thinking / reasoning 模式"
+                    aria-label={t("facet.thinking")}
                   />
                 ) : null}
                 <span className="truncate">{row.modelName}</span>

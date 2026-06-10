@@ -11,6 +11,7 @@ import { useDb } from "@/hooks/useDb";
 import { modelBadges, quantColor } from "@/lib/badges";
 import { avgTime } from "@/lib/filters";
 import { loadExam, type ExamPack } from "@/lib/exam";
+import { useI18n, type TFn } from "@/lib/i18n";
 import { statusKind } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -18,35 +19,6 @@ import { cn } from "@/lib/utils";
 // 左 = A、右 = B 的代表色(同時用在身分卡、長條、雷達圖)。
 const COLOR_A = "#22d3ee"; // cyan-400
 const COLOR_B = "#f59e0b"; // amber-500
-
-// 類別名稱顯示用中文(資料端為英文);查無對照則沿用原文。
-const CATEGORY_ZH: Record<string, string> = {
-  // DataExtract-15
-  "Clean Extraction": "乾淨抽取",
-  "Noisy and Informal": "雜訊口語",
-  "Multi-Entity": "多實體",
-  "Implicit and Missing": "隱含缺漏",
-  "Complex Documents": "複雜文件",
-  // InstructFollow-15
-  "Format Constraints": "格式限制",
-  "Ordering and Sorting": "排序",
-  "Multi-Domain": "跨領域",
-  "Precision Under Pressure": "高壓精準",
-  Adversarial: "對抗性",
-  // ReasonMath-15
-  "Everyday Arithmetic": "日常運算",
-  "Logic Puzzles": "邏輯謎題",
-  "Multi-Step Word Problems": "多步應用題",
-  "Trick Questions and Traps": "陷阱題",
-  "Applied Reasoning": "應用推理",
-  // ToolCall-15
-  "Tool Selection": "工具選擇",
-  "Parameter Precision": "參數精準",
-  "Multi-Step Chains": "多步串接",
-  "Restraint & Refusal": "克制拒絕",
-  "Error Recovery": "錯誤復原"
-};
-const zhCategory = (label: string) => CATEGORY_ZH[label] ?? label;
 
 function fmtSec(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) return "—";
@@ -66,11 +38,12 @@ function IdentityCard({
   color: string;
   side: "A" | "B";
 }) {
-  const badges = modelBadges(row);
+  const { t } = useI18n();
+  const badges = modelBadges(row, t);
   return (
     <Link
-      to={`/s/${row.id}`}
-      title={`查看 ${row.modelName} 詳細`}
+      to={`/s/${encodeURIComponent(row.packName)}/${encodeURIComponent(row.packVer)}/${encodeURIComponent(row.file)}`}
+      title={t("cmp.cardTitle", { name: row.modelName })}
       className="bg-card/70 hover:border-primary/50 group relative flex h-full flex-col items-center gap-2.5 overflow-hidden rounded-2xl border border-t-2 p-4 text-center transition-colors"
       style={{ borderTopColor: color }}
     >
@@ -246,28 +219,29 @@ function Radar({
 
 /* --------------------------- 逐題對比卡片 --------------------------- */
 
-function statusTone(status: number | null): { label: string; cls: string } {
+function statusTone(status: number | null, t: TFn): { label: string; cls: string } {
   switch (statusKind(status)) {
     case "pass":
-      return { label: "通過", cls: "text-emerald-300 border-emerald-400/30 bg-emerald-400/10" };
+      return { label: t("status.pass"), cls: "text-emerald-300 border-emerald-400/30 bg-emerald-400/10" };
     case "half":
-      return { label: "半對", cls: "text-amber-300 border-amber-400/30 bg-amber-400/10" };
+      return { label: t("status.half"), cls: "text-amber-300 border-amber-400/30 bg-amber-400/10" };
     case "fail":
-      return { label: "未過", cls: "text-red-300 border-red-400/30 bg-red-400/10" };
+      return { label: t("status.fail"), cls: "text-red-300 border-red-400/30 bg-red-400/10" };
     default:
-      return { label: "未測", cls: "text-muted-foreground border-border/50 bg-muted/40" };
+      return { label: t("status.skip"), cls: "text-muted-foreground border-border/50 bg-muted/40" };
   }
 }
 
 function SideStatus({ side, color, status }: { side: string; color: string; status: number | null }) {
-  const t = statusTone(status);
+  const { t } = useI18n();
+  const tone = statusTone(status, t);
   return (
-    <div className={cn("flex items-center justify-between gap-1.5 rounded-lg border px-2 py-1", t.cls)}>
+    <div className={cn("flex items-center justify-between gap-1.5 rounded-lg border px-2 py-1", tone.cls)}>
       <span className="inline-flex items-center gap-1.5 font-medium">
         <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
         {side}
       </span>
-      <span className="font-semibold">{t.label}</span>
+      <span className="font-semibold">{tone.label}</span>
     </div>
   );
 }
@@ -306,6 +280,7 @@ function ScenarioCard({
 /* ------------------------------ 主頁面 ------------------------------ */
 
 export default function Compare() {
+  const { t, lang, catLabel } = useI18n();
   const { db, loading, error } = useDb();
   const [sp, setSp] = useSearchParams();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -409,12 +384,12 @@ export default function Compare() {
   const [exam, setExam] = useState<ExamPack | null>(null);
   useEffect(() => {
     let alive = true;
-    if (packName && packVer) loadExam(packName, packVer).then((e) => alive && setExam(e));
+    if (packName && packVer) loadExam(packName, packVer, lang).then((e) => alive && setExam(e));
     else setExam(null);
     return () => {
       alive = false;
     };
-  }, [packName, packVer]);
+  }, [packName, packVer, lang]);
 
   // A / B 的逐題結果,對齊成卡片資料。
   const aResults = useMemo(() => (db && a ? getResults(db, a.id) : []), [db, a]);
@@ -435,16 +410,16 @@ export default function Compare() {
     if (!a || !b) return [] as { label: string; a: number; b: number }[];
     const bById = new Map(b.scoreCats.map((c) => [c.id, c]));
     return a.scoreCats.map((c) => ({
-      label: zhCategory(c.label ?? c.id),
+      label: catLabel(c.label ?? c.id),
       a: c.score,
       b: bById.get(c.id)?.score ?? 0
     }));
-  }, [a, b]);
+  }, [a, b, catLabel]);
 
   const metrics: Metric[] = useMemo(() => {
     if (!a || !b) return [];
     return [
-      { label: "總分", a: a.scoreTotal, b: b.scoreTotal, fmt: (v) => v.toFixed(1), max: 100, higherBetter: true },
+      { label: t("cmp.metric.total"), a: a.scoreTotal, b: b.scoreTotal, fmt: (v) => v.toFixed(1), max: 100, higherBetter: true },
       ...cats.map((c) => ({
         label: c.label,
         a: c.a,
@@ -454,7 +429,7 @@ export default function Compare() {
         higherBetter: true
       })),
       {
-        label: "通過率",
+        label: t("cmp.metric.passRate"),
         a: a.totalCount ? ((a.passCount + a.halfCount * 0.5) / a.totalCount) * 100 : null,
         b: b.totalCount ? ((b.passCount + b.halfCount * 0.5) / b.totalCount) * 100 : null,
         fmt: (v) => `${v.toFixed(0)}%`,
@@ -462,7 +437,7 @@ export default function Compare() {
         higherBetter: true
       },
       {
-        label: "平均每題",
+        label: t("cmp.metric.avgTime"),
         a: avgTime(a),
         b: avgTime(b),
         fmt: fmtSec,
@@ -470,14 +445,14 @@ export default function Compare() {
         higherBetter: false
       }
     ];
-  }, [a, b, cats]);
+  }, [a, b, cats, t]);
 
   return (
     <main className="mx-auto max-w-[900px] px-4 pt-10 pb-20 sm:pt-14">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display flex items-center gap-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
           <GitCompareArrows className="text-primary size-7 sm:size-8" />
-          模型對比
+          {t("cmp.title")}
         </h1>
         <button
           type="button"
@@ -485,14 +460,14 @@ export default function Compare() {
           className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
         >
           {copied ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
-          {copied ? "已複製連結" : "複製連結"}
+          {copied ? t("cmp.copied") : t("cmp.copy")}
         </button>
       </div>
 
       {loading ? (
         <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
           <Loader2 className="size-4 animate-spin" />
-          載入資料庫中…
+          {t("loading")}
         </div>
       ) : error ? (
         <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-xl border p-6 text-center text-sm">
@@ -538,7 +513,7 @@ export default function Compare() {
                             />
                           )}
                           <span className="min-w-0 flex-1 truncate text-left">
-                            {fam === "__all__" ? "全部系列" : fam}
+                            {fam === "__all__" ? t("cmp.family.all") : fam}
                           </span>
                         </span>
                       </SelectTrigger>
@@ -546,7 +521,7 @@ export default function Compare() {
                         <SelectItem value="__all__">
                           <span className="flex min-w-0 items-center gap-2">
                             <Layers className="size-3.5 shrink-0 opacity-70" />
-                            <span className="truncate">全部系列</span>
+                            <span className="truncate">{t("cmp.family.all")}</span>
                           </span>
                         </SelectItem>
                         {families.map((f) => {
@@ -584,7 +559,7 @@ export default function Compare() {
                             </>
                           ) : (
                             <span className="text-muted-foreground font-normal">
-                              {fam === "__all__" ? "先選系列…" : `模型 ${side.toUpperCase()}…`}
+                              {fam === "__all__" ? t("cmp.pickFamily") : t("cmp.pickModel", { side: side.toUpperCase() })}
                             </span>
                           )}
                         </span>
@@ -603,7 +578,7 @@ export default function Compare() {
                         </SelectItem>
                       ))}
                       {candidates.length === 0 ? (
-                        <div className="text-muted-foreground px-2 py-1.5 text-xs">無符合的模型</div>
+                        <div className="text-muted-foreground px-2 py-1.5 text-xs">{t("cmp.noModel")}</div>
                       ) : null}
                     </SelectContent>
                   </Select>
@@ -652,10 +627,8 @@ export default function Compare() {
               {/* 逐題對比:題目說明 + 評分標準 + A/B 結果(放最下,RWD 卡片) */}
               {scenarioRows.length > 0 ? (
                 <section className="mt-8">
-                  <h2 className="font-display text-lg font-bold">逐題對比</h2>
-                  <p className="text-muted-foreground mt-0.5 mb-3 text-xs">
-                    每題的測試重點與評分標準,以及 A / B 各自的結果
-                  </p>
+                  <h2 className="font-display text-lg font-bold">{t("cmp.perItem")}</h2>
+                  <p className="text-muted-foreground mt-0.5 mb-3 text-xs">{t("cmp.perItem.sub")}</p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {scenarioRows.map((s) => (
                       <ScenarioCard
@@ -671,9 +644,7 @@ export default function Compare() {
               ) : null}
             </>
           ) : (
-            <p className="text-muted-foreground/70 mt-6 text-center text-sm">
-              在上方左右各選一個模型即可對比 · 可用「系列」縮小清單 · 選好後「複製連結」分享
-            </p>
+            <p className="text-muted-foreground/70 mt-6 text-center text-sm">{t("cmp.hint")}</p>
           )}
         </>
       )}

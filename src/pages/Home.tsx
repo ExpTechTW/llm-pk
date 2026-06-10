@@ -16,24 +16,13 @@ import { SubmissionCard } from "@/components/SubmissionCard";
 import { buttonVariants } from "@/components/ui/button";
 import { getPacks, getSubmissionsByPack } from "@/lib/db";
 import { useDb } from "@/hooks/useDb";
+import { useI18n } from "@/lib/i18n";
 import type { SubmissionRow } from "@/lib/types";
 
 const FEATURES = [
-  {
-    icon: Scale,
-    title: "公平對照",
-    desc: "同一份測試題組,跨模型、量化、推理,在一致的標準下直接比較。"
-  },
-  {
-    icon: Users,
-    title: "社群跑分",
-    desc: "成績由社群成員實際跑測後投稿,涵蓋各種真實的本地部署組合。"
-  },
-  {
-    icon: Cpu,
-    title: "本地優先",
-    desc: "聚焦本地部署與量化效能,讓你看清楚每個組合在自己機器上的真實表現。"
-  }
+  { icon: Scale, titleKey: "home.feat.fair.t", descKey: "home.feat.fair.d" },
+  { icon: Users, titleKey: "home.feat.community.t", descKey: "home.feat.community.d" },
+  { icon: Cpu, titleKey: "home.feat.local.t", descKey: "home.feat.local.d" }
 ] as const;
 
 function LeadGroup({
@@ -45,6 +34,7 @@ function LeadGroup({
   icon: typeof Trophy;
   rows: SubmissionRow[];
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col gap-3">
       <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-[0.16em] uppercase">
@@ -57,7 +47,7 @@ function LeadGroup({
         ))
       ) : (
         <p className="text-muted-foreground/70 border-border/50 rounded-2xl border border-dashed px-4 py-6 text-center text-sm">
-          尚無投稿
+          {t("home.empty")}
         </p>
       )}
     </div>
@@ -75,6 +65,7 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string; 
 }
 
 export default function Home() {
+  const { t } = useI18n();
   const { db } = useDb();
 
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -120,41 +111,38 @@ export default function Home() {
           <section className="animate-rise flex flex-col items-center gap-6 text-center">
             <span className="border-border/60 bg-card/50 text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs backdrop-blur">
               <span className="bg-primary size-1.5 animate-pulse rounded-full" />
-              BenchLocal 社群跑分
+              {t("lb.badge")}
             </span>
             <h1 className="font-display max-w-3xl text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
-              本地模型,
+              {t("home.hero.l1")}
               <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
-                一份測試見真章
+                {t("home.hero.l2")}
               </span>
             </h1>
-            <p className="text-muted-foreground max-w-xl text-base leading-relaxed">
-              同一份測試題組,跨模型、量化、推理的公平對照。
-              由社群實測投稿,透明、可重現的本地模型跑分排行。
-            </p>
+            <p className="text-muted-foreground max-w-xl text-base leading-relaxed">{t("home.hero.desc")}</p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/leaderboard"
                 className={buttonVariants({ size: "lg", className: "rounded-full" })}
               >
                 <Trophy className="size-4" />
-                查看排行榜
+                {t("home.cta.leaderboard")}
                 <ArrowRight className="size-4" />
               </Link>
               <a
                 href="#features"
                 className={buttonVariants({ variant: "outline", size: "lg", className: "rounded-full" })}
               >
-                了解運作方式
+                {t("home.cta.how")}
               </a>
             </div>
           </section>
 
           {/* 即時數據 */}
           <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3">
-            <StatCard label="模型投稿" value={String(stats.submissions)} icon={Trophy} />
-            <StatCard label="測試套件" value={String(stats.packs)} icon={Layers} />
-            <StatCard label="社群貢獻者" value={String(stats.contributors)} icon={Users} />
+            <StatCard label={t("home.stat.submissions")} value={String(stats.submissions)} icon={Trophy} />
+            <StatCard label={t("home.stat.packs")} value={String(stats.packs)} icon={Layers} />
+            <StatCard label={t("home.stat.contributors")} value={String(stats.contributors)} icon={Users} />
           </section>
         </div>
 
@@ -163,7 +151,7 @@ export default function Home() {
           href="#explore"
           className="text-muted-foreground hover:text-foreground flex flex-col items-center gap-1 pb-6 text-xs transition-colors"
         >
-          往下滑
+          {t("home.scroll")}
           <ChevronDown className="size-5 animate-bounce" />
         </a>
       </div>
@@ -171,7 +159,7 @@ export default function Home() {
       {/* 模型跑馬燈(左 / 右 / 左 交錯捲動) */}
       {all.length > 0 ? (
         <section id="explore" className="animate-rise -mx-4 mb-14 scroll-mt-20 overflow-x-clip py-2 pt-20">
-          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl text-center pb-6">強大的社群</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl text-center pb-6">{t("home.community")}</h2>
           <ModelMarquee rows={all} />
         </section>
       ) : null}
@@ -179,20 +167,20 @@ export default function Home() {
       {/* 特色 */}
       <section id="features" className="scroll-mt-20 pt-20">
         <div className="mb-8 flex flex-col gap-2">
-          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">為什麼用 LLM PK?</h2>
-          <p className="text-muted-foreground text-sm">把分散的本地跑分,收斂成可以直接比較的一張表。</p>
+          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{t("home.why")}</h2>
+          <p className="text-muted-foreground text-sm">{t("home.why.sub")}</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
           {FEATURES.map((f) => (
             <div
-              key={f.title}
+              key={f.titleKey}
               className="border-border/60 bg-card/50 flex flex-col gap-3 rounded-2xl border p-6 backdrop-blur-sm"
             >
               <span className="from-primary/20 text-primary grid size-10 place-items-center rounded-xl bg-gradient-to-br to-cyan-400/10">
                 <f.icon className="size-5" />
               </span>
-              <h3 className="font-display text-lg font-bold tracking-tight">{f.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+              <h3 className="font-display text-lg font-bold tracking-tight">{t(f.titleKey)}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{t(f.descKey)}</p>
             </div>
           ))}
         </div>
@@ -203,19 +191,19 @@ export default function Home() {
         <section className="pt-20">
           <div className="mb-6 flex items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
-              <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">目前領先</h2>
-              <p className="text-muted-foreground text-sm">本地與雲端分開排行,各取綜合分數最高的組合。</p>
+              <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{t("home.lead.title")}</h2>
+              <p className="text-muted-foreground text-sm">{t("home.lead.sub")}</p>
             </div>
             <Link
               to="/leaderboard"
               className="text-primary hover:text-primary/80 inline-flex shrink-0 items-center gap-1 text-sm font-medium"
             >
-              完整排行 <ArrowRight className="size-4" />
+              {t("home.lead.full")} <ArrowRight className="size-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2">
-            <LeadGroup title="本地" icon={Cpu} rows={topLocal} />
-            <LeadGroup title="雲端" icon={Cloud} rows={topCloud} />
+            <LeadGroup title={t("val.local")} icon={Cpu} rows={topLocal} />
+            <LeadGroup title={t("val.cloud")} icon={Cloud} rows={topCloud} />
           </div>
         </section>
       ) : null}
@@ -224,17 +212,17 @@ export default function Home() {
       <section className="border-border/60 bg-card/40 relative mt-20 overflow-hidden rounded-3xl border p-8 text-center backdrop-blur-sm sm:p-12">
         <div className="from-primary/[0.08] pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b to-transparent" />
         <h2 className="font-display relative text-2xl font-bold tracking-tight sm:text-3xl">
-          想讓你的模型上榜?
+          {t("home.cta2.title")}
         </h2>
         <p className="text-muted-foreground relative mx-auto mt-3 max-w-md text-sm leading-relaxed">
-          用 BenchLocal 跑完同一份測試,把 score.json 投稿進來,就能加入排行對照。
+          {t("home.cta2.desc")}
         </p>
         <div className="relative mt-6 flex justify-center">
           <Link
             to="/leaderboard"
             className={buttonVariants({ size: "lg", className: "rounded-full" })}
           >
-            先看看排行榜
+            {t("home.cta2.btn")}
             <ArrowRight className="size-4" />
           </Link>
         </div>

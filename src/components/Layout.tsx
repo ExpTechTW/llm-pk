@@ -1,7 +1,35 @@
 import { Link, Outlet } from "react-router-dom";
 import { Download, GitCompareArrows, Trophy } from "lucide-react";
 
+import { LANGS, useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+
+function LangSwitcher() {
+  const { lang, setLang } = useI18n();
+  return (
+    <div className="border-border/60 bg-card/50 inline-flex items-center rounded-full border p-0.5">
+      {LANGS.map((l) => (
+        <button
+          key={l.code}
+          type="button"
+          onClick={() => setLang(l.code)}
+          aria-pressed={lang === l.code}
+          className={cn(
+            "rounded-full px-2 py-0.5 text-xs font-medium transition-colors",
+            lang === l.code ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Layout() {
+  const { t } = useI18n();
+  const navLink =
+    "text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors";
   return (
     <div className="relative min-h-screen">
       <div className="bg-atmosphere" aria-hidden />
@@ -18,25 +46,20 @@ export function Layout() {
                   </span>
                 </span>
                 <span className="text-muted-foreground text-[10px] tracking-[0.18em] uppercase">
-                  local bench
+                  {t("nav.tagline")}
                 </span>
               </span>
             </Link>
             <nav className="ml-auto flex items-center gap-2">
-              <Link
-                to="/leaderboard"
-                className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
-              >
+              <Link to="/leaderboard" className={navLink}>
                 <Trophy className="size-4" />
-                <span className="hidden sm:inline">排行榜</span>
+                <span className="hidden sm:inline">{t("nav.leaderboard")}</span>
               </Link>
-              <Link
-                to="/compare"
-                className="text-muted-foreground hover:text-foreground hover:border-primary/50 border-border/60 bg-card/50 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
-              >
+              <Link to="/compare" className={navLink}>
                 <GitCompareArrows className="size-4" />
-                <span className="hidden sm:inline">對比</span>
+                <span className="hidden sm:inline">{t("nav.compare")}</span>
               </Link>
+              <LangSwitcher />
             </nav>
           </div>
         </header>
@@ -44,9 +67,7 @@ export function Layout() {
         <Outlet />
 
         <footer className="border-border/40 mx-auto mt-10 flex max-w-[1480px] flex-col items-center gap-3 border-t px-5 py-8">
-          <p className="text-muted-foreground text-center text-xs">
-            資料由 BenchLocal 產生 · 排行依 BenchLocal 分數
-          </p>
+          <p className="text-muted-foreground text-center text-xs">{t("footer.note")}</p>
           <a
             href="https://benchlocal.com/"
             target="_blank"
@@ -54,7 +75,7 @@ export function Layout() {
             className="text-muted-foreground/80 hover:text-foreground hover:border-border border-border/50 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors"
           >
             <Download className="size-3.5" />
-            下載 BenchLocal
+            {t("nav.download")}
           </a>
         </footer>
       </div>

@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { useI18n } from "@/lib/i18n";
 import type { PackInfo } from "@/lib/types";
 
 export interface PackKey {
@@ -26,6 +27,7 @@ interface PackSelectProps {
 
 /** BenchPack 下拉選單,分類顯示為 {name} · v{ver}。 */
 export function PackSelect({ packs, value, onChange }: PackSelectProps) {
+  const { t } = useI18n();
   return (
     <Select
       value={value ? packId(value) : undefined}
@@ -34,11 +36,11 @@ export function PackSelect({ packs, value, onChange }: PackSelectProps) {
         onChange({ name, ver });
       }}
     >
-      <SelectTrigger aria-label="選擇測試類型" className="min-w-56">
+      <SelectTrigger aria-label={t("pack.placeholder")} className="min-w-56">
         <Layers className="text-primary size-4 shrink-0" />
-        <span className="text-muted-foreground text-[10px] tracking-[0.16em] uppercase">測試</span>
+        <span className="text-muted-foreground text-[10px] tracking-[0.16em] uppercase">{t("pack.label")}</span>
         <SelectValue
-          placeholder="選擇測試"
+          placeholder={t("pack.placeholder")}
           className="font-display text-sm font-bold tracking-tight"
         />
       </SelectTrigger>

@@ -22,6 +22,7 @@ import {
   type SortKey
 } from "@/lib/filters";
 import { useDb } from "@/hooks/useDb";
+import { useI18n } from "@/lib/i18n";
 import { usePrices } from "@/hooks/usePrices";
 import { priceKey } from "@/lib/price";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 const PAGE_SIZE = 15;
 
 export default function Leaderboard() {
+  const { t } = useI18n();
   const { db, loading, error } = useDb();
   const [pack, setPack] = useState<PackKey | null>(null);
   const [search, setSearch] = useState("");
@@ -104,9 +106,9 @@ export default function Leaderboard() {
     const narrowed = bound && (range[0] > bound[0] || range[1] < bound[1]);
     if (narrowed) {
       setSelected((prev) => {
-        if (prev.deployment?.has("雲端")) return prev;
+        if (prev.deployment?.has("cloud")) return prev;
         const next: Selected = { ...prev };
-        next.deployment = new Set(next.deployment ?? []).add("雲端");
+        next.deployment = new Set(next.deployment ?? []).add("cloud");
         return next;
       });
     }
@@ -130,12 +132,12 @@ export default function Leaderboard() {
         <div className="flex flex-col gap-3">
           <span className="border-border/60 bg-card/50 text-muted-foreground inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs backdrop-blur">
             <span className="bg-primary size-1.5 animate-pulse rounded-full" />
-            BenchLocal 社群跑分
+            {t("lb.badge")}
           </span>
           <h1 className="font-display text-4xl leading-[1.03] font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-            本地模型{" "}
+            {t("lb.title.pre")}{" "}
             <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
-              跑分排行榜
+              {t("lb.title.accent")}
             </span>
           </h1>
         </div>
@@ -152,20 +154,17 @@ export default function Leaderboard() {
       {loading ? (
         <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
           <Loader2 className="size-4 animate-spin" />
-          載入資料庫中…
+          {t("loading")}
         </div>
       ) : error ? (
         <div className="border-destructive/40 bg-destructive/10 text-destructive mx-auto max-w-md rounded-xl border p-6 text-center text-sm">
-          <p className="font-medium">無法載入排行榜</p>
+          <p className="font-medium">{t("lb.error.title")}</p>
           <p className="mt-1 opacity-80">{error}</p>
-          <p className="text-muted-foreground mt-3 text-xs">
-            請先執行 <code className="font-mono">npm run build:db</code> 產生 public/data.db。
-          </p>
+          <p className="text-muted-foreground mt-3 text-xs">{t("lb.error.hint")}</p>
         </div>
       ) : !db || packs.length === 0 ? (
         <div className="text-muted-foreground mx-auto max-w-md rounded-xl border p-10 text-center text-sm">
-          目前沒有任何投稿資料。把 score.json 放進{" "}
-          <code className="font-mono">data/&#123;pack&#125;/&#123;ver&#125;/</code> 後重新建置即可。
+          {t("lb.empty")}
         </div>
       ) : (
         <div className="lg:grid lg:grid-cols-[256px_minmax(0,1fr)] lg:gap-8">
@@ -179,7 +178,7 @@ export default function Leaderboard() {
                 className="w-full"
               >
                 <SlidersHorizontal className="size-4" />
-                篩選與排序{activeFilters > 0 ? ` · ${activeFilters}` : ""}
+                {t("filter.title")}{activeFilters > 0 ? ` · ${activeFilters}` : ""}
               </Button>
             </div>
             <div
@@ -209,14 +208,16 @@ export default function Leaderboard() {
           <div className="flex flex-col gap-3">
             <div className="text-muted-foreground flex items-center justify-between px-1 text-xs">
               <span>
-                {search.trim() || activeFilters > 0 ? "符合條件" : "全部投稿"} {filtered.length} 筆
+                {search.trim() || activeFilters > 0
+                  ? t("lb.count.matched", { n: filtered.length })
+                  : t("lb.count.all", { n: filtered.length })}
               </span>
-              <span>共 {rows.length} 筆</span>
+              <span>{t("lb.count.total", { n: rows.length })}</span>
             </div>
 
             {filtered.length === 0 ? (
               <div className="text-muted-foreground border-border/60 rounded-2xl border border-dashed py-16 text-center text-sm">
-                找不到符合條件的投稿。
+                {t("lb.noMatch")}
               </div>
             ) : (
               <>
@@ -229,7 +230,7 @@ export default function Leaderboard() {
                     onClick={() => setVisible((v) => v + PAGE_SIZE)}
                     className="mt-2 self-center rounded-full"
                   >
-                    顯示更多 {filtered.length - visible} 筆
+                    {t("lb.showMore", { n: filtered.length - visible })}
                   </Button>
                 ) : null}
               </>

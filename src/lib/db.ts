@@ -220,11 +220,20 @@ export function getSubmissionsByPack(db: Database, packName: string, packVer: st
   return rows.map((r) => mapRow(r, cats));
 }
 
-/** 單一投稿(詳細頁用)。 */
-export function getSubmissionById(db: Database, id: number): SubmissionRow | null {
-  const rows = queryAll<RawRow>(db, `${SUBMISSION_SELECT} WHERE s.id = $id`, { $id: id });
+/** 單一投稿(詳細頁用)。以 pack+ver+file 的穩定鍵定位(重建 DB 不變,連結可分享)。 */
+export function getSubmissionByFile(
+  db: Database,
+  packName: string,
+  packVer: string,
+  file: string
+): SubmissionRow | null {
+  const rows = queryAll<RawRow>(
+    db,
+    `${SUBMISSION_SELECT} WHERE s.pack_name = $p AND s.pack_ver = $v AND s.file = $f`,
+    { $p: packName, $v: packVer, $f: file }
+  );
   if (!rows.length) return null;
-  const cats = getCategories(db, rows[0].pack_name, rows[0].pack_ver);
+  const cats = getCategories(db, packName, packVer);
   return mapRow(rows[0], cats);
 }
 

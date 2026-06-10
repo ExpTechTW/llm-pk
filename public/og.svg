@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0e100b" />
+      <stop offset="1" stop-color="#14160f" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#a3e635" />
+      <stop offset="1" stop-color="#67e8f9" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.2" r="0.8">
+      <stop stop-color="#a3e635" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#a3e635" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#glow)" />
+
+  <!-- pill -->
+  <g transform="translate(100,120)">
+    <rect x="0" y="0" width="340" height="44" rx="22" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12" />
+    <circle cx="26" cy="22" r="5" fill="#a3e635" />
+    <text x="46" y="29" font-family="Hanken Grotesk, Arial, sans-serif" font-size="18" fill="#cbd5c0" letter-spacing="1">BenchLocal community runs</text>
+  </g>
+
+  <!-- title -->
+  <text x="100" y="290" font-family="Bricolage Grotesque, Arial, sans-serif" font-size="120" font-weight="800" letter-spacing="-2">
+    <tspan fill="#f4f6ee">LLM </tspan><tspan fill="url(#accent)">PK</tspan>
+  </text>
+
+  <!-- subtitle -->
+  <text x="104" y="370" font-family="Hanken Grotesk, Arial, sans-serif" font-size="40" font-weight="600" fill="#e7ebdd">Local LLM leaderboard</text>
+  <text x="104" y="430" font-family="Hanken Grotesk, Arial, sans-serif" font-size="28" fill="#9aa291">本地模型跑分排行 · ローカルモデルランキング</text>
+
+  <!-- footer chips -->
+  <g transform="translate(104,500)" font-family="JetBrains Mono, monospace" font-size="22" fill="#9aa291">
+    <text x="0" y="24">model × quant × backend × hardware · one fair test</text>
+  </g>
+</svg>

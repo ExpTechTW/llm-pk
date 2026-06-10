@@ -1,0 +1,157 @@
+{
+  "pack": "DataExtract-15",
+  "ver": "1.0.0",
+  "lang": "zh",
+  "scenarios": {
+    "DE-01": {
+      "title": "名片 / 聯絡資訊",
+      "category": "A",
+      "prompt": "從以下文字中擷取聯絡資訊：\n\nDr. Sarah Chen, Ph.D.\nSenior Research Scientist\nBioGen Therapeutics, Inc.\n1420 Harbor Blvd, Suite 300\nSan Diego, CA 92101\nTel: (858) 555-0147\nEmail: s.chen@biogentherapeutics.com\nLinkedIn: linkedin.com/in/sarahchen-phd\n\n欄位：name, title, company, address, city, state, zip, phone, email, linkedin_url",
+      "criteria": [
+        "從結構良好的輸入進行基準擷取。每個欄位都有清楚標示且毫無歧義。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-02": {
+      "title": "收據 / 發票",
+      "category": "A",
+      "prompt": "從以下收據中擷取交易明細：\n\nURBAN BEAN COFFEE\n847 Market Street\nSan Francisco, CA 94103\n\nDate: 03/15/2026  Time: 08:42 AM\nCashier: Mike  Register: #3\n\nAmericano (L)          $4.75\nOat Milk Latte (M)     $5.50\nBlueberry Muffin       $3.25\n\nSubtotal:             $13.50\nTax (8.625%):          $1.16\nTotal:                $14.66\n\nVisa ending 4821\nAuth: 772941\n\n欄位：store_name, store_address, date, time, items（{name, price} 的陣列）, subtotal, tax_rate, tax_amount, total, payment_method, card_last_four",
+      "criteria": [
+        "從收據格式進行結構化擷取。價格必須是數字（而非帶有 \"$\" 的字串）。模型必須處理 items 陣列，並區分小計、稅額與總計。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-03": {
+      "title": "職缺公告",
+      "category": "A",
+      "prompt": "從以下公告中擷取職缺細節：\n\n🚀 We're Hiring! Senior Frontend Engineer\n\nLocation: Austin, TX (Hybrid - 3 days in office)\nTeam: Product Engineering\nReports to: VP of Engineering\n\nCompensation: $145,000 - $185,000 base + equity + benefits\n\nAbout the role:\nWe're looking for a senior frontend engineer to lead our design system rebuild. You'll work with React, TypeScript, and our custom component library. 3+ years of experience required.\n\nMust have: React, TypeScript, CSS-in-JS, accessibility (WCAG 2.1)\nNice to have: GraphQL, Storybook, animation (Framer Motion)\n\nApply at careers.example.com/senior-fe or email jobs@example.com\n\n欄位：job_title, location, work_model, team, reports_to, salary_min, salary_max, required_skills（陣列）, preferred_skills（陣列）, experience_years_min, apply_url, apply_email",
+      "criteria": [
+        "從半結構化文字擷取多種欄位類型：字串、數字、陣列。模型必須解析薪資範圍、區分必備技能與加分技能，並從敘述文字中擷取年資（\"3+ years\"）。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-04": {
+      "title": "非正式電子郵件對話串",
+      "category": "B",
+      "prompt": "從以下電子郵件對話串中擷取會議細節：\n\n---\nFrom: Lisa Park <lisa.p@company.com>\nTo: Team-Alpha <team-alpha@company.com>\nDate: March 10, 2026, 3:47 PM\nSubject: Re: Re: sprint planning??\n\nok so after talking to Jake, let's do Thursday instead of Wednesday. Same time tho - 10am. We can use the Maple room since Oak is booked. bring your laptops, we're gonna do live estimation this time\n\nbtw the retro from last sprint is still on for Friday 2pm in Birch. don't confuse the two lol\n\n- Lisa\n---\nFrom: Jake Torres <j.torres@company.com>\nTo: Team-Alpha <team-alpha@company.com>\nDate: March 10, 2026, 2:15 PM\nSubject: Re: sprint planning??\n\nWednesday doesn't work for me, can we move it? Thursday or Friday works. Also the Oak room has a broken projector so maybe book a different one.\n---\n\n欄位：meeting_name, day, time, room, organizer_name, organizer_email, note",
+      "criteria": [
+        "從對話式、非正式的文字進行擷取。模型必須：按時間順序閱讀對話串（最新的郵件才是最終決定）、區分衝刺規劃會議與回顧會議，並從口語化的語言中擷取資訊。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-05": {
+      "title": "含內嵌規格的產品評論",
+      "category": "B",
+      "prompt": "從以下評論中擷取產品細節與評論者的評價：\n\n★★★★☆\nReviewed by: TechDad_42 on Feb 28, 2026\nVerified Purchase\n\nBought the XR-7500 Pro noise-cancelling headphones for my daily commute. Was deciding between these and the Sony WH-1000XM5 ($348) but went with these since they were on sale for $279 (normally $329). Battery life is honestly amazing — I get about 38 hours on a single charge vs the 30 hours Sony claims. The ANC is good but not quite as good as my old Bose QC45s tbh. Sound quality is excellent for the price point. They fold flat which is great for my bag.\n\nOne complaint: the app (v3.2.1) is buggy on Android 14. Crashes when trying to customize EQ. Not a dealbreaker since the default sound profile is great.\n\nWeight: 254g. Bluetooth 5.3. USB-C charging.\n\nWould I recommend? Yeah, especially at the sale price. Best value under $300 IMO.\n\n欄位：product_name, product_price_paid, product_price_original, rating_stars, reviewer_name, battery_life_hours, weight_grams, bluetooth_version, charging_type, competitor_1_name, competitor_1_price, competitor_2_name, complaint, recommendation",
+      "criteria": [
+        "從帶有主觀意見、非正式的產品評論中擷取資訊。模型必須區分被評論產品的規格與競品規格、處理兩個不同的價格（特價與原價）、辨識比較中提及的競品，並原樣複製抱怨／推薦文字，而非加以改寫。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-06": {
+      "title": "手寫風格筆記（OCR 模擬）",
+      "category": "B",
+      "prompt": "從以下醫療診所筆記（由手寫轉錄）中擷取病患就診細節：\n\nPt: Margaret Liu    DOB: 5/12/1958\nVisit: 3-20-2026    Provider: Dr. Patel\n\nCC: persistent cough x 3 weeks, worse at night\nno fever, no weight loss\nh/o asthma - childhood, resolved\n\nBP 128/82  HR 76  Temp 98.4  SpO2 97%\n\nAssessment: likely post-nasal drip r/t seasonal allergies\nPlan: fluticasone nasal spray, follow up 2 wks if no improvement\nReferral: none at this time\n\nRx: fluticasone propionate 50mcg, 2 sprays each nostril daily x 30 days\n\n欄位：patient_name, date_of_birth, visit_date, provider, chief_complaint, blood_pressure_systolic, blood_pressure_diastolic, heart_rate, temperature, oxygen_saturation, assessment, medication_name, medication_dose, medication_duration, referral",
+      "criteria": [
+        "解析醫療縮寫（CC、BP、HR、h/o、r/t、Rx、Pt），並從縮寫筆記中擷取結構化資料，且不在字串欄位中展開縮寫。`referral` 欄位明確標示為 \"none at this time\"——正確的擷取結果應為 `null`（未進行任何轉診）。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-07": {
+      "title": "單一文件中的多人資訊",
+      "category": "C",
+      "prompt": "擷取此電子郵件中提及的每個人的資訊：\n\nHi team,\n\nQuick updates after today's meeting:\n\n— Marcus Washington (Senior Designer, NYC office) is taking over the Acme rebrand from Sarah. He'll be on-site in Chicago next week. His direct line is 212-555-0189. Contact him at m.washington@studio.com\n\n— Sarah Kim is transitioning to the Globex account effective April 1. She's relocating from Chicago to the LA office. No new phone yet — use her email sarah.k@studio.com for now.\n\n— The freelance illustrator we hired for Acme is Priya Desai. She charges $95/hour. Her portfolio is at priyadesai.com. She's based in Toronto but works US East Coast hours. Email: priya@priyadesai.com\n\nPlease update your contacts accordingly.\n— Jordan\n\n每人欄位：name, role, location, email, phone, hourly_rate, note\n以人物物件的陣列形式擷取。",
+      "criteria": [
+        "多實體擷取，模型必須正確地將屬性與對應的人物關聯起來。Marcus 的電話不是 Sarah 的電話。Sarah 的所在地是 LA（她的新地點），而非 Chicago（她正要離開的地方）。Priya 的費率只屬於 Priya。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-08": {
+      "title": "互相衝突的資訊",
+      "category": "C",
+      "prompt": "從以下文字中擷取活動細節。若資訊互相衝突，請擷取最新版本。\n\n=== ORIGINAL INVITE (March 1) ===\nAnnual Company Picnic\nDate: Saturday, June 14\nTime: 11:00 AM – 4:00 PM\nLocation: Riverside Park, Shelter B\nRSVP by May 15 to events@company.com\nCatering by Fresh Bites ($22/person)\n\n=== UPDATE (March 12) ===\nHey all — slight change of plans. We're moving the picnic to Lincoln Park (Shelter A) because Riverside is under construction. Same date and time. Also the caterer changed their pricing to $25/person.\n\n=== CORRECTION (March 18) ===\nSorry, one more update. The start time is now 11:30 AM (the park opens later than we thought). End time stays 4:00 PM. Everything else from the March 12 update still stands.\n\n欄位：event_name, date, start_time, end_time, location_park, location_shelter, rsvp_deadline, rsvp_email, catering_company, catering_price_per_person",
+      "criteria": [
+        "時間性衝突的解析。模型必須追蹤哪一次更新取代了哪一次。開始時間在 3 月 18 日的更正中變更。地點在 3 月 12 日的更新中變更。外燴價格在 3 月 12 日的更新中變更。日期並未變更（明確指出『Same date』）。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-09": {
+      "title": "巢狀引用——郵件中的郵件",
+      "category": "C",
+      "prompt": "只擷取目前（最外層）的請求細節。忽略引用／轉寄的內容。\n\nFrom: Alice Wong <alice@company.com>\nTo: Facilities <facilities@company.com>\nDate: March 20, 2026\nSubject: FW: Re: Conference Room Request\n\nHi Facilities,\n\nForwarding this thread for context, but here's what I actually need:\n\nPlease book the Atlas room for 8 people on March 28, 2:00 PM–3:30 PM. We need a projector and whiteboard. No catering needed.\n\nThanks,\nAlice\n\n-------- Forwarded Message --------\nFrom: Bob Chen <bob@company.com>\nDate: March 15, 2026\n\nAlice, I originally asked for the Summit room on March 22 for 12 people with lunch catering for the Q1 review. But that's been cancelled now. Can you see if Atlas is available for a smaller meeting instead?\n\n-------- Original Message --------\nFrom: Carol Davis <carol@company.com>\nDate: March 10, 2026\n\nBob — the Phoenix room is booked for March 22. Try Summit or Atlas. We can do catering for up to 20 people.\n\n欄位：requester_name, requester_email, room, date, start_time, end_time, attendee_count, needs_projector, needs_whiteboard, needs_catering",
+      "criteria": [
+        "情境層次的辨識。此郵件對話串包含三個不同的人在三個不同時間提出的三個不同的會議室請求。模型必須只擷取 Alice 目前的請求（最外層的訊息），而非 Bob 已取消的請求或 Carol 的建議。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-10": {
+      "title": "過度擷取的陷阱",
+      "category": "D",
+      "prompt": "從以下評論中擷取餐廳細節：\n\n\"Had dinner at Sakura Sushi last night with my partner. The place is tucked away on a quiet street in what I think is the Nob Hill neighborhood — honestly not 100% sure. The omakase was incredible, maybe the best I've had in the city. We spent about 2 hours there. The chef (didn't catch his name) was super friendly. No idea what we paid — my partner handled the bill. We took an Uber home so I know it's somewhere near California Street but I really couldn't point to it on a map. Definitely going back.\"\n\n欄位：restaurant_name, cuisine_type, neighborhood, street_address, chef_name, price_paid, visit_duration, rating_score, reservation_required, parking_available",
+      "criteria": [
+        "模型對於真正無法得知的欄位回傳 null 的能力。評論者明確表示自己對社區「not 100% sure」、「didn't catch」廚師的名字、「no idea」付了多少錢，也無法精確指出位置。沒有評分分數，只有正面的情緒。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-11": {
+      "title": "文字中的否定與更正",
+      "category": "D",
+      "prompt": "從以下規劃訊息中擷取最終確認的細節：\n\n\"OK so for the team offsite: we were thinking Aspen but actually that's too expensive so let's do Lake Tahoe instead. Budget per person is $500, wait no, I just checked and it's $450 after the flights went up. Dates are April 10-12. Actually hold on — April 10 is a Monday and people need to fly in Sunday night, so let's do April 11-13 (Tue-Thu). We'll need 8 rooms. No wait, Jessica and Tom are sharing, and Mike can't make it anymore, so 6 rooms. The hotel is Mountain View Lodge. Or was it Mountain View Inn? Let me check... it's Mountain View Lodge. Confirmed.\"\n\n欄位：destination, budget_per_person, start_date, end_date, num_rooms, hotel_name, total_attendees",
+      "criteria": [
+        "追蹤意識流文字中的更正與自我更正。每個欄位都至少被修改過一次。模型必須擷取最終陳述的值，而非第一個值。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-12": {
+      "title": "誘餌實體——別擷取錯誤的對象",
+      "category": "D",
+      "prompt": "擷取「被評論的產品」的細節，而非任何提及的競品。\n\n\"Bought a ZenBook Pro 15 laptop for my daughter's college. $1,299 at Best Buy. She was also considering the MacBook Air M3 ($1,099) and the Dell XPS 13 ($1,199) but we went with ASUS because of the OLED display and 16GB RAM. Battery life is about 10 hours which is less than the MacBook's 18 hours but she'll mostly use it plugged in. It's heavier than the Dell at 1.8kg vs 1.2kg but the 15-inch screen was important to her.\n\nThe i7-13700H processor handles everything she throws at it. 512GB SSD is fine for now — she keeps everything in Google Drive anyway. One thing that bugs me: it came with McAfee preinstalled and a bunch of other bloatware. The ASUS customer support was also pretty bad when I called about a driver issue.\n\nOverall: 4/5 stars. Great laptop for the price, just wish ASUS cleaned up the software experience.\"\n\n欄位：product_name, brand, price, store, display_type, display_size, ram_gb, processor, storage, battery_life_hours, weight_kg, rating, operating_system, complaint",
+      "criteria": [
+        "實體消歧。文中提及三台筆電及其規格。模型必須只擷取 ZenBook 的細節。MacBook 的 18 小時電池與 $1,099 價格、Dell 的 1.2kg 重量與 $1,199 價格皆為誘餌。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-13": {
+      "title": "含折扣的多段式發票",
+      "category": "E",
+      "prompt": "擷取發票細節：\n\nINVOICE #INV-2026-0847\n\nFrom: CloudTech Solutions, LLC\n123 Innovation Way, Seattle, WA 98101\nTax ID: 91-7654321\n\nBill To: Meridian Corp\nAttn: Accounts Payable\n500 Commerce Dr, Portland, OR 97201\nPO#: MC-2026-445\n\nInvoice Date: March 15, 2026\nDue Date: April 14, 2026\nTerms: Net 30\n\n┌─────────────────────────────────────────────────────────────────────┐\n│ Description                    │ Qty │ Unit Price │ Amount         │\n├─────────────────────────────────────────────────────────────────────┤\n│ Cloud Hosting - Pro Plan       │ 12  │ $149.00    │ $1,788.00     │\n│ API Gateway - Standard         │ 1   │ $299.00    │ $299.00       │\n│ SSL Certificate - Wildcard     │ 2   │ $89.00     │ $178.00       │\n│ Professional Services (hrs)    │ 8   │ $175.00    │ $1,400.00     │\n│ Data Migration (one-time)      │ 1   │ $500.00    │ $500.00       │\n├─────────────────────────────────────────────────────────────────────┤\n│ Subtotal                                           │ $4,165.00     │\n│ Volume Discount (10%)                              │ -$416.50      │\n│ Early Payment Credit                               │ -$50.00       │\n│ ─────────────────────────────────────────────────────────────────── │\n│ Total Due                                          │ $3,698.50     │\n└─────────────────────────────────────────────────────────────────────┘\n\nPayment: Wire transfer to Account #****4521 (Chase Bank)\nFor questions: billing@cloudtech.io\n\n欄位：invoice_number, vendor_name, vendor_address, vendor_tax_id, client_name, client_po, invoice_date, due_date, payment_terms, line_items（{description, qty, unit_price, amount} 的陣列）, subtotal, discounts（{description, amount} 的陣列）, total_due, payment_method, billing_contact_email",
+      "criteria": [
+        "包含巢狀陣列、多個段落，以及需要精確處理的財務資料的複雜結構化擷取。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-14": {
+      "title": "多語言文件",
+      "category": "E",
+      "prompt": "從以下雙語產品列表中擷取產品細節：\n\n【新発売】ワイヤレスイヤホン AirPulse X3\nNew Release: AirPulse X3 Wireless Earbuds\n\n価格 / Price: ¥12,980 (税込 / tax included)\n色 / Colors: ミッドナイトブラック (Midnight Black), パールホワイト (Pearl White), サクラピンク (Sakura Pink)\n\n仕様 / Specifications:\nドライバー / Driver: 10mm ダイナミック / 10mm Dynamic\nBluetooth: 5.3\nバッテリー / Battery: イヤホン本体 8時間 / Earbuds 8 hours, ケース込み 32時間 / With case 32 hours\n防水 / Water resistance: IPX5\n重量 / Weight: 片耳 5.2g / Per earbud 5.2g, ケース 42g / Case 42g\nノイキャン / ANC: ✓ アダプティブ / Adaptive\n\n付属品 / Included: USB-C充電ケーブル, イヤーチップ(S/M/L), 取扱説明書\nIncluded: USB-C charging cable, ear tips (S/M/L), user manual\n\n販売元 / Sold by: SoundWave Electronics Co., Ltd. (東京都渋谷区)\n\n欄位：product_name, product_type, price_jpy, tax_included, colors（陣列）, driver_size, bluetooth_version, battery_life_earbuds_hours, battery_life_with_case_hours, water_resistance_rating, earbud_weight_grams, case_weight_grams, has_anc, anc_type, included_items（陣列）, seller_name, seller_location",
+      "criteria": [
+        "從雙語內容（日文／英文）擷取資訊。模型必須處理日圓格式、雙語標籤、CJK 字元，並在欄位以文字形式回傳時完全保留原始語言的字串。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    },
+    "DE-15": {
+      "title": "空白文件的陷阱",
+      "category": "E",
+      "prompt": "從以下「關於我們」頁面擷取公司細節：\n\nWelcome to our website! We're passionate about what we do and we've been doing it for a long time. Our team of dedicated professionals works hard every day to deliver the best results for our clients. We believe in innovation, integrity, and excellence.\n\n\"Great service!\" — A happy customer\n\"Would recommend!\" — Another satisfied client\n\nContact us today to learn how we can help your business grow!\n© 2026 All rights reserved.\n\n欄位：company_name, founding_year, ceo_name, employee_count, headquarters_city, industry, annual_revenue, phone_number, email, website_url",
+      "criteria": [
+        "模型在文字完全不含可擷取資訊時說出「我不知道」的能力。這個通用的「關於我們」頁面完全沒有任何具體細節，因此每個欄位都應為 null。",
+        "✓ 回傳有效的 JSON，並為所要求的欄位保留與原文完全一致的文字。",
+        "✗ 出現幻覺、進行正規化，或擷取了原文並未明確支持的欄位。"
+      ]
+    }
+  }
+}

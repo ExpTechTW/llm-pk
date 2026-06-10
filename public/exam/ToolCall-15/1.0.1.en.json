@@ -1,0 +1,127 @@
+{
+  "pack": "ToolCall-15",
+  "ver": "1.0.1",
+  "lang": "en",
+  "scenarios": {
+    "TC-01": {
+      "title": "Direct Specialist Match",
+      "category": "A",
+      "prompt": "What's the weather like in Berlin right now?",
+      "criteria": [
+        "Use get_weather instead of falling back to web_search."
+      ]
+    },
+    "TC-02": {
+      "title": "Distractor Resistance",
+      "category": "A",
+      "prompt": "What is the current price of AAPL stock?",
+      "criteria": [
+        "Use get_stock_price without extra tools."
+      ]
+    },
+    "TC-03": {
+      "title": "Implicit Tool Need",
+      "category": "A",
+      "prompt": "I need to let Sarah know the meeting moved to 3pm.",
+      "criteria": [
+        "Infer get_contacts followed by send_email."
+      ]
+    },
+    "TC-04": {
+      "title": "Unit Handling",
+      "category": "B",
+      "prompt": "What's the temperature in Tokyo in Fahrenheit?",
+      "criteria": [
+        "Pass the requested units parameter instead of ignoring it."
+      ]
+    },
+    "TC-05": {
+      "title": "Date and Time Parsing",
+      "category": "B",
+      "prompt": "Schedule a team standup for next Monday at 9:30am, 30 minutes, with Alex and Jamie.",
+      "criteria": [
+        "Parse relative date and structured event parameters correctly."
+      ]
+    },
+    "TC-06": {
+      "title": "Multi-Value Extraction",
+      "category": "B",
+      "prompt": "Translate 'Where is the nearest hospital?' from English to both Spanish and Japanese.",
+      "criteria": [
+        "Split a one-to-many translation request into two tool calls."
+      ]
+    },
+    "TC-07": {
+      "title": "Search → Read → Act",
+      "category": "C",
+      "prompt": "Find the Q3 budget report and email the total to my manager.",
+      "criteria": [
+        "Thread file search, file read, contact lookup, and send_email end to end."
+      ]
+    },
+    "TC-08": {
+      "title": "Conditional Branching",
+      "category": "C",
+      "prompt": "Check the weather in Paris. If it's raining, remind me to bring an umbrella tomorrow at 8am.",
+      "criteria": [
+        "Branch off the weather result instead of setting the reminder blindly."
+      ]
+    },
+    "TC-09": {
+      "title": "Parallel Independence",
+      "category": "C",
+      "prompt": "What's the weather in London and the stock price of MSFT?",
+      "criteria": [
+        "Handle two independent requests without missing either one."
+      ]
+    },
+    "TC-10": {
+      "title": "Trivial Knowledge",
+      "category": "D",
+      "prompt": "What year did World War II end?",
+      "criteria": [
+        "Avoid tools for basic knowledge."
+      ]
+    },
+    "TC-11": {
+      "title": "Simple Math",
+      "category": "D",
+      "prompt": "What is 15% of 200?",
+      "criteria": [
+        "Avoid calculator for easy arithmetic."
+      ]
+    },
+    "TC-12": {
+      "title": "Impossible Request",
+      "category": "D",
+      "prompt": "Delete all my emails from last month.",
+      "criteria": [
+        "Refuse cleanly when no suitable tool exists."
+      ]
+    },
+    "TC-13": {
+      "title": "Empty Results",
+      "category": "E",
+      "prompt": "Find the Johnson proposal document.",
+      "criteria": [
+        "Retry or ask for clarification when the first search returns nothing."
+      ]
+    },
+    "TC-14": {
+      "title": "Malformed Response",
+      "category": "E",
+      "prompt": "What's Apple's stock price?",
+      "criteria": [
+        "Surface tool errors instead of hallucinating a price."
+      ]
+    },
+    "TC-15": {
+      "title": "Conflicting Information",
+      "category": "E",
+      "prompt": "Search for the population of Iceland and calculate what 2% of it would be.",
+      "criteria": [
+        "Carry the exact searched value into the calculator."
+      ]
+    }
+  }
+}
