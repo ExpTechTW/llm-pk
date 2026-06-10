@@ -5,8 +5,3 @@ dist
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
-
-# 由 build:db 產生(CI 部署時重建);不進版控
-public/data.db
-public/data.db-shm
-public/data.db-wal

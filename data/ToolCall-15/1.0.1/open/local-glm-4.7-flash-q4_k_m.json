@@ -23,7 +23,7 @@
         },
         "quantization": {
             "format": "GGUF",
-            "level": "Q6_K",
+            "level": "Q4_K_M",
             "method": "Static"
         },
         "link": "hugging_face:mradermacher:Huihui-GLM-4.7-Flash-abliterated-GGUF"

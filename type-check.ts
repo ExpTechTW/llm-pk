@@ -145,7 +145,10 @@ function lint(raw: unknown): string[] {
     warnings.push("results 為空,沒有任何題目結果");
   }
 
-  if (data.backend && (data.backend.ver == null || data.backend.ver === "")) {
+  // 雲端 API(如 OpenRouter)沒有可重現的版本號,留空屬正常,不提醒。
+  const backendName = String(data.backend?.name ?? "").toLowerCase();
+  const skipVerHint = data.deployment === "cloud" || backendName === "openrouter";
+  if (!skipVerHint && data.backend && (data.backend.ver == null || data.backend.ver === "")) {
     warnings.push("backend.ver 留空,建議補上推理引擎/API 版本以利重現");
   }
 
