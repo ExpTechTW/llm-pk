@@ -1,5 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
-import { GitCompareArrows, Trophy } from "lucide-react";
+import { Download, GitCompareArrows, Trophy } from "lucide-react";
 
 export function Layout() {
   return (
@@ -43,10 +43,19 @@ export function Layout() {
 
         <Outlet />
 
-        <footer className="border-border/40 mx-auto mt-10 max-w-[1480px] border-t px-5 py-8">
+        <footer className="border-border/40 mx-auto mt-10 flex max-w-[1480px] flex-col items-center gap-3 border-t px-5 py-8">
           <p className="text-muted-foreground text-center text-xs">
             資料由 BenchLocal 產生 · 排行依 BenchLocal 分數
           </p>
+          <a
+            href="https://benchlocal.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-muted-foreground/80 hover:text-foreground hover:border-border border-border/50 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors"
+          >
+            <Download className="size-3.5" />
+            下載 BenchLocal
+          </a>
         </footer>
       </div>
     </div>

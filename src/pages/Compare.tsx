@@ -75,18 +75,21 @@ function IdentityCard({
       </span>
       <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={52} radius="rounded-2xl" />
       <div className="w-full min-w-0">
-        <div
-          className="font-display min-h-[2lh] text-sm leading-tight font-bold wrap-break-word sm:text-base"
-          title={row.modelName}
-        >
-          {row.modelName}
+        {/* 名稱固定 3 行高、上下置中,左右兩卡名稱區一樣高,分數才會對齊 */}
+        <div className="flex h-[3lh] items-center justify-center text-sm leading-tight sm:text-base">
+          <span className="font-display line-clamp-3 font-bold wrap-break-word" title={row.modelName}>
+            {row.modelName}
+          </span>
         </div>
-        {row.linkAuthor ? (
-          <div className="text-muted-foreground/70 mt-0.5 flex items-center justify-center gap-1 text-xs">
-            <HfAvatar handle={row.linkAuthor} avatarUrl={row.linkAuthorAvatar} size={14} linked={false} />
-            <span className="truncate">{row.linkAuthor}</span>
-          </div>
-        ) : null}
+        {/* 作者列固定高度(沒有作者也保留空間,維持對齊) */}
+        <div className="text-muted-foreground/70 mt-0.5 flex h-5 items-center justify-center gap-1 text-xs">
+          {row.linkAuthor ? (
+            <>
+              <HfAvatar handle={row.linkAuthor} avatarUrl={row.linkAuthorAvatar} size={14} linked={false} />
+              <span className="truncate">{row.linkAuthor}</span>
+            </>
+          ) : null}
+        </div>
       </div>
       <div className="font-data text-3xl leading-none font-bold tabular-nums" style={{ color }}>
         {row.scoreTotal.toFixed(1)}

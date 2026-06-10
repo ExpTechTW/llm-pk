@@ -39,7 +39,7 @@ function SelectContent({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          "bg-card text-foreground border-border/70 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 overflow-hidden rounded-xl border shadow-xl shadow-black/40 backdrop-blur-xl",
+          "bg-card text-foreground border-border/70 relative z-50 max-h-(--radix-select-content-available-height) max-w-(--radix-select-content-available-width) min-w-32 overflow-hidden rounded-xl border shadow-xl shadow-black/40 backdrop-blur-xl",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
