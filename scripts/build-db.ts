@@ -210,6 +210,17 @@ function readValidEntries(): { entries: ValidEntry[]; skipped: number } {
       }
     }
 
+    // 檔名應為 {前綴}-{model.id}.json(前綴如 local / openrouter),不一致時警告。
+    const id = report.value.model.id;
+    if (id) {
+      const base = fileKey(relName); // 去目錄與副檔名
+      const prefix = base.split("-")[0];
+      const expected = `${prefix}-${id.replace(/\//g, "-")}`;
+      if (base !== expected) {
+        console.warn(`  ${relName}: 檔名與 model.id 不一致(預期 ${expected}.json)`);
+      }
+    }
+
     // 只取雜湊前 5 碼做變更偵測(碰撞機率對這個資料量可忽略)。
     const hash = createHash("sha1").update(text).digest("hex").slice(0, 5);
     entries.push({ relName, raw, value: report.value, hash });
