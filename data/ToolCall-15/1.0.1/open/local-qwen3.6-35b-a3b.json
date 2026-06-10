@@ -7,7 +7,7 @@
   },
   "deployment": "local",
   "model": {
-    "id": "qwen3.6-35b-a3b",
+    "id": "huihui-qwen3.6-35b-a3b-abliterated-int4-autoround",
     "name": "Huihui Qwen3.6 35B A3B Abliterated",
     "org": "Qwen",
     "access": "open",

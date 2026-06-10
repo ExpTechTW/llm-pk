@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "author": "YuYu1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "Huihui Qwen3.6 35B A3B Claude 4.7 Opus Abliterated",
+        "id": "huihui-qwen3.6-35b-a3b-claude-opus-4.7-abliterated-int4-autoround",
+        "org": "Qwen",
+        "access": "open",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "MoE",
+        "size": {
+            "params": "35B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "Safetensors",
+            "level": "int4",
+            "method": "AutoRound"
+        },
+        "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound"
+    },
+    "backend": {
+        "name": "vllm",
+        "ver": "0.22.1rc1"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "DGX Spark",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 90,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 50,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T02:15:06.338Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 5810
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 2778
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 4646
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2504
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 5696
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 3632
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 9232
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 5830
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 3130
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 2385
+        },
+        "TC-11": {
+            "status": null,
+            "time": 3442
+        },
+        "TC-12": {
+            "status": 0,
+            "time": 54687
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 6767
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 6148
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 4448
+        }
+    }
+}
