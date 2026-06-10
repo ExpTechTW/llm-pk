@@ -1,0 +1,132 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "nemotron-3-ultra-550b-a55b",
+        "name": "Nemotron 3 Ultra 550B A55B",
+        "org": "NVIDIA",
+        "access": "open",
+        "family": {
+            "name": "Nemotron",
+            "ver": "3"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "550B",
+            "active": "55B"
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 97,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 93,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 93,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T19:14:45.276Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": 1,
+            "time": 21925
+        },
+        "IF-02": {
+            "status": 1,
+            "time": 35855
+        },
+        "IF-03": {
+            "status": 1,
+            "time": 65436
+        },
+        "IF-04": {
+            "status": 1,
+            "time": 25055
+        },
+        "IF-05": {
+            "status": 1,
+            "time": 16447
+        },
+        "IF-06": {
+            "status": 1,
+            "time": 14189
+        },
+        "IF-07": {
+            "status": 1,
+            "time": 24007
+        },
+        "IF-08": {
+            "status": null,
+            "time": 31447
+        },
+        "IF-09": {
+            "status": 1,
+            "time": 28438
+        },
+        "IF-10": {
+            "status": 1,
+            "time": 240719
+        },
+        "IF-11": {
+            "status": null,
+            "time": 66405
+        },
+        "IF-12": {
+            "status": 1,
+            "time": 4050
+        },
+        "IF-13": {
+            "status": 1,
+            "time": 11276
+        },
+        "IF-14": {
+            "status": 1,
+            "time": 12030
+        },
+        "IF-15": {
+            "status": 1,
+            "time": 40053
+        }
+    }
+}
