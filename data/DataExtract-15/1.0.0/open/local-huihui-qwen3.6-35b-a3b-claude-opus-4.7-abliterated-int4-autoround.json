@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "YuYu1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "Huihui Qwen3.6 35B A3B Claude 4.7 Opus Abliterated",
+        "id": "huihui-qwen3.6-35b-a3b-claude-opus-4.7-abliterated-int4-autoround",
+        "org": "Qwen",
+        "access": "open",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "35B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "Safetensors",
+            "level": "int4",
+            "method": "AutoRound"
+        },
+        "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound"
+    },
+    "backend": {
+        "name": "vllm",
+        "ver": "0.22.1rc1"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "DGX Spark",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 12,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 0,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 0,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 30,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 0,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 33,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T18:25:58.597Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 0,
+            "time": 4114
+        },
+        "DE-02": {
+            "status": 0,
+            "time": 5915
+        },
+        "DE-03": {
+            "status": 0,
+            "time": 7614
+        },
+        "DE-04": {
+            "status": 0,
+            "time": 12098
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 7719
+        },
+        "DE-06": {
+            "status": 0,
+            "time": 6935
+        },
+        "DE-07": {
+            "status": 0,
+            "time": 14203
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 6791
+        },
+        "DE-09": {
+            "status": 0,
+            "time": 5173
+        },
+        "DE-10": {
+            "status": 0,
+            "time": 5222
+        },
+        "DE-11": {
+            "status": 0,
+            "time": 9617
+        },
+        "DE-12": {
+            "status": 0,
+            "time": 11584
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 11008
+        },
+        "DE-14": {
+            "status": 0,
+            "time": 7113
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 3168
+        }
+    }
+}
