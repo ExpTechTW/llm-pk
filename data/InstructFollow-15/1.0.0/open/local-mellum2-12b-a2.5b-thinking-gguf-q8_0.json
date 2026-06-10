@@ -1,0 +1,159 @@
+{
+  "BenchLocal": "0.3.0",
+  "results_upload": "whes1015",
+  "BenchPack": {
+    "name": "InstructFollow-15",
+    "ver": "1.0.0"
+  },
+  "deployment": "local",
+  "model": {
+    "id": "mellum2-12b-a2.5b-thinking-gguf-q8_0",
+    "name": "Mellum2 12B A2.5B Thinking",
+    "org": "JetBrains",
+    "access": "open",
+    "family": {
+      "name": "Mellum",
+      "ver": "2"
+    },
+    "type": "MoE",
+    "thinking": true,
+    "size": {
+      "params": "12B",
+      "active": "2.5B"
+    },
+    "quantization": {
+      "format": "GGUF",
+      "level": "Q8_0",
+      "method": "Static"
+    },
+    "link": "hugging_face:JetBrains:Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
+    "args": {
+      "spec": {
+        "method": "ngram",
+        "n-match": 32,
+        "n-min": 16,
+        "n-max": 64
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "repeat-penalty": 1
+    }
+  },
+  "backend": {
+    "name": "llama.cpp",
+    "ver": "9519"
+  },
+  "hardware": {
+    "company": "NVIDIA",
+    "device": "Tesla P100-PCIE-16GB",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "580.159.03",
+    "cuda": "13.0"
+  },
+  "score": {
+    "total": 79,
+    "categories": [
+      {
+        "id": "A",
+        "label": "Format Constraints",
+        "score": 55,
+        "weight": 20
+      },
+      {
+        "id": "B",
+        "label": "Ordering and Sorting",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "C",
+        "label": "Multi-Domain",
+        "score": 100,
+        "weight": 20
+      },
+      {
+        "id": "D",
+        "label": "Precision Under Pressure",
+        "score": 73,
+        "weight": 20
+      },
+      {
+        "id": "E",
+        "label": "Adversarial",
+        "score": 67,
+        "weight": 20
+      }
+    ]
+  },
+  "run": {
+    "date": "2026-06-10T19:04:18.388Z",
+    "mode": "parallel_by_test_case",
+    "runsPerTest": 1
+  },
+  "results": {
+    "IF-01": {
+      "status": 1,
+      "time": 7828
+    },
+    "IF-02": {
+      "status": 0,
+      "time": 5633
+    },
+    "IF-03": {
+      "status": 0,
+      "time": 7029
+    },
+    "IF-04": {
+      "status": 1,
+      "time": 3250
+    },
+    "IF-05": {
+      "status": 1,
+      "time": 4127
+    },
+    "IF-06": {
+      "status": 1,
+      "time": 2785
+    },
+    "IF-07": {
+      "status": 1,
+      "time": 44288
+    },
+    "IF-08": {
+      "status": 1,
+      "time": 24842
+    },
+    "IF-09": {
+      "status": 1,
+      "time": 12049
+    },
+    "IF-10": {
+      "status": 0,
+      "time": 28027
+    },
+    "IF-11": {
+      "status": null,
+      "time": 10347
+    },
+    "IF-12": {
+      "status": 1,
+      "time": 2028
+    },
+    "IF-13": {
+      "status": 1,
+      "time": 7503
+    },
+    "IF-14": {
+      "status": 0,
+      "time": 4507
+    },
+    "IF-15": {
+      "status": 1,
+      "time": 8655
+    }
+  }
+}

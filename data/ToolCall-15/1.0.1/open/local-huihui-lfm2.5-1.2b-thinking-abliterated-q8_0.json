@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "huihui-lfm2.5-1.2b-thinking-abliterated-q8_0",
+        "name": "Huihui LFM2.5 1.2B Thinking Abliterated",
+        "org": "LiquidAI",
+        "access": "open",
+        "family": {
+            "name": "LiquidAI",
+            "ver": "2.5"
+        },
+        "type": "Dense",
+        "thinking": true,
+        "size": {
+            "params": "1.2B",
+            "active": "1.2B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q8_0",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:Huihui-LFM2.5-1.2B-Thinking-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 70,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 83,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 33,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 83,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 50,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-10T19:03:02.178Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 2685
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 2561
+        },
+        "TC-03": {
+            "status": null,
+            "time": 4976
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2410
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 6500
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 4668
+        },
+        "TC-07": {
+            "status": 0,
+            "time": 70057
+        },
+        "TC-08": {
+            "status": 0,
+            "time": 17615
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 6293
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 3438
+        },
+        "TC-11": {
+            "status": null,
+            "time": 4531
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 5821
+        },
+        "TC-13": {
+            "status": 0,
+            "time": 8516
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 2970
+        },
+        "TC-15": {
+            "status": null,
+            "time": 13971
+        }
+    }
+}

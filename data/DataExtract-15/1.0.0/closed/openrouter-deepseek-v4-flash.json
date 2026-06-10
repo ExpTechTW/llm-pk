@@ -7,19 +7,19 @@
     },
     "deployment": "cloud",
     "model": {
-        "id": "gemini-3.1-flash-lite",
-        "name": "Gemini 3.1 Flash Lite",
-        "org": "Google",
-        "access": "closed",
+        "id": "deepseek-v4-flash",
+        "name": "DeepSeek V4 Flash",
+        "org": "DeepSeek",
+        "access": "open",
         "family": {
-            "name": "Gemini",
-            "ver": "3.1"
+            "name": "DeepSeek",
+            "ver": "4"
         },
-        "type": "",
-        "thinking": false,
+        "type": "MoE",
+        "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "284B",
+            "active": "13B"
         },
         "link": ""
     },
@@ -28,24 +28,24 @@
         "ver": ""
     },
     "score": {
-        "total": 89,
+        "total": 87,
         "categories": [
             {
                 "id": "A",
                 "label": "Clean Extraction",
-                "score": 97,
+                "score": 95,
                 "weight": 15
             },
             {
                 "id": "B",
                 "label": "Noisy and Informal",
-                "score": 89,
+                "score": 84,
                 "weight": 20
             },
             {
                 "id": "C",
                 "label": "Multi-Entity",
-                "score": 92,
+                "score": 90,
                 "weight": 25
             },
             {
@@ -63,70 +63,70 @@
         ]
     },
     "run": {
-        "date": "2026-06-10T18:50:29.186Z",
+        "date": "2026-06-10T18:57:32.500Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "DE-01": {
             "status": 1,
-            "time": 3157
+            "time": 9828
         },
         "DE-02": {
             "status": 1,
-            "time": 1963
+            "time": 9358
         },
         "DE-03": {
             "status": 1,
-            "time": 1334
+            "time": 11244
         },
         "DE-04": {
             "status": 1,
-            "time": 5400
+            "time": 6787
         },
         "DE-05": {
-            "status": 1,
-            "time": 5352
+            "status": null,
+            "time": 2591
         },
         "DE-06": {
             "status": 1,
-            "time": 1760
+            "time": 11154
         },
         "DE-07": {
             "status": null,
-            "time": 4843
+            "time": 10607
         },
         "DE-08": {
             "status": 1,
-            "time": 2366
+            "time": 4962
         },
         "DE-09": {
             "status": 1,
-            "time": 1288
+            "time": 5100
         },
         "DE-10": {
             "status": null,
-            "time": 1606
+            "time": 6057
         },
         "DE-11": {
             "status": 1,
-            "time": 1015
+            "time": 1694
         },
         "DE-12": {
             "status": 1,
-            "time": 1071
+            "time": 10721
         },
         "DE-13": {
             "status": 0,
-            "time": 2099
+            "time": 16595
         },
         "DE-14": {
             "status": null,
-            "time": 1470
+            "time": 4250
         },
         "DE-15": {
             "status": 1,
-            "time": 786
+            "time": 3121
         }
     }
 }

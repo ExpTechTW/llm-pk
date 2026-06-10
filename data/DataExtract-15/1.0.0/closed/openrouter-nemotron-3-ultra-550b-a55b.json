@@ -7,19 +7,19 @@
     },
     "deployment": "cloud",
     "model": {
-        "id": "gemini-3.1-flash-lite",
-        "name": "Gemini 3.1 Flash Lite",
-        "org": "Google",
-        "access": "closed",
+        "id": "nemotron-3-ultra-550b-a55b",
+        "name": "Nemotron 3 Ultra 550B A55B",
+        "org": "NVIDIA",
+        "access": "open",
         "family": {
-            "name": "Gemini",
-            "ver": "3.1"
+            "name": "Nemotron",
+            "ver": "3"
         },
-        "type": "",
-        "thinking": false,
+        "type": "MoE",
+        "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "550B",
+            "active": "55B"
         },
         "link": ""
     },
@@ -28,105 +28,105 @@
         "ver": ""
     },
     "score": {
-        "total": 89,
+        "total": 73,
         "categories": [
             {
                 "id": "A",
                 "label": "Clean Extraction",
-                "score": 97,
+                "score": 95,
                 "weight": 15
             },
             {
                 "id": "B",
                 "label": "Noisy and Informal",
-                "score": 89,
+                "score": 43,
                 "weight": 20
             },
             {
                 "id": "C",
                 "label": "Multi-Entity",
-                "score": 92,
+                "score": 84,
                 "weight": 25
             },
             {
                 "id": "D",
                 "label": "Implicit and Missing",
-                "score": 89,
+                "score": 72,
                 "weight": 25
             },
             {
                 "id": "E",
                 "label": "Complex Documents",
-                "score": 77,
+                "score": 72,
                 "weight": 15
             }
         ]
     },
     "run": {
-        "date": "2026-06-10T18:50:29.186Z",
+        "date": "2026-06-10T18:57:32.500Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "DE-01": {
             "status": 1,
-            "time": 3157
+            "time": 14998
         },
         "DE-02": {
             "status": 1,
-            "time": 1963
+            "time": 31452
         },
         "DE-03": {
             "status": 1,
-            "time": 1334
+            "time": 26846
         },
         "DE-04": {
-            "status": 1,
-            "time": 5400
+            "status": 0,
+            "time": 28271
         },
         "DE-05": {
-            "status": 1,
-            "time": 5352
+            "status": 0,
+            "time": 22006
         },
         "DE-06": {
             "status": 1,
-            "time": 1760
+            "time": 36044
         },
         "DE-07": {
             "status": null,
-            "time": 4843
+            "time": 58187
         },
         "DE-08": {
             "status": 1,
-            "time": 2366
+            "time": 33823
         },
         "DE-09": {
             "status": 1,
-            "time": 1288
+            "time": 10520
         },
         "DE-10": {
             "status": null,
-            "time": 1606
+            "time": 47330
         },
         "DE-11": {
             "status": 1,
-            "time": 1015
+            "time": 23365
         },
         "DE-12": {
-            "status": 1,
-            "time": 1071
+            "status": 0,
+            "time": 78181
         },
         "DE-13": {
             "status": 0,
-            "time": 2099
+            "time": 43717
         },
         "DE-14": {
             "status": null,
-            "time": 1470
+            "time": 129056
         },
         "DE-15": {
             "status": 1,
-            "time": 786
+            "time": 27654
         }
     }
 }
