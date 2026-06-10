@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, SlidersHorizontal } from "lucide-react";
 
+import { CompareBar, CompareCheck, CompareDialog, COMPARE_MAX } from "@/components/Compare";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { PackSelect, type PackKey } from "@/components/PackSelect";
 import { SearchBar } from "@/components/SearchBar";
 import { SubmissionCard } from "@/components/SubmissionCard";
 import { Button } from "@/components/ui/button";
 import { getPacks, getSubmissionsByPack } from "@/lib/db";
+import type { SubmissionRow } from "@/lib/types";
 import {
   applyFilters,
   computeBounds,
@@ -36,6 +38,8 @@ export default function Leaderboard() {
   const [sort, setSort] = useState<SortKey>("score");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [showFilters, setShowFilters] = useState(false);
+  const [compareIds, setCompareIds] = useState<Set<number>>(() => new Set());
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const prices = usePrices();
   const packs = useMemo(() => (db ? getPacks(db) : []), [db]);
@@ -54,6 +58,12 @@ export default function Leaderboard() {
   const [priceRanges, setPriceRanges] = useState<Ranges>({});
   const sizeBounds = useMemo(() => computeBounds(rows, SIZE_FIELDS), [rows]);
   const [sizeRanges, setSizeRanges] = useState<Ranges>({});
+
+  const rowById = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
+  const compareRows = useMemo(
+    () => [...compareIds].map((cid) => rowById.get(cid)).filter((r): r is SubmissionRow => !!r),
+    [compareIds, rowById]
+  );
 
   const facets = useMemo(() => computeFacets(rows, search, selected), [rows, search, selected]);
   const filtered = useMemo(
@@ -80,6 +90,17 @@ export default function Leaderboard() {
   const changePack = (next: PackKey) => {
     setPack(next);
     setSelected(emptySelected());
+    setCompareIds(new Set());
+    setCompareOpen(false);
+  };
+
+  const toggleCompare = (cid: number) => {
+    setCompareIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(cid)) next.delete(cid);
+      else if (next.size < COMPARE_MAX) next.add(cid);
+      return next;
+    });
   };
 
   const toggle = (facetKey: string, value: string) => {
@@ -220,9 +241,22 @@ export default function Leaderboard() {
               </div>
             ) : (
               <>
-                {filtered.slice(0, visible).map((row, index) => (
-                  <SubmissionCard key={row.id} row={row} rank={index + 1} index={index} />
-                ))}
+                {filtered.slice(0, visible).map((row, index) => {
+                  const checked = compareIds.has(row.id);
+                  return (
+                    <div key={row.id} className="flex items-center gap-2 sm:gap-3">
+                      <CompareCheck
+                        checked={checked}
+                        disabled={!checked && compareIds.size >= COMPARE_MAX}
+                        onToggle={() => toggleCompare(row.id)}
+                        label={row.modelName}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <SubmissionCard row={row} rank={index + 1} index={index} />
+                      </div>
+                    </div>
+                  );
+                })}
                 {filtered.length > visible ? (
                   <Button
                     variant="outline"
@@ -237,6 +271,24 @@ export default function Leaderboard() {
           </div>
         </div>
       )}
+
+      {/* 比較:底部浮動列 + 並排比較對話框 */}
+      {compareRows.length > 0 ? <div className="h-20" aria-hidden /> : null}
+      <CompareBar
+        rows={compareRows}
+        onRemove={toggleCompare}
+        onClear={() => {
+          setCompareIds(new Set());
+          setCompareOpen(false);
+        }}
+        onOpen={() => setCompareOpen(true)}
+      />
+      <CompareDialog
+        rows={compareRows}
+        open={compareOpen && compareRows.length >= 2}
+        onOpenChange={setCompareOpen}
+        onRemove={toggleCompare}
+      />
     </main>
   );
 }
