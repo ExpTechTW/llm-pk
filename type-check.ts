@@ -67,13 +67,14 @@ const modelCommon = {
   access: z.enum(["open", "closed"]), // 開源 / 閉源權重
   family: z.object({ name: z.string(), ver: z.string() }).partial().optional(),
   type: z.string().optional(), // MoE / Dense
+  thinking: z.boolean().optional(), // 是否具備 thinking / reasoning 模式
   size: z.object({ params: z.string(), active: z.string().optional() }).optional(),
   link: z.string().optional()
 };
 
 const base = {
   BenchLocal: z.string(),
-  author: z.string().min(1, "author 不可為空(GitHub 使用者名稱,用於顯示頭像)"),
+  results_upload: z.string().min(1, "results_upload 不可為空(GitHub 使用者名稱,上傳跑分結果者)"),
   BenchPack: z.object({ name: z.string().min(1, "BenchPack.name 不可為空"), ver: z.string() }),
   backend: z.object({ name: z.string(), ver: z.string().optional() }),
   score: scoreSchema,

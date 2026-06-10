@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Cloud, Cpu, Crown } from "lucide-react";
+import { Crown, Lightbulb } from "lucide-react";
 
+import { accessBadge, archBadge, deployBadge, paramsBadge } from "@/lib/badges";
 import { OrgLogo } from "@/components/ui/org-logo";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
@@ -16,8 +17,7 @@ const RANK_ACCENT: Record<number, string> = {
 // 量化標籤特例配色:命中關鍵字者套用指定色,其餘用預設(格式=紫、等級=青)。
 const QUANT_COLOR_RULES: { match: string[]; className: string }[] = [
   { match: ["BF16", "Q8"], className: "text-orange-300" },
-  { match: ["GGUF"], className: "text-emerald-300" },
-  { match: ["SAFETENSORS"], className: "text-blue-300" }
+  { match: ["GGUF", "SAFETENSORS"], className: "text-blue-300" }
 ];
 
 function quantColor(value: string, fallback: string): string {
@@ -41,10 +41,13 @@ function Chip({ children, className }: { children: ReactNode; className?: string
 
 /** 首頁概覽卡:整張卡可點擊進入詳細頁。 */
 export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank: number; index: number }) {
-  const isCloud = row.deployment === "cloud";
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const isTop = rank <= 3;
   const isChampion = rank === 1;
+  const deploy = deployBadge(row.deployment);
+  const access = accessBadge(row.access);
+  const params = paramsBadge(row.sizeParams);
+  const arch = archBadge(row.modelType, row.sizeActive, row.sizeParams);
 
   return (
     <Link
@@ -77,21 +80,40 @@ export function SubmissionCard({ row, rank, index }: { row: SubmissionRow; rank:
         {/* 廠牌 logo */}
         <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={46} />
 
-        {/* 名稱 + 作者 + 標籤 */}
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        {/* 名稱 + 標籤 */}
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <h3
-            className="font-display truncate text-[17px] leading-tight font-bold tracking-tight"
+            className="font-display flex items-center gap-2 text-2xl leading-tight font-bold tracking-tight"
             title={row.modelName}
           >
-            {row.modelName}
+            {row.thinking ? (
+              <Lightbulb
+                className="text-amber-300/90 size-5 shrink-0"
+                aria-label="支援 thinking / reasoning 模式"
+              />
+            ) : null}
+            <span className="truncate">{row.modelName}</span>
           </h3>
-          {row.modelId ? (
-            <div className="text-muted-foreground/70 truncate font-mono text-xs">{row.modelId}</div>
-          ) : null}
           <div className="flex flex-wrap items-center gap-1">
-            <Chip className={isCloud ? "text-sky-300/90" : "text-primary"}>
-              {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
-              {isCloud ? "雲端" : "開源"}
+            <Chip className={access.className}>
+              <access.Icon className="size-3" />
+              {access.label}
+            </Chip>
+            {params ? (
+              <Chip className={params.className}>
+                <params.Icon className="size-3" />
+                {params.label}
+              </Chip>
+            ) : null}
+            {arch ? (
+              <Chip className={arch.className}>
+                <arch.Icon className="size-3" />
+                {arch.label}
+              </Chip>
+            ) : null}
+            <Chip className={deploy.className}>
+              <deploy.Icon className="size-3" />
+              {deploy.label}
             </Chip>
             {row.quantFormat ? (
               <Chip className={quantColor(row.quantFormat, "text-violet-300")}>{row.quantFormat}</Chip>

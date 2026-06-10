@@ -54,3 +54,57 @@ export function GithubAvatar({ username, size = 40, className, linked = true }: 
     </a>
   );
 }
+
+interface HfAvatarProps {
+  handle: string;
+  avatarUrl: string | null;
+  size?: number;
+  className?: string;
+  linked?: boolean;
+}
+
+/** HuggingFace 作者頭像;頭像 URL 於建置期解析,載入失敗時退回首字母。 */
+export function HfAvatar({ handle, avatarUrl, size = 24, className, linked = true }: HfAvatarProps) {
+  const [failed, setFailed] = useState(false);
+
+  const inner =
+    !avatarUrl || failed ? (
+      <span className="text-[10px] font-semibold">{handle.slice(0, 1).toUpperCase()}</span>
+    ) : (
+      <img
+        src={avatarUrl}
+        alt={handle}
+        loading="lazy"
+        width={size}
+        height={size}
+        onError={() => setFailed(true)}
+        className="size-full object-cover"
+      />
+    );
+
+  const classes = cn(
+    "ring-border bg-muted text-muted-foreground inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 select-none",
+    className
+  );
+
+  if (!linked) {
+    return (
+      <span className={classes} style={{ width: size, height: size }}>
+        {inner}
+      </span>
+    );
+  }
+
+  return (
+    <a
+      href={`https://huggingface.co/${handle}`}
+      target="_blank"
+      rel="noreferrer"
+      title={handle}
+      className={classes}
+      style={{ width: size, height: size }}
+    >
+      {inner}
+    </a>
+  );
+}

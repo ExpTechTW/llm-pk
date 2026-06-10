@@ -3,14 +3,15 @@ import { useState } from "react";
 import { brandIcon } from "@/components/ui/brand-icon";
 import { cn } from "@/lib/utils";
 
+// 字母圖示一律白底,只用文字顏色區分(背景與品牌/頭像統一為白色)。
 const MONOGRAM_TONES = [
-  "bg-rose-500/15 text-rose-500",
-  "bg-orange-500/15 text-orange-500",
-  "bg-amber-500/15 text-amber-600",
-  "bg-emerald-500/15 text-emerald-500",
-  "bg-cyan-500/15 text-cyan-500",
-  "bg-indigo-500/15 text-indigo-500",
-  "bg-violet-500/15 text-violet-500"
+  "text-rose-600",
+  "text-orange-600",
+  "text-amber-600",
+  "text-emerald-600",
+  "text-cyan-600",
+  "text-indigo-600",
+  "text-violet-600"
 ];
 
 function toneFor(seed: string): string {
@@ -39,9 +40,8 @@ export function OrgLogo({ org, avatar, size = 44, radius = "rounded-xl", classNa
     <span
       title={org ?? undefined}
       className={cn(
-        "ring-border/70 inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 select-none",
+        "ring-border/70 inline-flex shrink-0 items-center justify-center overflow-hidden bg-white ring-1 select-none",
         radius,
-        brand ? "bg-white" : "bg-background",
         showLetter && toneFor(label),
         className
       )}

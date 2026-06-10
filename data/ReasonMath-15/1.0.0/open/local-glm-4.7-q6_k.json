@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ReasonMath-15",
         "ver": "1.0.0"
@@ -9,7 +9,7 @@
     "model": {
         "name": "GLM 4.7 Flash",
         "id": "glm-4.7-flash",
-        "org": "Z-AI",
+        "org": "zai-org",
         "access": "open",
         "family": {
             "name": "GLM",
@@ -26,7 +26,7 @@
             "level": "Q6_K",
             "method": "Static"
         },
-        "link": "https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF"
+        "link": "hugging_face:mradermacher:Huihui-GLM-4.7-Flash-abliterated-GGUF"
     },
     "backend": {
         "name": "llama.cpp",

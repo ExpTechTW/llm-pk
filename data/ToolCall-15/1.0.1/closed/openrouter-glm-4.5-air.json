@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -9,17 +9,17 @@
     "model": {
         "id": "glm-4.5-air",
         "name": "GLM 4.5 Air",
-        "org": "Z-AI",
-        "access": "closed",
+        "org": "zai-org",
+        "access": "open",
         "family": {
             "name": "GLM",
             "ver": "4.5"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "106B",
+            "active": "12B"
         },
         "link": ""
     },

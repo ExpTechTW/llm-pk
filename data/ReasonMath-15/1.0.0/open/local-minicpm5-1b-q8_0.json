@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ReasonMath-15",
         "ver": "1.0.0"
@@ -15,7 +15,7 @@
             "name": "MiniCPM",
             "ver": "5"
         },
-        "type": "MoE",
+        "type": "Dense",
         "thinking": true,
         "size": {
             "params": "1B",
@@ -26,7 +26,7 @@
             "level": "Q8_0",
             "method": "Static"
         },
-        "link": "https://huggingface.co/mradermacher/Huihui-MiniCPM5-1B-abliterated-GGUF"
+        "link": "hugging_face:mradermacher:Huihui-MiniCPM5-1B-abliterated-GGUF"
     },
     "backend": {
         "name": "llama.cpp",

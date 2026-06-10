@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "mistral-small-4",
         "name": "Mistral Small 4",
         "org": "mistralai",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "Mistral",
             "ver": "4"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "119B",
+            "active": "6B"
         },
         "link": ""
     },

@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "gpt-oss-120b",
         "name": "GPT OSS 120B",
         "org": "OpenAI",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "GPT",
             "ver": ""
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "120B",
+            "active": "5.1B"
         },
         "link": ""
     },

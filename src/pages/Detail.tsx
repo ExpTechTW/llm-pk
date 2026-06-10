@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Cloud, Cpu, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Lightbulb } from "lucide-react";
 
-import { GithubAvatar } from "@/components/ui/avatar";
+import { accessBadge, archBadge, deployBadge, paramsBadge } from "@/lib/badges";
+import { GithubAvatar, HfAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
 import {
   Dialog,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { getResults, getSubmissionById } from "@/lib/db";
 import { loadExam, type ExamPack } from "@/lib/exam";
+import { parseModelLink } from "@/lib/modelLink";
 import { formatPass, statusKind } from "@/lib/status";
 import type { ResultEntry } from "@/lib/types";
 import { useDb } from "@/hooks/useDb";
@@ -108,8 +110,13 @@ export default function Detail() {
   }
 
   const isCloud = row.deployment === "cloud";
+  const deploy = deployBadge(row.deployment);
+  const access = accessBadge(row.access);
+  const params = paramsBadge(row.sizeParams);
+  const arch = archBadge(row.modelType, row.sizeActive, row.sizeParams);
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const hwExtra = Object.entries(row.hwExtra);
+  const modelLink = parseModelLink(row.modelLink);
   const openExam = openQ ? exam?.scenarios[openQ] : undefined;
   const openResult = openQ ? resultById.get(openQ) : undefined;
 
@@ -129,35 +136,60 @@ export default function Detail() {
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
           <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={64} radius="rounded-2xl" />
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <h1 className="font-display text-2xl leading-tight font-extrabold tracking-tight break-words">
-              {row.modelName}
+            <h1 className="font-display flex items-center gap-2 text-2xl leading-tight font-extrabold tracking-tight break-words">
+              {row.thinking ? (
+                <Lightbulb
+                  className="text-amber-300/90 size-5 shrink-0"
+                  aria-label="支援 thinking / reasoning 模式"
+                />
+              ) : null}
+              <span>{row.modelName}</span>
             </h1>
             {row.modelId ? (
               <span className="text-muted-foreground font-mono text-xs break-all">{row.modelId}</span>
             ) : null}
-            <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
-              <GithubAvatar username={row.author} size={20} />
-              <a
-                href={`https://github.com/${row.author}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-foreground"
-              >
-                @{row.author}
-              </a>
-              {row.modelLink ? (
-                <>
-                  <span className="text-border">·</span>
+            {/* 模型作者(HuggingFace)— 凸顯 */}
+            {row.linkAuthor || modelLink ? (
+            <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm">
+              {row.linkAuthor ? (
+                <span className="inline-flex items-center gap-2">
+                  <HfAvatar handle={row.linkAuthor} avatarUrl={row.linkAuthorAvatar} size={26} />
                   <a
-                    href={row.modelLink}
+                    href={`https://huggingface.co/${row.linkAuthor}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="hover:text-foreground inline-flex items-center gap-1"
+                    className="text-foreground hover:text-primary font-semibold"
                   >
-                    模型頁 <ExternalLink className="size-3" />
+                    {row.linkAuthor}
                   </a>
-                </>
+                </span>
               ) : null}
+              {modelLink ? (
+                <a
+                  href={modelLink.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                  title={modelLink.label}
+                >
+                  模型頁 <ExternalLink className="size-3" />
+                </a>
+              ) : null}
+            </div>
+            ) : null}
+
+            {/* 上傳者(GitHub)— 弱化 */}
+            <div className="text-muted-foreground/50 mt-1 flex items-center gap-1.5 text-xs">
+              <span>跑分上傳者</span>
+              <GithubAvatar username={row.uploader} size={14} linked={false} />
+              <a
+                href={`https://github.com/${row.uploader}`}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-muted-foreground"
+              >
+                @{row.uploader}
+              </a>
             </div>
           </div>
 
@@ -178,19 +210,27 @@ export default function Detail() {
         </div>
 
         <div className="relative mt-4 flex flex-wrap items-center gap-1.5">
-          <Chip className={isCloud ? "text-sky-300" : "text-primary"}>
-            {isCloud ? <Cloud className="size-3" /> : <Cpu className="size-3" />}
-            {isCloud ? "雲端" : "開源"}
+          <Chip className={access.className}>
+            <access.Icon className="size-3" />
+            {access.label}
           </Chip>
-          {isCloud ? <Chip>{row.access === "closed" ? "閉源" : "開源"}</Chip> : null}
-          {row.familyName ? <Chip>{`${row.familyName}${row.familyVer ? ` ${row.familyVer}` : ""}`}</Chip> : null}
-          {row.modelType ? <Chip>{row.modelType}</Chip> : null}
-          {row.sizeParams ? (
-            <Chip>
-              {row.sizeParams}
-              {row.sizeActive && row.sizeActive !== row.sizeParams ? ` · A${row.sizeActive}` : ""}
+          {params ? (
+            <Chip className={params.className}>
+              <params.Icon className="size-3" />
+              {params.label}
             </Chip>
           ) : null}
+          {arch ? (
+            <Chip className={arch.className}>
+              <arch.Icon className="size-3" />
+              {arch.label}
+            </Chip>
+          ) : null}
+          <Chip className={deploy.className}>
+            <deploy.Icon className="size-3" />
+            {deploy.label}
+          </Chip>
+          {row.familyName ? <Chip>{`${row.familyName}${row.familyVer ? ` ${row.familyVer}` : ""}`}</Chip> : null}
           {row.quantLevel ? (
             <Chip className="text-foreground">
               {[row.quantFormat, row.quantLevel, row.quantMethod].filter(Boolean).join(" · ")}

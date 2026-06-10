@@ -5,13 +5,15 @@ import { Slider } from "@/components/ui/slider";
 import {
   FACETS,
   PRICE_FIELDS,
+  SIZE_FIELDS,
   SORT_OPTIONS,
-  countPriceActive,
+  countRangeActive,
   countSelected,
+  type Bounds,
   type FacetValueCount,
-  type PriceBounds,
-  type PriceRange,
-  type PriceRanges,
+  type Range,
+  type RangeFieldDef,
+  type Ranges,
   type Selected,
   type SortKey
 } from "@/lib/filters";
@@ -24,21 +26,12 @@ interface FilterSidebarProps {
   onReset: () => void;
   sort: SortKey;
   onSortChange: (sort: SortKey) => void;
-  priceBounds: PriceBounds;
-  priceRanges: PriceRanges;
-  onPriceChange: (key: string, range: PriceRange) => void;
-}
-
-// 價格步進:依區間大小選一個順手的粒度。
-function priceStep(min: number, max: number): number {
-  const span = max - min;
-  if (span <= 2) return 0.01;
-  if (span <= 20) return 0.1;
-  return 1;
-}
-
-function fmtPrice(v: number): string {
-  return `$${Number.isInteger(v) ? v : Number(v.toFixed(2))}`;
+  priceBounds: Bounds;
+  priceRanges: Ranges;
+  onPriceChange: (key: string, range: Range) => void;
+  sizeBounds: Bounds;
+  sizeRanges: Ranges;
+  onSizeChange: (key: string, range: Range) => void;
 }
 
 // 可展開 / 縮起的分類區塊。
@@ -72,6 +65,46 @@ function Section({
   );
 }
 
+// 一組數值區間拉桿(價格 / 規模共用)。
+function RangeGroup({
+  fields,
+  bounds,
+  ranges,
+  onChange
+}: {
+  fields: RangeFieldDef[];
+  bounds: Bounds;
+  ranges: Ranges;
+  onChange: (key: string, range: Range) => void;
+}) {
+  return (
+    <>
+      {fields.map((f) => {
+        const [lo, hi] = bounds[f.key];
+        const range = ranges[f.key] ?? [lo, hi];
+        return (
+          <div key={f.key} className="flex flex-col gap-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">{f.label}</span>
+              <span className="font-data text-foreground tabular-nums">
+                {f.format(range[0])} – {f.format(range[1])}
+              </span>
+            </div>
+            <Slider
+              min={lo}
+              max={hi}
+              step={f.step(lo, hi)}
+              value={range}
+              onValueChange={(v) => onChange(f.key, [v[0], v[1]])}
+              aria-label={`${f.label}區間`}
+            />
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 export function FilterSidebar({
   facets,
   selected,
@@ -81,14 +114,21 @@ export function FilterSidebar({
   onSortChange,
   priceBounds,
   priceRanges,
-  onPriceChange
+  onPriceChange,
+  sizeBounds,
+  sizeRanges,
+  onSizeChange
 }: FilterSidebarProps) {
-  const activeCount = countSelected(selected) + countPriceActive(priceRanges, priceBounds);
+  const activeCount =
+    countSelected(selected) +
+    countRangeActive(priceRanges, priceBounds, PRICE_FIELDS) +
+    countRangeActive(sizeRanges, sizeBounds, SIZE_FIELDS);
   const priceKeys = PRICE_FIELDS.filter((f) => priceBounds[f.key]);
+  const sizeKeys = SIZE_FIELDS.filter((f) => sizeBounds[f.key]);
 
   // 各分類的收合狀態:預設只有「排序」與「部署」展開,其餘(各面向 + 價格)收起。
   const [collapsed, setCollapsed] = useState<Set<string>>(
-    () => new Set([...FACETS.map((f) => f.key).filter((k) => k !== "deployment"), "price"])
+    () => new Set([...FACETS.map((f) => f.key).filter((k) => k !== "deployment"), "size", "price"])
   );
   const isOpen = (key: string) => !collapsed.has(key);
   const toggleSection = (key: string) =>
@@ -192,6 +232,19 @@ export function FilterSidebar({
         );
       })}
 
+      {/* 規模區間(參數量 / 啟用量,拉桿) */}
+      {sizeKeys.length > 0 ? (
+        <Section
+          title="規模"
+          titleSize="text-sm"
+          open={isOpen("size")}
+          onToggle={() => toggleSection("size")}
+          bodyGap="gap-4"
+        >
+          <RangeGroup fields={sizeKeys} bounds={sizeBounds} ranges={sizeRanges} onChange={onSizeChange} />
+        </Section>
+      ) : null}
+
       {/* 價格區間(拉桿) */}
       {priceKeys.length > 0 ? (
         <Section
@@ -201,28 +254,7 @@ export function FilterSidebar({
           onToggle={() => toggleSection("price")}
           bodyGap="gap-4"
         >
-          {priceKeys.map((f) => {
-            const [lo, hi] = priceBounds[f.key];
-            const range = priceRanges[f.key] ?? [lo, hi];
-            return (
-              <div key={f.key} className="flex flex-col gap-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{f.label}</span>
-                  <span className="font-data text-foreground tabular-nums">
-                    {fmtPrice(range[0])} – {fmtPrice(range[1])}
-                  </span>
-                </div>
-                <Slider
-                  min={lo}
-                  max={hi}
-                  step={priceStep(lo, hi)}
-                  value={range}
-                  onValueChange={(v) => onPriceChange(f.key, [v[0], v[1]])}
-                  aria-label={`${f.label}價格區間`}
-                />
-              </div>
-            );
-          })}
+          <RangeGroup fields={priceKeys} bounds={priceBounds} ranges={priceRanges} onChange={onPriceChange} />
         </Section>
       ) : null}
     </div>

@@ -1,46 +1,61 @@
 {
   "BenchLocal": "0.3.0",
-  "author": "whes1015",
+  "results_upload": "whes1015",
   "BenchPack": {
     "name": "ToolCall-15",
     "ver": "1.0.1"
   },
   "deployment": "local",
   "model": {
-    "id": "gemma4-12b",
-    "name": "Huihui Gemma4 12B IT Abliterated",
-    "org": "Google",
+    "id": "mellum2-12b-a2.5b",
+    "name": "Mellum2 12B A2.5B Thinking",
+    "org": "JetBrains",
     "access": "open",
     "family": {
-      "name": "Gemma",
-      "ver": "4"
+      "name": "Mellum",
+      "ver": "2"
     },
-    "type": "Dense",
+    "type": "MoE",
     "thinking": true,
     "size": {
       "params": "12B",
-      "active": "12B"
+      "active": "2.5B"
     },
     "quantization": {
       "format": "GGUF",
-      "level": "Q4_0",
-      "method": "QAT"
+      "level": "Q8_0",
+      "method": "Static"
     },
-    "link": "https://huggingface.co/huihui-ai/Huihui-gemma-4-12B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    "link": "hugging_face:JetBrains:Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0",
+    "args": {
+      "spec": {
+        "method": "ngram",
+        "n-match": 32,
+        "n-min": 16,
+        "n-max": 64
+      },
+      "temp": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence-penalty": 0,
+      "repeat-penalty": 1
+    }
   },
   "backend": {
     "name": "llama.cpp",
-    "ver": "9580"
+    "ver": "9519"
   },
   "hardware": {
-    "company": "Apple",
-    "device": "MacBook Pro",
-    "chip": "Apple M4 Max",
-    "os": "macOS 26.6 Beta (25G5028f)",
-    "driver": ""
+    "company": "NVIDIA",
+    "device": "Tesla P100-PCIE-16GB",
+    "chip": "",
+    "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+    "driver": "580.159.03",
+    "cuda": "13.0"
   },
   "score": {
-    "total": 70,
+    "total": 83,
     "categories": [
       {
         "id": "A",
@@ -57,88 +72,88 @@
       {
         "id": "C",
         "label": "Multi-Step Chains",
-        "score": 67,
+        "score": 100,
         "weight": 20
       },
       {
         "id": "D",
         "label": "Restraint & Refusal",
-        "score": 50,
+        "score": 100,
         "weight": 20
       },
       {
         "id": "E",
         "label": "Error Recovery",
-        "score": 67,
+        "score": 50,
         "weight": 20
       }
     ]
   },
   "run": {
-    "date": "2026-06-09T20:59:35.241Z",
+    "date": "2026-06-09T18:19:11.419Z",
     "mode": "parallel_by_test_case",
     "runsPerTest": 1
   },
   "results": {
     "TC-01": {
       "status": 1,
-      "time": 5756
+      "time": 7488
     },
     "TC-02": {
       "status": 1,
-      "time": 3847
+      "time": 5086
     },
     "TC-03": {
       "status": 1,
-      "time": 12150
+      "time": 12008
     },
     "TC-04": {
       "status": 1,
-      "time": 5397
+      "time": 5440
     },
     "TC-05": {
       "status": 0,
-      "time": 13173
+      "time": 28400
     },
     "TC-06": {
       "status": 1,
-      "time": 9527
+      "time": 7684
     },
     "TC-07": {
       "status": 1,
-      "time": 20475
+      "time": 25314
     },
     "TC-08": {
-      "status": 0,
-      "time": 10710
+      "status": 1,
+      "time": 16569
     },
     "TC-09": {
       "status": 1,
-      "time": 11635
+      "time": 11335
     },
     "TC-10": {
       "status": 1,
-      "time": 2413
+      "time": 3492
     },
     "TC-11": {
-      "status": null,
-      "time": 5579
+      "status": 1,
+      "time": 2428
     },
     "TC-12": {
-      "status": 0,
-      "time": 252091
+      "status": 1,
+      "time": 3057
     },
     "TC-13": {
-      "status": 1,
-      "time": 10845
+      "status": 0,
+      "time": 7968
     },
     "TC-14": {
-      "status": 0,
-      "time": 11882
+      "status": 1,
+      "time": 5168
     },
     "TC-15": {
-      "status": 1,
-      "time": 8868
+      "status": null,
+      "time": 17457
     }
   }
 }

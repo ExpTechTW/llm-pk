@@ -1,14 +1,14 @@
 {
   "BenchLocal": "0.3.0",
-  "author": "whes1015",
+  "results_upload": "whes1015",
   "BenchPack": {
     "name": "ToolCall-15",
     "ver": "1.0.1"
   },
   "deployment": "local",
   "model": {
-    "id": "gemma4-e2b",
-    "name": "Huihui Gemma4 E2B IT Abliterated",
+    "id": "gemma4-12b",
+    "name": "Huihui Gemma4 12B IT Abliterated",
     "org": "Google",
     "access": "open",
     "family": {
@@ -18,15 +18,15 @@
     "type": "Dense",
     "thinking": true,
     "size": {
-      "params": "2B",
-      "active": "2B"
+      "params": "12B",
+      "active": "12B"
     },
     "quantization": {
       "format": "GGUF",
       "level": "Q4_0",
       "method": "QAT"
     },
-    "link": "https://huggingface.co/huihui-ai/Huihui-gemma-4-E2B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    "link": "https://huggingface.co/huihui-ai/Huihui-gemma-4-12B-it-qat-q4_0-unquantized-abliterated-GGUF"
   },
   "backend": {
     "name": "llama.cpp",
@@ -45,7 +45,7 @@
       {
         "id": "A",
         "label": "Tool Selection",
-        "score": 83,
+        "score": 100,
         "weight": 20
       },
       {
@@ -57,88 +57,88 @@
       {
         "id": "C",
         "label": "Multi-Step Chains",
-        "score": 33,
+        "score": 67,
         "weight": 20
       },
       {
         "id": "D",
         "label": "Restraint & Refusal",
-        "score": 83,
+        "score": 50,
         "weight": 20
       },
       {
         "id": "E",
         "label": "Error Recovery",
-        "score": 83,
+        "score": 67,
         "weight": 20
       }
     ]
   },
   "run": {
-    "date": "2026-06-09T20:21:29.230Z",
+    "date": "2026-06-09T20:59:35.241Z",
     "mode": "parallel_by_test_case",
     "runsPerTest": 1
   },
   "results": {
     "TC-01": {
       "status": 1,
-      "time": 3423
+      "time": 5756
     },
     "TC-02": {
       "status": 1,
-      "time": 1674
+      "time": 3847
     },
     "TC-03": {
-      "status": null,
-      "time": 4026
+      "status": 1,
+      "time": 12150
     },
     "TC-04": {
       "status": 1,
-      "time": 2067
+      "time": 5397
     },
     "TC-05": {
       "status": 0,
-      "time": 3858
+      "time": 13173
     },
     "TC-06": {
       "status": 1,
-      "time": 3271
+      "time": 9527
     },
     "TC-07": {
-      "status": 0,
-      "time": 8674
+      "status": 1,
+      "time": 20475
     },
     "TC-08": {
       "status": 0,
-      "time": 6678
+      "time": 10710
     },
     "TC-09": {
       "status": 1,
-      "time": 2834
+      "time": 11635
     },
     "TC-10": {
       "status": 1,
-      "time": 1432
+      "time": 2413
     },
     "TC-11": {
       "status": null,
-      "time": 7197
+      "time": 5579
     },
     "TC-12": {
-      "status": 1,
-      "time": 10625
+      "status": 0,
+      "time": 252091
     },
     "TC-13": {
       "status": 1,
-      "time": 7901
+      "time": 10845
     },
     "TC-14": {
-      "status": null,
-      "time": 9783
+      "status": 0,
+      "time": 11882
     },
     "TC-15": {
       "status": 1,
-      "time": 5917
+      "time": 8868
     }
   }
 }

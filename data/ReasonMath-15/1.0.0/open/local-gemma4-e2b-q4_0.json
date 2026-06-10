@@ -1,6 +1,6 @@
 {
   "BenchLocal": "0.3.0",
-  "author": "whes1015",
+  "results_upload": "whes1015",
   "BenchPack": {
     "name": "ReasonMath-15",
     "ver": "1.0.0"
@@ -15,7 +15,7 @@
       "name": "Gemma",
       "ver": "4"
     },
-    "type": "MoE",
+    "type": "Dense",
     "thinking": true,
     "size": {
       "params": "2B",
@@ -26,7 +26,7 @@
       "level": "Q4_0",
       "method": "QAT"
     },
-    "link": "https://huggingface.co/huihui-ai/Huihui-gemma-4-E2B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    "link": "hugging_face:huihui-ai:Huihui-gemma-4-E2B-it-qat-q4_0-unquantized-abliterated-GGUF"
   },
   "backend": {
     "name": "llama.cpp",

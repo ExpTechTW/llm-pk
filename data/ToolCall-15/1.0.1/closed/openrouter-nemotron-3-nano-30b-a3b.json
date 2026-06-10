@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "nemotron-3-nano-30b-a3b",
         "name": "Nemotron 3 Nano 30B A3B",
         "org": "NVIDIA",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "Nemotron",
             "ver": "3"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "30B",
+            "active": "3B"
         },
         "link": ""
     },

@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,7 +10,7 @@
         "id": "grok-4.2",
         "name": "Grok 4.2",
         "org": "X-AI",
-        "access": "open",
+        "access": "closed",
         "family": {
             "name": "Grok",
             "ver": "4.2"

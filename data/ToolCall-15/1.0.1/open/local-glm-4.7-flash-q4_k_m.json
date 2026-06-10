@@ -5,27 +5,39 @@
         "name": "ToolCall-15",
         "ver": "1.0.1"
     },
-    "deployment": "cloud",
+    "deployment": "local",
     "model": {
-        "id": "mimo-v2-flash",
-        "name": "Mimo V2 Flash",
-        "org": "Xiaomi",
+        "name": "GLM 4.7 Flash",
+        "id": "glm-4.7-flash",
+        "org": "zai-org",
         "access": "open",
         "family": {
-            "name": "Mimo",
-            "ver": "2"
+            "name": "GLM",
+            "ver": "4.7"
         },
         "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "309B",
-            "active": "15B"
+            "params": "30B",
+            "active": "3B"
         },
-        "link": ""
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q6_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:Huihui-GLM-4.7-Flash-abliterated-GGUF"
     },
     "backend": {
-        "name": "OpenRouter",
-        "ver": ""
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
     },
     "score": {
         "total": 93,
@@ -33,7 +45,7 @@
             {
                 "id": "A",
                 "label": "Tool Selection",
-                "score": 100,
+                "score": 67,
                 "weight": 20
             },
             {
@@ -45,13 +57,13 @@
             {
                 "id": "C",
                 "label": "Multi-Step Chains",
-                "score": 83,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "D",
                 "label": "Restraint & Refusal",
-                "score": 83,
+                "score": 100,
                 "weight": 20
             },
             {
@@ -63,70 +75,70 @@
         ]
     },
     "run": {
-        "date": "2026-06-09T21:45:58.135Z",
+        "date": "2026-06-10T06:01:58.778Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "TC-01": {
             "status": 1,
-            "time": 1288
+            "time": 2517
         },
         "TC-02": {
             "status": 1,
-            "time": 1446
+            "time": 2208
         },
         "TC-03": {
-            "status": 1,
-            "time": 3668
+            "status": 0,
+            "time": 3489
         },
         "TC-04": {
             "status": 1,
-            "time": 984
+            "time": 1848
         },
         "TC-05": {
             "status": 1,
-            "time": 2345
+            "time": 5606
         },
         "TC-06": {
             "status": 1,
-            "time": 1404
+            "time": 2907
         },
         "TC-07": {
-            "status": null,
-            "time": 3438
+            "status": 1,
+            "time": 8074
         },
         "TC-08": {
             "status": 1,
-            "time": 2086
+            "time": 6013
         },
         "TC-09": {
             "status": 1,
-            "time": 1612
+            "time": 2827
         },
         "TC-10": {
             "status": 1,
-            "time": 663
+            "time": 3141
         },
         "TC-11": {
-            "status": null,
-            "time": 1020
+            "status": 1,
+            "time": 2017
         },
         "TC-12": {
             "status": 1,
-            "time": 1262
+            "time": 5283
         },
         "TC-13": {
             "status": 1,
-            "time": 1492
+            "time": 6296
         },
         "TC-14": {
             "status": 1,
-            "time": 1420
+            "time": 3095
         },
         "TC-15": {
             "status": 1,
-            "time": 2410
+            "time": 6111
         }
     }
 }

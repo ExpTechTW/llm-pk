@@ -1,6 +1,6 @@
 {
   "BenchLocal": "0.3.0",
-  "author": "whes1015",
+  "results_upload": "whes1015",
   "BenchPack": {
     "name": "ToolCall-15",
     "ver": "1.0.1"
@@ -26,7 +26,7 @@
       "level": "int4",
       "method": "AutoRound"
     },
-    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-35B-A3B-abliterated-int4-AutoRound",
+    "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-35B-A3B-abliterated-int4-AutoRound",
     "args": {
       "spec": {
         "method": "MTP",

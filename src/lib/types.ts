@@ -19,7 +19,7 @@ export interface ScoreCategory {
 
 export interface SubmissionRow {
   id: number;
-  author: string;
+  uploader: string; // results_upload:上傳跑分結果者的 GitHub 帳號
   benchlocal: string;
   packName: string;
   packVer: string;
@@ -28,11 +28,14 @@ export interface SubmissionRow {
   modelOrg: string | null;
   orgAvatar: string | null;
   modelLink: string | null;
+  linkAuthor: string | null; // 模型作者(HuggingFace 帳號,取自 link)
+  linkAuthorAvatar: string | null; // 模型作者的 HF 頭像 URL
   access: "open" | "closed" | string;
   deployment: "local" | "cloud" | string;
   familyName: string | null;
   familyVer: string | null;
   modelType: string | null;
+  thinking: boolean | null;
   sizeParams: string | null;
   sizeActive: string | null;
   quantFormat: string | null;

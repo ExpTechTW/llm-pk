@@ -49,7 +49,7 @@ export function getPacks(db: Database): PackInfo[] {
 
 interface RawRow {
   id: number;
-  author: string;
+  results_upload: string;
   benchlocal: string;
   pack_name: string;
   pack_ver: string;
@@ -63,11 +63,14 @@ interface RawRow {
   family_name: string | null;
   family_ver: string | null;
   model_type: string | null;
+  model_thinking: number | null;
   size_params: string | null;
   size_active: string | null;
   quant_format: string | null;
   quant_level: string | null;
   quant_method: string | null;
+  link_author: string | null;
+  link_author_avatar: string | null;
   backend_name: string;
   backend_ver: string | null;
   hw_company: string | null;
@@ -100,7 +103,7 @@ function parseJson<T>(value: string | null, fallback: T): T {
 function mapRow(r: RawRow): SubmissionRow {
   return {
     id: r.id,
-    author: r.author,
+    uploader: r.results_upload,
     benchlocal: r.benchlocal,
     packName: r.pack_name,
     packVer: r.pack_ver,
@@ -109,11 +112,14 @@ function mapRow(r: RawRow): SubmissionRow {
     modelOrg: r.model_org,
     orgAvatar: r.org_avatar,
     modelLink: r.model_link,
+    linkAuthor: r.link_author,
+    linkAuthorAvatar: r.link_author_avatar,
     access: r.model_access,
     deployment: r.deployment,
     familyName: r.family_name,
     familyVer: r.family_ver,
     modelType: r.model_type,
+    thinking: r.model_thinking == null ? null : Boolean(r.model_thinking),
     sizeParams: r.size_params,
     sizeActive: r.size_active,
     quantFormat: r.quant_format,

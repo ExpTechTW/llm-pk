@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "InstructFollow-15",
         "ver": "1.0.0"
@@ -9,17 +9,17 @@
     "model": {
         "id": "glm-4.7-flash",
         "name": "GLM 4.7 Flash",
-        "org": "Z-AI",
-        "access": "closed",
+        "org": "zai-org",
+        "access": "open",
         "family": {
             "name": "GLM",
             "ver": "4.7"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "30B",
+            "active": "3B"
         },
         "link": ""
     },

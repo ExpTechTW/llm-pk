@@ -1,46 +1,47 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "YuYu1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
     },
     "deployment": "local",
     "model": {
-        "name": "GLM 4.7 Flash",
-        "id": "glm-4.7-flash",
-        "org": "Z-AI",
+        "name": "Huihui Qwen3.6 35B A3B Claude 4.7 Opus Abliterated",
+        "id": "huihui-qwen3.6-35b-a3b-claude-opus-4.7-abliterated-int4-autoround",
+        "org": "Qwen",
         "access": "open",
         "family": {
-            "name": "GLM",
-            "ver": "4.7"
+            "name": "Qwen",
+            "ver": "3.6"
         },
         "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "30B",
+            "params": "35B",
             "active": "3B"
         },
         "quantization": {
-            "format": "GGUF",
-            "level": "Q6_K",
-            "method": "Static"
+            "format": "Safetensors",
+            "level": "int4",
+            "method": "AutoRound"
         },
-        "link": "https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF"
+        "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound"
     },
     "backend": {
-        "name": "llama.cpp",
-        "ver": "9580"
+        "name": "vllm",
+        "ver": "0.22.1rc1"
     },
     "hardware": {
-        "company": "Apple",
-        "device": "MacBook Pro",
-        "chip": "Apple M4 Max",
-        "os": "macOS 26.6 Beta (25G5028f)",
-        "driver": ""
+        "company": "NVIDIA",
+        "device": "DGX Spark",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
     },
     "score": {
-        "total": 100,
+        "total": 90,
         "categories": [
             {
                 "id": "A",
@@ -63,7 +64,7 @@
             {
                 "id": "D",
                 "label": "Restraint & Refusal",
-                "score": 100,
+                "score": 50,
                 "weight": 20
             },
             {
@@ -75,70 +76,70 @@
         ]
     },
     "run": {
-        "date": "2026-06-10T03:47:23.401Z",
+        "date": "2026-06-10T02:15:06.338Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "TC-01": {
             "status": 1,
-            "time": 4653
+            "time": 5810
         },
         "TC-02": {
             "status": 1,
-            "time": 3267
+            "time": 2778
         },
         "TC-03": {
             "status": 1,
-            "time": 5672
+            "time": 4646
         },
         "TC-04": {
             "status": 1,
-            "time": 2670
+            "time": 2504
         },
         "TC-05": {
             "status": 1,
-            "time": 5898
+            "time": 5696
         },
         "TC-06": {
             "status": 1,
-            "time": 5038
+            "time": 3632
         },
         "TC-07": {
             "status": 1,
-            "time": 11654
+            "time": 9232
         },
         "TC-08": {
             "status": 1,
-            "time": 7662
+            "time": 5830
         },
         "TC-09": {
             "status": 1,
-            "time": 8165
+            "time": 3130
         },
         "TC-10": {
             "status": 1,
-            "time": 5182
+            "time": 2385
         },
         "TC-11": {
-            "status": 1,
-            "time": 2166
+            "status": null,
+            "time": 3442
         },
         "TC-12": {
-            "status": 1,
-            "time": 5473
+            "status": 0,
+            "time": 54687
         },
         "TC-13": {
             "status": 1,
-            "time": 8546
+            "time": 6767
         },
         "TC-14": {
             "status": 1,
-            "time": 3980
+            "time": 6148
         },
         "TC-15": {
             "status": 1,
-            "time": 10090
+            "time": 4448
         }
     }
 }

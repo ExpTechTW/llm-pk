@@ -9,13 +9,15 @@ import { Button } from "@/components/ui/button";
 import { getPacks, getSubmissionsByPack } from "@/lib/db";
 import {
   applyFilters,
+  computeBounds,
   computeFacets,
-  computePriceBounds,
-  countPriceActive,
+  countRangeActive,
   countSelected,
   emptySelected,
-  type PriceRange,
-  type PriceRanges,
+  PRICE_FIELDS,
+  SIZE_FIELDS,
+  type Range,
+  type Ranges,
   type Selected,
   type SortKey
 } from "@/lib/filters";
@@ -48,27 +50,32 @@ export default function Leaderboard() {
         : r;
     });
   }, [db, pack, prices]);
-  const priceBounds = useMemo(() => computePriceBounds(rows), [rows]);
-  const [priceRanges, setPriceRanges] = useState<PriceRanges>({});
+  const priceBounds = useMemo(() => computeBounds(rows, PRICE_FIELDS), [rows]);
+  const [priceRanges, setPriceRanges] = useState<Ranges>({});
+  const sizeBounds = useMemo(() => computeBounds(rows, SIZE_FIELDS), [rows]);
+  const [sizeRanges, setSizeRanges] = useState<Ranges>({});
 
   const facets = useMemo(() => computeFacets(rows, search, selected), [rows, search, selected]);
   const filtered = useMemo(
-    () => applyFilters(rows, search, selected, sort, priceRanges, priceBounds),
-    [rows, search, selected, sort, priceRanges, priceBounds]
+    () => applyFilters(rows, search, selected, sort, priceRanges, priceBounds, sizeRanges, sizeBounds),
+    [rows, search, selected, sort, priceRanges, priceBounds, sizeRanges, sizeBounds]
   );
 
   useEffect(() => {
     if (!pack && packs.length > 0) setPack({ name: packs[0].name, ver: packs[0].ver });
   }, [packs, pack]);
 
-  // 價格區間預設為各欄位的完整範圍(換 pack / 價格載入後重置)
+  // 區間預設為各欄位的完整範圍(換 pack / 資料載入後重置)
   useEffect(() => {
     setPriceRanges({ ...priceBounds });
   }, [priceBounds]);
+  useEffect(() => {
+    setSizeRanges({ ...sizeBounds });
+  }, [sizeBounds]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
-  }, [pack, search, selected, sort, priceRanges]);
+  }, [pack, search, selected, sort, priceRanges, sizeRanges]);
 
   const changePack = (next: PackKey) => {
     setPack(next);
@@ -86,7 +93,11 @@ export default function Leaderboard() {
     });
   };
 
-  const changePrice = (key: string, range: PriceRange) => {
+  const changeSize = (key: string, range: Range) => {
+    setSizeRanges((prev) => ({ ...prev, [key]: range }));
+  };
+
+  const changePrice = (key: string, range: Range) => {
     setPriceRanges((prev) => ({ ...prev, [key]: range }));
     // 價格只有雲端模型才有 → 一旦縮小某個價格區間,自動勾選「部署:雲端」
     const bound = priceBounds[key];
@@ -104,9 +115,13 @@ export default function Leaderboard() {
   const resetAll = () => {
     setSelected(emptySelected());
     setPriceRanges({ ...priceBounds });
+    setSizeRanges({ ...sizeBounds });
   };
 
-  const activeFilters = countSelected(selected) + countPriceActive(priceRanges, priceBounds);
+  const activeFilters =
+    countSelected(selected) +
+    countRangeActive(priceRanges, priceBounds, PRICE_FIELDS) +
+    countRangeActive(sizeRanges, sizeBounds, SIZE_FIELDS);
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 pt-10 pb-20 sm:pt-14">
@@ -117,15 +132,12 @@ export default function Leaderboard() {
             <span className="bg-primary size-1.5 animate-pulse rounded-full" />
             BenchLocal 社群跑分
           </span>
-          <h1 className="font-display text-3xl leading-[1.05] font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+          <h1 className="font-display text-4xl leading-[1.03] font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
             本地模型{" "}
             <span className="from-primary bg-gradient-to-r to-cyan-300 bg-clip-text text-transparent">
               跑分排行榜
             </span>
           </h1>
-          <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
-            同一份測試,跨模型、量化、推理的公平對照
-          </p>
         </div>
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
           {packs.length > 0 ? (
@@ -186,6 +198,9 @@ export default function Leaderboard() {
                 priceBounds={priceBounds}
                 priceRanges={priceRanges}
                 onPriceChange={changePrice}
+                sizeBounds={sizeBounds}
+                sizeRanges={sizeRanges}
+                onSizeChange={changeSize}
               />
             </div>
           </aside>

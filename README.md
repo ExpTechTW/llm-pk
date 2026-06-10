@@ -77,19 +77,19 @@ npm run build      # 驗證型別 + 建 DB + 打包(輸出 dist/)
 ```jsonc
 {
   "BenchLocal": "0.3.0",                       // BenchLocal 版本
-  "author": "YuYu1015",                        // GitHub 帳號(顯示頭像 https://github.com/{author}.png)
+  "results_upload": "whes1015",                 // 上傳跑分結果者的 GitHub 帳號(顯示頭像)
   "BenchPack": { "name": "ToolCall-15", "ver": "1.0.1" },  // 測試類型 名稱 / 版本
-  "deployment": "local",                        // local | cloud(判別器)
+  "deployment": "local",                        // local | cloud(部署判別器)
   "model": {
     "name": "Qwen3 27B",                        // 重點展示的乾淨名稱
     "id": "Qwen/Qwen3-27B",                     // 選填:完整識別碼(HF 形式 org/model → 自動帶廠牌 logo)
     "org": "Qwen",                              // 選填:廠牌(留空則由 id 前綴或 family 推得)
-    "access": "open",                           // open | closed(開源/閉源權重)
+    "access": "open",                           // open | closed(開源/閉源「權重」,與 deployment 無關)
     "family": { "name": "Qwen", "ver": "3.6" }, // 選填
     "type": "MoE",                              // 選填:MoE / Dense
     "size": { "params": "35B", "active": "3B" },// 選填
     "quantization": { "format": "GGUF", "level": "int4", "method": "AutoRound" }, // 僅 local
-    "link": "https://huggingface.co/…"          // 選填
+    "link": "hugging_face:Qwen:Qwen3-27B"       // 選填:簡化格式 hugging_face:{user}:{repo}(前端展開成 HF 網址)
   },
   "backend": { "name": "llama.cpp", "ver": "b4321" }, // 本地=引擎;雲端=API 供應商
   "hardware": {                                  // 僅 local;雲端整段省略

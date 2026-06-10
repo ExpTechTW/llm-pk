@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "granite-4.1-8b",
         "name": "Granite 4.1 8B",
         "org": "IBM",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "Granite",
             "ver": "4.1"
         },
-        "type": "",
+        "type": "Dense",
         "thinking": false,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "8B",
+            "active": "8B"
         },
         "link": ""
     },

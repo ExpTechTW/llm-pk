@@ -1,6 +1,6 @@
 {
   "BenchLocal": "0.3.0",
-  "author": "whes1015",
+  "results_upload": "whes1015",
   "BenchPack": {
     "name": "ToolCall-15",
     "ver": "1.0.1"
@@ -26,7 +26,7 @@
       "level": "Q4_K_XL",
       "method": "Unsloth Dynamic 2.0"
     },
-    "link": "https://huggingface.co/YuYu1015/Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
+    "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-27B-abliterated-UD-Q4_K_XL-MTP-GGUF",
     "args": {
       "spec": {
         "method": "MTP",

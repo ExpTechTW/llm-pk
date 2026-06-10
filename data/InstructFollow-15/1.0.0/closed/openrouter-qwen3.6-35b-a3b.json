@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "InstructFollow-15",
         "ver": "1.0.0"
@@ -10,16 +10,16 @@
         "id": "qwen3.6-35b-a3b",
         "name": "Qwen3.6 35B A3B",
         "org": "Qwen",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "Qwen",
             "ver": "3.6"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "35B",
+            "active": "3B"
         },
         "link": ""
     },

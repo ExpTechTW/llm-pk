@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "llama-3.3-70b-instruct",
         "name": "Llama 3.3 70B Instruct",
         "org": "Meta",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "Llama",
             "ver": "3.3"
         },
-        "type": "",
+        "type": "Dense",
         "thinking": false,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "70B",
+            "active": "70B"
         },
         "link": ""
     },

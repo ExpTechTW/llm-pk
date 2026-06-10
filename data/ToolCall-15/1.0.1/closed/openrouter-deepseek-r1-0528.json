@@ -1,6 +1,6 @@
 {
     "BenchLocal": "0.3.0",
-    "author": "whes1015",
+    "results_upload": "whes1015",
     "BenchPack": {
         "name": "ToolCall-15",
         "ver": "1.0.1"
@@ -10,16 +10,16 @@
         "id": "deepseek-r1-0528",
         "name": "DeepSeek R1 0528",
         "org": "DeepSeek",
-        "access": "closed",
+        "access": "open",
         "family": {
             "name": "DeepSeek",
             "ver": "R1"
         },
-        "type": "",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "",
-            "active": ""
+            "params": "671B",
+            "active": "37B"
         },
         "link": ""
     },

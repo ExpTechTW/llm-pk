@@ -85,7 +85,7 @@ export default function Home() {
 
   const stats = useMemo(() => {
     const backends = new Set(all.map((r) => r.backendName).filter(Boolean));
-    const contributors = new Set(all.map((r) => r.author).filter(Boolean));
+    const contributors = new Set(all.map((r) => r.uploader).filter(Boolean));
     return {
       submissions: all.length,
       packs: packs.length,
