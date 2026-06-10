@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Lightbulb } from "lucide-react";
 
-import { accessBadge, archBadge, deployBadge, paramsBadge } from "@/lib/badges";
+import { modelBadges } from "@/lib/badges";
 import { GithubAvatar, HfAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
 import {
@@ -110,10 +110,7 @@ export default function Detail() {
   }
 
   const isCloud = row.deployment === "cloud";
-  const deploy = deployBadge(row.deployment);
-  const access = accessBadge(row.access);
-  const params = paramsBadge(row.sizeParams);
-  const arch = archBadge(row.modelType, row.sizeActive, row.sizeParams);
+  const badges = modelBadges(row);
   const score = Math.max(0, Math.min(100, row.scoreTotal));
   const hwExtra = Object.entries(row.hwExtra);
   const modelLink = parseModelLink(row.modelLink);
@@ -210,26 +207,12 @@ export default function Detail() {
         </div>
 
         <div className="relative mt-4 flex flex-wrap items-center gap-1.5">
-          <Chip className={access.className}>
-            <access.Icon className="size-3" />
-            {access.label}
-          </Chip>
-          {params ? (
-            <Chip className={params.className}>
-              <params.Icon className="size-3" />
-              {params.label}
+          {badges.map((b) => (
+            <Chip key={b.label} className={b.className}>
+              <b.Icon className="size-3" />
+              {b.label}
             </Chip>
-          ) : null}
-          {arch ? (
-            <Chip className={arch.className}>
-              <arch.Icon className="size-3" />
-              {arch.label}
-            </Chip>
-          ) : null}
-          <Chip className={deploy.className}>
-            <deploy.Icon className="size-3" />
-            {deploy.label}
-          </Chip>
+          ))}
           {row.familyName ? <Chip>{`${row.familyName}${row.familyVer ? ` ${row.familyVer}` : ""}`}</Chip> : null}
           {row.quantLevel ? (
             <Chip className="text-foreground">

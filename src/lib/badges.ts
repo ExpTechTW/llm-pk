@@ -1,4 +1,4 @@
-import { Boxes, Cloud, Cpu, Lock, LockOpen, Network, type LucideIcon } from "lucide-react";
+import { Boxes, Cloud, Cpu, Lock, LockOpen, Network, Zap, type LucideIcon } from "lucide-react";
 
 import type { SubmissionRow } from "./types";
 
@@ -22,23 +22,36 @@ export function accessBadge(access: SubmissionRow["access"]): BadgeInfo {
     : { label: "開源", className: "text-emerald-300", Icon: LockOpen };
 }
 
+// 啟用參數:如「3B」。僅 MoE(啟用量與總參數不同)時顯示,Dense / 無資料回 null。
+export function activeBadge(sizeActive: string | null, sizeParams: string | null): BadgeInfo | null {
+  if (!sizeActive || sizeActive === sizeParams) return null;
+  return { label: sizeActive, className: "text-amber-300", Icon: Zap };
+}
+
 // 參數量:如「35B」。無資料回 null。
 export function paramsBadge(sizeParams: string | null): BadgeInfo | null {
   if (!sizeParams) return null;
   return { label: sizeParams, className: "text-fuchsia-300", Icon: Boxes };
 }
 
-// 架構:如「MoE • 3B」(啟用量與總參數不同時才附上)、Dense 則只顯示「Dense」。無架構回 null。
-export function archBadge(
-  modelType: string | null,
-  sizeActive: string | null,
-  sizeParams: string | null
-): BadgeInfo | null {
+// 架構:如「MoE」/「Dense」。無架構回 null。
+export function archBadge(modelType: string | null): BadgeInfo | null {
   if (!modelType) return null;
-  const showActive = sizeActive && sizeActive !== sizeParams;
-  return {
-    label: showActive ? `${modelType} • ${sizeActive}` : modelType,
-    className: "text-teal-300",
-    Icon: Network
-  };
+  return { label: modelType, className: "text-teal-300", Icon: Network };
+}
+
+type BadgeSource = Pick<
+  SubmissionRow,
+  "access" | "deployment" | "sizeActive" | "sizeParams" | "modelType"
+>;
+
+// 統一的徽章順序:權重 → 啟用參數 → 參數量 → 架構 → 部署。空的(無資料)自動略過。
+export function modelBadges(row: BadgeSource): BadgeInfo[] {
+  return [
+    accessBadge(row.access),
+    activeBadge(row.sizeActive, row.sizeParams),
+    paramsBadge(row.sizeParams),
+    archBadge(row.modelType),
+    deployBadge(row.deployment)
+  ].filter((b): b is BadgeInfo => b !== null);
 }
