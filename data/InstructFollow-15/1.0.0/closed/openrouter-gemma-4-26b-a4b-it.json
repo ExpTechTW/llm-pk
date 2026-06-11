@@ -8,7 +8,7 @@
     "deployment": "cloud",
     "model": {
         "id": "gemma-4-26b-a4b-it",
-        "name": "Google: Gemma 4 26B A4B",
+        "name": "Gemma 4 26B A4B",
         "org": "google",
         "access": "open",
         "family": {
@@ -16,7 +16,7 @@
             "ver": "4"
         },
         "type": "MoE",
-        "thinking": true,
+        "thinking": false,
         "size": {
             "params": "26B",
             "active": "4B"

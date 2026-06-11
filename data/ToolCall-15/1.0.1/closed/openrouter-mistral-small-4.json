@@ -16,7 +16,7 @@
             "ver": "4"
         },
         "type": "MoE",
-        "thinking": true,
+        "thinking": false,
         "size": {
             "params": "119B",
             "active": "6B"

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Crown, Lightbulb } from "lucide-react";
+import { Crown, Lightbulb, LightbulbOff } from "lucide-react";
 
 import { modelBadges, quantColor } from "@/lib/badges";
 import { OrgLogo } from "@/components/ui/org-logo";
@@ -88,10 +88,15 @@ export function SubmissionCard({
                 className="font-display flex min-w-0 flex-1 items-center gap-1.5 text-lg leading-tight font-bold tracking-tight sm:gap-2 sm:text-2xl"
                 title={row.modelName}
               >
-                {row.thinking ? (
+                {row.thinking === true ? (
                   <Lightbulb
                     className="text-amber-300/90 size-4 shrink-0 sm:size-5"
                     aria-label={t("facet.thinking")}
+                  />
+                ) : row.thinking === false ? (
+                  <LightbulbOff
+                    className="text-red-400/90 size-4 shrink-0 sm:size-5"
+                    aria-label={t("val.nonThinking")}
                   />
                 ) : null}
                 <span className="truncate">{row.modelName}</span>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, ExternalLink, ImageDown, Lightbulb, Link2, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, ImageDown, Lightbulb, LightbulbOff, Link2, Loader2 } from "lucide-react";
 
 import { ShareCard } from "@/components/ShareCard";
 import { copyCardImage, copyText, toDataUrl } from "@/lib/shareImage";
@@ -231,10 +231,15 @@ export default function Detail() {
           <OrgLogo org={row.modelOrg} avatar={row.orgAvatar} size={64} radius="rounded-2xl" />
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <h1 className="font-display flex items-center gap-2 text-2xl leading-tight font-extrabold tracking-tight break-words">
-              {row.thinking ? (
+              {row.thinking === true ? (
                 <Lightbulb
                   className="text-amber-300/90 size-5 shrink-0"
                   aria-label={t("facet.thinking")}
+                />
+              ) : row.thinking === false ? (
+                <LightbulbOff
+                  className="text-red-400/90 size-5 shrink-0"
+                  aria-label={t("val.nonThinking")}
                 />
               ) : null}
               <span>{row.modelName}</span>
