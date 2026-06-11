@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "YuYu1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "name": "Huihui Qwen3.6 35B A3B Claude 4.7 Opus Abliterated",
+        "id": "huihui-qwen3.6-35b-a3b-claude-opus-4.7-abliterated-fp8",
+        "org": "Qwen",
+        "access": "open",
+        "family": {
+            "name": "Qwen",
+            "ver": "3.6"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "35B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "Safetensors",
+            "level": "FP8",
+            "method": "Static"
+        },
+        "link": "hugging_face:YuYu1015:Huihui-Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-int4-AutoRound"
+    },
+    "backend": {
+        "name": "vllm",
+        "ver": "0.22.1rc1"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "DGX Spark",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 79,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 55,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 73,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 67,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T02:06:43.020Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": 1,
+            "time": 3166
+        },
+        "IF-02": {
+            "status": 0,
+            "time": 6820
+        },
+        "IF-03": {
+            "status": 0,
+            "time": 4032
+        },
+        "IF-04": {
+            "status": 1,
+            "time": 1840
+        },
+        "IF-05": {
+            "status": 1,
+            "time": 2460
+        },
+        "IF-06": {
+            "status": 1,
+            "time": 2496
+        },
+        "IF-07": {
+            "status": 1,
+            "time": 2857
+        },
+        "IF-08": {
+            "status": 1,
+            "time": 1622
+        },
+        "IF-09": {
+            "status": 1,
+            "time": 4965
+        },
+        "IF-10": {
+            "status": null,
+            "time": 57033
+        },
+        "IF-11": {
+            "status": 0,
+            "time": 5946
+        },
+        "IF-12": {
+            "status": 1,
+            "time": 4775
+        },
+        "IF-13": {
+            "status": 1,
+            "time": 1167
+        },
+        "IF-14": {
+            "status": 0,
+            "time": 2157
+        },
+        "IF-15": {
+            "status": 1,
+            "time": 2455
+        }
+    }
+}
