@@ -14,7 +14,7 @@ import { loadExam, type ExamPack } from "@/lib/exam";
 import { useI18n, type TFn } from "@/lib/i18n";
 import { statusKind } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { clamp, cn, formatDuration } from "@/lib/utils";
 
 // 左 = A、右 = B 的代表色(同時用在身分卡、長條、雷達圖)。
 const COLOR_A = "#22d3ee"; // cyan-400
@@ -22,7 +22,7 @@ const COLOR_B = "#f59e0b"; // amber-500
 
 function fmtSec(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) return "—";
-  return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
+  return formatDuration(ms);
 }
 
 /* ----------------------------- 身分卡 ----------------------------- */
@@ -105,7 +105,7 @@ interface Metric {
 
 function VersusBar({ m }: { m: Metric }) {
   const { a, b } = m;
-  const pct = (v: number | null) => (v == null ? 0 : Math.max(0, Math.min(100, (v / m.max) * 100)));
+  const pct = (v: number | null) => (v == null ? 0 : clamp((v / m.max) * 100, 0, 100));
   const both = a != null && b != null && a !== b;
   const aWin = both && (m.higherBetter ? a > b : a < b);
   const bWin = both && !aWin;
@@ -169,7 +169,7 @@ function Radar({
   const R = size / 2 - 56;
   const angle = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
   const pt = (val: number, i: number) => {
-    const r = (Math.max(0, Math.min(100, val)) / 100) * R;
+    const r = (clamp(val, 0, 100) / 100) * R;
     return [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
   };
   const polygon = (vals: number[]) => vals.map((v, i) => pt(v, i).join(",")).join(" ");

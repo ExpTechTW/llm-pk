@@ -21,7 +21,7 @@ import { parseModelLink } from "@/lib/modelLink";
 import { formatPass, statusKind } from "@/lib/status";
 import type { ResultEntry } from "@/lib/types";
 import { useDb } from "@/hooks/useDb";
-import { cn } from "@/lib/utils";
+import { clamp, cn, formatDuration } from "@/lib/utils";
 
 // 狀態 → 標籤/配色,語意一律走共用的 statusKind(避免與計分分歧)
 function statusInfo(status: number | null, t: TFn) {
@@ -47,7 +47,7 @@ function shortId(scenarioId: string): string {
 
 function formatTime(ms: number): string {
   if (!ms || ms <= 0) return "—";
-  return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
+  return formatDuration(ms);
 }
 
 function Chip({ children, className }: { children: ReactNode; className?: string }) {
@@ -170,7 +170,7 @@ export default function Detail() {
 
   const isCloud = row.deployment === "cloud";
   const badges = modelBadges(row, t);
-  const score = Math.max(0, Math.min(100, row.scoreTotal));
+  const score = clamp(row.scoreTotal, 0, 100);
   const hwExtra = Object.entries(row.hwExtra);
   const modelLink = parseModelLink(row.modelLink);
   const openExam = openQ ? exam?.scenarios[openQ] : undefined;
@@ -347,7 +347,7 @@ export default function Detail() {
                   <div className="bg-muted/70 h-1 overflow-hidden rounded-full">
                     <div
                       className="bg-primary/70 h-full rounded-full"
-                      style={{ width: `${Math.max(0, Math.min(100, cat.score))}%` }}
+                      style={{ width: `${clamp(cat.score, 0, 100)}%` }}
                     />
                   </div>
                 </div>

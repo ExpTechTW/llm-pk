@@ -41,6 +41,9 @@ export const FACETS: FacetDef[] = [
   { key: "quantLevel", labelKey: "facet.quantLevel", get: (r) => r.quantLevel },
 ];
 
+// 單位(以 B 為基準):K=1e-6、M=1e-3、B=1、T=1e3,無單位視為 B。
+const SIZE_MULT: Record<string, number> = { K: 1e-6, M: 1e-3, B: 1, T: 1e3, "": 1 };
+
 // 把參數量字串(如 "30B"、"2.5B"、"550M"、"1.6T")換算成數值(以 B 為單位)。
 export function parseSize(value: string | null): number | null {
   if (!value) return null;
@@ -48,9 +51,7 @@ export function parseSize(value: string | null): number | null {
   if (!m) return null;
   const n = parseFloat(m[1]);
   if (Number.isNaN(n)) return null;
-  // 單位(以 B 為基準):K=1e-6、M=1e-3、B=1、T=1e3,無單位視為 B。
-  const mult: Record<string, number> = { K: 1e-6, M: 1e-3, B: 1, T: 1e3, "": 1 };
-  return n * mult[m[2].toUpperCase()];
+  return n * SIZE_MULT[m[2].toUpperCase()];
 }
 
 // 數值區間篩選(用拉桿)。價格與參數量/啟用量共用同一套機制。

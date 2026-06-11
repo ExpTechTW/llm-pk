@@ -3,6 +3,7 @@ import { Binary, Boxes, Cloud, Cpu, Lock, LockOpen, Network, type LucideIcon } f
 
 import type { SubmissionRow } from "@/lib/types";
 import type { TFn } from "@/lib/i18n";
+import { clamp } from "@/lib/utils";
 
 // 卡片自帶配色(明確 hex,避免 oklch / 主題變數在 canvas 端的相容問題)。
 const C = {
@@ -30,7 +31,6 @@ const HUE = {
 const FONT =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang TC", "PingFang SC", "Hiragino Sans", "Noto Sans CJK", sans-serif';
 
-const clamp = (n: number) => Math.max(0, Math.min(100, n));
 const scoreHue = (n: number) => (n >= 80 ? C.primary : n >= 50 ? HUE.amber : HUE.red);
 
 interface Chip {
@@ -183,7 +183,7 @@ export const ShareCard = forwardRef<
               <span style={{ fontSize: 12.5, color: C.sub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {catLabel(c.label ?? c.id)}
               </span>
-              <span style={{ fontSize: 15, fontWeight: 800, color: scoreHue(clamp(c.score)), fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+              <span style={{ fontSize: 15, fontWeight: 800, color: scoreHue(clamp(c.score, 0, 100)), fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
                 {c.score}
               </span>
             </div>

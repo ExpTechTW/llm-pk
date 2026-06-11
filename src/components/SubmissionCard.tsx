@@ -7,7 +7,7 @@ import { OrgLogo } from "@/components/ui/org-logo";
 import { useI18n } from "@/lib/i18n";
 import { formatPass } from "@/lib/status";
 import type { SubmissionRow } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { clamp, cn } from "@/lib/utils";
 
 const RANK_ACCENT: Record<number, string> = {
   1: "text-primary",
@@ -41,7 +41,8 @@ export function SubmissionCard({
   seq?: number;
 }) {
   const { t } = useI18n();
-  const score = Math.max(0, Math.min(100, row.scoreTotal));
+  const score = clamp(row.scoreTotal, 0, 100);
+  const [scoreInt, scoreFrac] = row.scoreTotal.toFixed(1).split(".");
   const isTop = rank <= 3;
   const isChampion = rank === 1;
   const badges = modelBadges(row, t);
@@ -128,10 +129,10 @@ export function SubmissionCard({
           <div className="flex w-1/4 shrink-0 flex-col items-end justify-center gap-1.5">
             <div className="flex items-baseline">
               <span className="font-data text-2xl leading-none font-bold tabular-nums sm:text-3xl">
-                {row.scoreTotal.toFixed(1).split(".")[0]}
+                {scoreInt}
               </span>
               <span className="text-muted-foreground/70 font-data text-xs">
-                .{row.scoreTotal.toFixed(1).split(".")[1]}
+                .{scoreFrac}
               </span>
             </div>
             <div className="bg-muted/70 h-1.5 w-full overflow-hidden rounded-full ring-1 ring-white/60">

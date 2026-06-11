@@ -9,7 +9,6 @@ import { TestAbout } from "@/components/TestAbout";
 import { Button } from "@/components/ui/button";
 import { getPacks, getSubmissionsByPack } from "@/lib/db";
 import { loadExam, type ExamPack } from "@/lib/exam";
-import type { SubmissionRow } from "@/lib/types";
 import {
   applyFilters,
   computeBounds,
@@ -86,16 +85,19 @@ export default function Leaderboard() {
   // 啟用量 / 參數量越小越好。seq 為實際順序(1,2,3,4…)。非「分數」排序則用顯示順序當名次。
   const ranks = useMemo(() => {
     if (sort !== "score") return filtered.map((_, i) => i + 1);
-    const size = (s: string | null) => parseSize(s) ?? Infinity; // 無資料視為最大(最差)
-    const isBetter = (a: SubmissionRow, b: SubmissionRow): boolean => {
-      if (a.scoreTotal !== b.scoreTotal) return a.scoreTotal > b.scoreTotal; // 分數高者佳
-      const aa = size(a.sizeActive);
-      const ba = size(b.sizeActive);
-      if (aa !== ba) return aa < ba; // 啟用量小者佳
-      return size(a.sizeParams) < size(b.sizeParams); // 參數量小者佳
+    // 預先換算啟用量/參數量(無資料視為最大、最差),避免在 O(n²) 名次比較中重複正則解析。
+    const active = filtered.map((r) => parseSize(r.sizeActive) ?? Infinity);
+    const params = filtered.map((r) => parseSize(r.sizeParams) ?? Infinity);
+    // i 是否嚴格優於 j:分數高 > 啟用量小 > 參數量小。
+    const isBetter = (i: number, j: number): boolean => {
+      const a = filtered[i];
+      const b = filtered[j];
+      if (a.scoreTotal !== b.scoreTotal) return a.scoreTotal > b.scoreTotal;
+      if (active[i] !== active[j]) return active[i] < active[j];
+      return params[i] < params[j];
     };
     // 名次 = 嚴格優於自己的筆數 + 1;三者全等者並列同名次。
-    return filtered.map((row) => 1 + filtered.filter((o) => isBetter(o, row)).length);
+    return filtered.map((_, i) => 1 + filtered.reduce((n, _o, j) => n + (isBetter(j, i) ? 1 : 0), 0));
   }, [filtered, sort]);
 
   useEffect(() => {
