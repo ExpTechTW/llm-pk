@@ -33,32 +33,6 @@ const FONT =
 const clamp = (n: number) => Math.max(0, Math.min(100, n));
 const scoreHue = (n: number) => (n >= 80 ? C.primary : n >= 50 ? HUE.amber : HUE.red);
 
-function fmtTime(ms: number): string {
-  if (!ms || ms <= 0) return "—";
-  return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
-}
-
-// 額外資訊(2 欄鍵值),只放有資料的項目。
-function metaData(row: SubmissionRow, t: TFn): { label: string; value: string }[] {
-  const out: { label: string; value: string }[] = [];
-  out.push({
-    label: t("detail.meta.backend"),
-    value: `${row.backendName}${row.backendVer ? ` ${row.backendVer}` : ""}`
-  });
-  if (row.deployment === "cloud") {
-    if (row.modelType) out.push({ label: t("facet.type"), value: row.modelType });
-  } else {
-    const hw = [row.hwCompany, row.hwChip || row.hwDevice].filter(Boolean).join(" ");
-    if (hw) out.push({ label: t("detail.panel.hardware"), value: hw });
-  }
-  out.push({ label: t("detail.meta.date"), value: row.runDate });
-  if (row.totalCount > 0) out.push({ label: t("detail.meta.avg"), value: fmtTime(row.totalTime / row.totalCount) });
-  if (row.runsPerTest > 1) out.push({ label: t("detail.meta.runs"), value: `×${row.runsPerTest}` });
-  if (row.thinking != null)
-    out.push({ label: t("facet.thinking"), value: row.thinking ? t("val.thinking") : t("val.nonThinking") });
-  return out.slice(0, 6);
-}
-
 interface Chip {
   label: string;
   color: string;
@@ -104,8 +78,7 @@ export const ShareCard = forwardRef<
 >(function ShareCard({ row, t, catLabel, siteLabel, avatar }, ref) {
   const monogram = (row.modelOrg || row.modelName).trim().charAt(0).toUpperCase() || "?";
   const cats = row.scoreCats.slice(0, 6);
-  const sub = [row.modelOrg, row.familyName].filter(Boolean).join(" · ") || row.modelId || "";
-  const meta = metaData(row, t);
+  const sub = row.modelOrg || "";
 
   return (
     <div
@@ -118,6 +91,7 @@ export const ShareCard = forwardRef<
         backgroundColor: C.bg,
         color: C.text,
         fontFamily: FONT,
+        border: `1px solid ${C.border}`,
         borderRadius: 24
       }}
     >
@@ -149,7 +123,7 @@ export const ShareCard = forwardRef<
             alt=""
             width={48}
             height={48}
-            style={{ width: 48, height: 48, flexShrink: 0, borderRadius: 13, objectFit: "cover", background: "#fff" }}
+            style={{ width: 48, height: 48, flexShrink: 0, borderRadius: 13, objectFit: "cover", background: "#fff", border: "1px solid rgba(255,255,255,0.1)" }}
           />
         ) : (
           <div
@@ -243,40 +217,6 @@ export const ShareCard = forwardRef<
           );
         })}
       </div>
-
-      {/* 額外資訊(緊湊雙欄鍵值) */}
-      {meta.length > 0 ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            columnGap: 18,
-            rowGap: 7,
-            borderTop: `1px solid ${C.border}`,
-            paddingTop: 14,
-            marginBottom: 14
-          }}
-        >
-          {meta.map((m, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, minWidth: 0 }}>
-              <span style={{ fontSize: 11, color: C.sub, whiteSpace: "nowrap" }}>{m.label}</span>
-              <span
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 600,
-                  color: C.text,
-                  textAlign: "right",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}
-              >
-                {m.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : null}
 
       {/* 頁尾 */}
       <div
