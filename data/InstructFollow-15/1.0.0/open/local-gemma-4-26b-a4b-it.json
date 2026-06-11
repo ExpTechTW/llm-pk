@@ -1,0 +1,132 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "gemma-4-26b-a4b-it",
+        "name": "Google: Gemma 4 26B A4B",
+        "org": "google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "26B",
+            "active": "4B"
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 91,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 93,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 93,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 67,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T13:35:59.377Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": 1,
+            "time": 3411
+        },
+        "IF-02": {
+            "status": 1,
+            "time": 1767
+        },
+        "IF-03": {
+            "status": 1,
+            "time": 2009
+        },
+        "IF-04": {
+            "status": 1,
+            "time": 4904
+        },
+        "IF-05": {
+            "status": null,
+            "time": 970
+        },
+        "IF-06": {
+            "status": 1,
+            "time": 2981
+        },
+        "IF-07": {
+            "status": 1,
+            "time": 1916
+        },
+        "IF-08": {
+            "status": 1,
+            "time": 2914
+        },
+        "IF-09": {
+            "status": 1,
+            "time": 1395
+        },
+        "IF-10": {
+            "status": 1,
+            "time": 4476
+        },
+        "IF-11": {
+            "status": null,
+            "time": 1335
+        },
+        "IF-12": {
+            "status": 1,
+            "time": 1062
+        },
+        "IF-13": {
+            "status": 1,
+            "time": 1697
+        },
+        "IF-14": {
+            "status": 0,
+            "time": 2525
+        },
+        "IF-15": {
+            "status": 1,
+            "time": 1029
+        }
+    }
+}
