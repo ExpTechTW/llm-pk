@@ -4,6 +4,7 @@
  * - 遞迴掃描 data/ 下所有 .json。
  * - 用 type-check.ts 的 schema 驗證每個檔案,不合格者跳過並警告。
  * - 用資料夾推得的 pack/ver 與 JSON 內容交叉比對,不一致時警告。
+ * - 校驗題號前綴與測試包一致(ReasonMath → RM、ToolCall → TC…),不符時警告。
  * - 在建置期把廠牌(org)/ 模型作者解析成 HuggingFace 頭像 URL 存入 DB(前端零 API 呼叫)。
  * - 建立索引(pack+ver+score、model_name、uploader)加速前端查詢。
  * - 排行依據:BenchLocal 給的分數 score.total。
@@ -134,6 +135,14 @@ function relNameOf(packName: string, packVer: string, deployment: string, name: 
   return `${packName}/${packVer}/${folder}/${name}.json`;
 }
 
+// 由測試包名稱推得題號前綴:取名稱(去掉 -size 後綴)裡的大寫字首。
+//   ReasonMath-15 → RM、ToolCall-15 → TC、DataExtract-15 → DE、InstructFollow-15 → IF。
+function scenarioPrefix(packName: string): string {
+  const base = packName.split("-")[0];
+  const caps = base.match(/[A-Z]/g);
+  return caps && caps.length >= 2 ? caps.join("") : base.slice(0, 2).toUpperCase();
+}
+
 // scores / results 改用逗號分隔的純數字字串(去掉 JSON 中括號,省空間)。null → 空字串。
 function encodeNums(arr: (number | null)[]): string {
   return arr.map((v) => (v == null ? "" : v)).join(",");
@@ -222,6 +231,16 @@ function readValidEntries(): { entries: ValidEntry[]; skipped: number } {
       if (folderVer !== report.value.BenchPack.ver) {
         console.warn(`  ${relName}: 資料夾版本「${folderVer}」與 JSON「${report.value.BenchPack.ver}」不一致`);
       }
+    }
+
+    // 題號前綴應與測試包一致(ReasonMath → RM-01…),避免投稿放錯 pack 或題庫對不上。
+    const prefix = scenarioPrefix(report.value.BenchPack.name);
+    const badKeys = Object.keys(report.value.results).filter((k) => !k.startsWith(`${prefix}-`));
+    if (badKeys.length > 0) {
+      const shown = badKeys.slice(0, 5).join("、") + (badKeys.length > 5 ? "…" : "");
+      console.warn(
+        `  ${relName}: 題號前綴應為「${prefix}-」(${report.value.BenchPack.name}),但有 ${badKeys.length} 題不符:${shown}`
+      );
     }
 
     // 檔名應為 {前綴}-{model.id}.json(前綴如 local / openrouter),不一致時警告。
