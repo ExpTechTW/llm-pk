@@ -54,6 +54,10 @@ export const messages: Record<string, string> = {
   "val.thinking": "Thinking",
   "val.nonThinking": "Non-thinking",
   "val.noThinkingMode": "No thinking mode",
+  "legend.thinking": "Thinking:",
+  "legend.think.on": "Thinking on",
+  "legend.think.off": "Supported, off",
+  "legend.think.none": "No thinking mode",
 
   "pack.label": "Test",
   "pack.placeholder": "Select test",

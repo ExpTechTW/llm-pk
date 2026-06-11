@@ -54,6 +54,10 @@ export const messages: Record<string, string> = {
   "val.thinking": "思考",
   "val.nonThinking": "非思考",
   "val.noThinkingMode": "思考モード非対応",
+  "legend.thinking": "思考表示:",
+  "legend.think.on": "思考あり",
+  "legend.think.off": "対応・未使用",
+  "legend.think.none": "思考モード非対応",
 
   "pack.label": "テスト",
   "pack.placeholder": "テストを選択",

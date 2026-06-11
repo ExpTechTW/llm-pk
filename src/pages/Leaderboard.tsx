@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, ChevronDown, Info, Loader2, SlidersHorizontal } from "lucide-react";
+import { BookOpen, ChevronDown, Info, Lightbulb, LightbulbOff, Loader2, SlidersHorizontal } from "lucide-react";
 
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { PackSelect, type PackKey } from "@/components/PackSelect";
@@ -293,6 +293,23 @@ export default function Leaderboard() {
                 </button>
               </span>
               <span>{t("lb.count.total", { n: rows.length })}</span>
+            </div>
+
+            {/* 燈泡圖例:三態思考標記說明(flex-wrap 手機自動換行) */}
+            <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1.5 px-1 text-[11px] sm:text-xs">
+              <span className="font-medium">{t("legend.thinking")}</span>
+              <span className="inline-flex items-center gap-1">
+                <Lightbulb className="text-amber-300/90 size-3.5 shrink-0" />
+                {t("legend.think.on")}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <LightbulbOff className="text-red-400/90 size-3.5 shrink-0" />
+                {t("legend.think.off")}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <LightbulbOff className="text-muted-foreground/35 size-3.5 shrink-0" />
+                {t("legend.think.none")}
+              </span>
             </div>
 
             {showRankHelp ? (
