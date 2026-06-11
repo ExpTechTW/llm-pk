@@ -87,6 +87,12 @@ export const messages: Record<string, string> = {
   "badge.closed": "Closed",
 
   "detail.back": "Back",
+  "detail.copyUrl": "Copy link",
+  "detail.copyCard": "Copy card",
+  "detail.copied": "Copied",
+  "detail.downloaded": "Downloaded",
+  "detail.copying": "Generating…",
+  "detail.copyFailed": "Failed",
   "detail.notFound": "Submission not found.",
   "detail.backToLb": "← Back to leaderboard",
   "detail.modelPage": "Model page",

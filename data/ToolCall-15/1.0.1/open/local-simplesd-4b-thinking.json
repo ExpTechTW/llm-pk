@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "simplesd-4b-thinking",
+        "name": "SimpleSD 4B Thinking",
+        "org": "Apple",
+        "access": "open",
+        "family": {
+            "name": "SimpleSD",
+            "ver": "1"
+        },
+        "type": "Dense",
+        "thinking": true,
+        "size": {
+            "params": "4B",
+            "active": "4B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q8_0",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:SimpleSD-4B-thinking-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9580"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 93,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T02:21:51.408Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 13511
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 16533
+        },
+        "TC-03": {
+            "status": 0,
+            "time": 22777
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 13680
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 27932
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 74620
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 109139
+        },
+        "TC-08": {
+            "status": 1,
+            "time": 60589
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 14466
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 7497
+        },
+        "TC-11": {
+            "status": 1,
+            "time": 13441
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 10751
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 24090
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 19184
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 41515
+        }
+    }
+}

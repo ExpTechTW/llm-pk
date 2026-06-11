@@ -87,6 +87,12 @@ export const messages: Record<string, string> = {
   "badge.closed": "閉源",
 
   "detail.back": "返回",
+  "detail.copyUrl": "複製連結",
+  "detail.copyCard": "複製圖卡",
+  "detail.copied": "已複製",
+  "detail.downloaded": "已下載",
+  "detail.copying": "產生中…",
+  "detail.copyFailed": "失敗",
   "detail.notFound": "找不到這筆投稿。",
   "detail.backToLb": "← 回排行榜",
   "detail.modelPage": "模型頁",

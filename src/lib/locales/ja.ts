@@ -87,6 +87,12 @@ export const messages: Record<string, string> = {
   "badge.closed": "クローズド",
 
   "detail.back": "戻る",
+  "detail.copyUrl": "リンクをコピー",
+  "detail.copyCard": "カードをコピー",
+  "detail.copied": "コピー済み",
+  "detail.downloaded": "ダウンロード済み",
+  "detail.copying": "生成中…",
+  "detail.copyFailed": "失敗",
   "detail.notFound": "投稿が見つかりません。",
   "detail.backToLb": "← ランキングへ",
   "detail.modelPage": "モデルページ",

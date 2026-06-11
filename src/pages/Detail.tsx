@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Lightbulb } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, ImageDown, Lightbulb, Link2, Loader2 } from "lucide-react";
 
+import { ShareCard } from "@/components/ShareCard";
+import { copyCardImage, copyText, toDataUrl } from "@/lib/shareImage";
 import { modelBadges } from "@/lib/badges";
 import { GithubAvatar, HfAvatar } from "@/components/ui/avatar";
 import { OrgLogo } from "@/components/ui/org-logo";
@@ -104,6 +106,31 @@ export default function Detail() {
   const [exam, setExam] = useState<ExamPack | null>(null);
   const [openQ, setOpenQ] = useState<string | null>(null);
 
+  // 分享:複製連結 / 複製成績圖卡(PNG)。
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [urlCopied, setUrlCopied] = useState(false);
+  const [cardMsg, setCardMsg] = useState<"idle" | "working" | "copied" | "downloaded" | "error">("idle");
+  const [avatarData, setAvatarData] = useState<string | null>(null);
+  const siteLabel = (window.location.host + import.meta.env.BASE_URL).replace(/\/$/, "");
+
+  const onCopyUrl = async () => {
+    if (await copyText(window.location.href)) {
+      setUrlCopied(true);
+      setTimeout(() => setUrlCopied(false), 1800);
+    }
+  };
+  const onCopyCard = async () => {
+    if (!cardRef.current) return;
+    setCardMsg("working");
+    try {
+      const safe = (row?.modelName ?? "model").replace(/[^\w.-]+/g, "-").slice(0, 60);
+      setCardMsg(await copyCardImage(cardRef.current, `llm-pk-${safe}.png`));
+    } catch {
+      setCardMsg("error");
+    }
+    setTimeout(() => setCardMsg("idle"), 2400);
+  };
+
   const row = useMemo(
     () => (db && pack && ver && file ? getSubmissionByFile(db, pack, ver, file) : null),
     [db, pack, ver, file]
@@ -115,6 +142,17 @@ export default function Detail() {
   useEffect(() => {
     if (row) loadExam(row.packName, row.packVer, lang).then(setExam);
   }, [row, lang]);
+
+  // 預先把 org 頭像抓成 data URL,讓圖卡擷取時直接內嵌(失敗則用字母圖示)。
+  const orgAvatar = row?.orgAvatar ?? null;
+  useEffect(() => {
+    let alive = true;
+    setAvatarData(null);
+    if (orgAvatar) toDataUrl(orgAvatar).then((d) => alive && setAvatarData(d));
+    return () => {
+      alive = false;
+    };
+  }, [orgAvatar]);
 
   if (loading) {
     return <p className="text-muted-foreground py-20 text-center text-sm">{t("loading")}</p>;
@@ -140,14 +178,51 @@ export default function Detail() {
 
   return (
     <main className="animate-rise mx-auto max-w-4xl px-4 pt-6 pb-12 space-y-6">
-      <button
-        type="button"
-        onClick={goBack}
-        className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-1.5 text-sm"
-      >
-        <ArrowLeft className="size-4" />
-        {t("detail.back")}
-      </button>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={goBack}
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm"
+        >
+          <ArrowLeft className="size-4" />
+          {t("detail.back")}
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onCopyUrl}
+            className="border-border/60 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors"
+          >
+            {urlCopied ? <Check className="size-3.5 text-primary" /> : <Link2 className="size-3.5" />}
+            <span className="hidden sm:inline">{urlCopied ? t("detail.copied") : t("detail.copyUrl")}</span>
+          </button>
+          <button
+            type="button"
+            onClick={onCopyCard}
+            disabled={cardMsg === "working"}
+            className="border-border/60 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-60"
+          >
+            {cardMsg === "working" ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : cardMsg === "copied" || cardMsg === "downloaded" ? (
+              <Check className="size-3.5 text-primary" />
+            ) : (
+              <ImageDown className="size-3.5" />
+            )}
+            <span className="hidden sm:inline">
+              {cardMsg === "working"
+                ? t("detail.copying")
+                : cardMsg === "copied"
+                  ? t("detail.copied")
+                  : cardMsg === "downloaded"
+                    ? t("detail.downloaded")
+                    : cardMsg === "error"
+                      ? t("detail.copyFailed")
+                      : t("detail.copyCard")}
+            </span>
+          </button>
+        </div>
+      </div>
 
       {/* 標頭 */}
       <header className="bg-card/70 border-border/60 relative overflow-hidden rounded-3xl border p-6 backdrop-blur-sm">
@@ -427,6 +502,11 @@ export default function Detail() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* 離屏成績圖卡:供「複製圖卡」擷取成 PNG(不顯示於畫面) */}
+      <div aria-hidden style={{ position: "fixed", left: -99999, top: 0, pointerEvents: "none" }}>
+        <ShareCard ref={cardRef} row={row} t={t} catLabel={catLabel} siteLabel={siteLabel} avatar={avatarData} />
+      </div>
     </main>
   );
 }
