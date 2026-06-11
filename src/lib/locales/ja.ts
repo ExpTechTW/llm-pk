@@ -53,6 +53,7 @@ export const messages: Record<string, string> = {
   "val.closed": "クローズド",
   "val.thinking": "思考",
   "val.nonThinking": "非思考",
+  "val.noThinkingMode": "思考モード非対応",
 
   "pack.label": "テスト",
   "pack.placeholder": "テストを選択",

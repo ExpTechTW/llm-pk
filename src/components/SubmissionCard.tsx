@@ -98,7 +98,12 @@ export function SubmissionCard({
                     className="text-red-400/90 size-4 shrink-0 sm:size-5"
                     aria-label={t("val.nonThinking")}
                   />
-                ) : null}
+                ) : (
+                  <LightbulbOff
+                    className="text-muted-foreground/35 size-4 shrink-0 sm:size-5"
+                    aria-label={t("val.noThinkingMode")}
+                  />
+                )}
                 <span className="truncate">{row.modelName}</span>
               </h3>
             </div>

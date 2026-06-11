@@ -53,6 +53,7 @@ export const messages: Record<string, string> = {
   "val.closed": "Closed",
   "val.thinking": "Thinking",
   "val.nonThinking": "Non-thinking",
+  "val.noThinkingMode": "No thinking mode",
 
   "pack.label": "Test",
   "pack.placeholder": "Select test",

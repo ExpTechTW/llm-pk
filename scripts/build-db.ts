@@ -544,7 +544,7 @@ async function main(): Promise<void> {
         family_name: s.model.family?.name ?? null,
         family_ver: s.model.family?.ver ?? null,
         model_type: s.model.type ?? null,
-        model_thinking: s.model.thinking === undefined ? null : s.model.thinking ? 1 : 0,
+        model_thinking: s.model.thinking == null ? null : s.model.thinking ? 1 : 0,
         size_params: s.model.size?.params ?? null,
         size_active: s.model.size?.active ?? null,
         quant_format: quant?.format ?? null,

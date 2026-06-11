@@ -241,7 +241,12 @@ export default function Detail() {
                   className="text-red-400/90 size-5 shrink-0"
                   aria-label={t("val.nonThinking")}
                 />
-              ) : null}
+              ) : (
+                <LightbulbOff
+                  className="text-muted-foreground/35 size-5 shrink-0"
+                  aria-label={t("val.noThinkingMode")}
+                />
+              )}
               <span>{row.modelName}</span>
             </h1>
             {row.modelId ? (

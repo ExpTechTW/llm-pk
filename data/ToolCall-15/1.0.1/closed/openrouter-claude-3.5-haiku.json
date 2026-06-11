@@ -16,7 +16,7 @@
             "ver": "3.5"
         },
         "type": "",
-        "thinking": false,
+        "thinking": null,
         "size": {
             "params": "",
             "active": ""

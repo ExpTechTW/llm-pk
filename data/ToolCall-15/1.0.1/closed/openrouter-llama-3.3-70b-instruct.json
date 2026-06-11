@@ -16,7 +16,7 @@
             "ver": "3.3"
         },
         "type": "Dense",
-        "thinking": false,
+        "thinking": null,
         "size": {
             "params": "70B",
             "active": "70B"
