@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "ToolCall-15",
+        "ver": "1.0.1"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "huihui-gemma-4-26b-a4b-it-qat-q4_0-unquantized-abliterated-q4_k",
+        "name": "Gemma 4 26B A4B IT QAT Q4_0 Unquantized Abliterated",
+        "org": "Google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "26B",
+            "active": "4B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:huihui-ai:Huihui-gemma-4-26B-A4B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9544"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "NVIDIA GeForce RTX 3090",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 87,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Tool Selection",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Parameter Precision",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Chains",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Restraint & Refusal",
+                "score": 67,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Error Recovery",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T23:04:01.002Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "TC-01": {
+            "status": 1,
+            "time": 1955
+        },
+        "TC-02": {
+            "status": 1,
+            "time": 1334
+        },
+        "TC-03": {
+            "status": 1,
+            "time": 4342
+        },
+        "TC-04": {
+            "status": 1,
+            "time": 2481
+        },
+        "TC-05": {
+            "status": 1,
+            "time": 4636
+        },
+        "TC-06": {
+            "status": 1,
+            "time": 2404
+        },
+        "TC-07": {
+            "status": 1,
+            "time": 5526
+        },
+        "TC-08": {
+            "status": 0,
+            "time": 3160
+        },
+        "TC-09": {
+            "status": 1,
+            "time": 2244
+        },
+        "TC-10": {
+            "status": 1,
+            "time": 700
+        },
+        "TC-11": {
+            "status": 0,
+            "time": 1302
+        },
+        "TC-12": {
+            "status": 1,
+            "time": 2655
+        },
+        "TC-13": {
+            "status": 1,
+            "time": 2460
+        },
+        "TC-14": {
+            "status": 1,
+            "time": 3155
+        },
+        "TC-15": {
+            "status": 1,
+            "time": 2849
+        }
+    }
+}

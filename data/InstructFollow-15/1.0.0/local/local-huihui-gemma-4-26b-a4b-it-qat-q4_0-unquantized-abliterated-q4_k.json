@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "huihui-gemma-4-26b-a4b-it-qat-q4_0-unquantized-abliterated-q4_k",
+        "name": "Gemma 4 26B A4B IT QAT Q4_0 Unquantized Abliterated",
+        "org": "Google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "26B",
+            "active": "4B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:huihui-ai:Huihui-gemma-4-26B-A4B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9544"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "NVIDIA GeForce RTX 3090",
+        "chip": "",
+        "os": "Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-124-generic x86_64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 96,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 100,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 94,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 85,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 100,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T23:10:54.130Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": 1,
+            "time": 29614
+        },
+        "IF-02": {
+            "status": 1,
+            "time": 30777
+        },
+        "IF-03": {
+            "status": 1,
+            "time": 29761
+        },
+        "IF-04": {
+            "status": 1,
+            "time": 15957
+        },
+        "IF-05": {
+            "status": 1,
+            "time": 30064
+        },
+        "IF-06": {
+            "status": 1,
+            "time": 3364
+        },
+        "IF-07": {
+            "status": 1,
+            "time": 29817
+        },
+        "IF-08": {
+            "status": 1,
+            "time": 26897
+        },
+        "IF-09": {
+            "status": null,
+            "time": 30097
+        },
+        "IF-10": {
+            "status": 1,
+            "time": 30198
+        },
+        "IF-11": {
+            "status": null,
+            "time": 30186
+        },
+        "IF-12": {
+            "status": null,
+            "time": 15156
+        },
+        "IF-13": {
+            "status": 1,
+            "time": 1861
+        },
+        "IF-14": {
+            "status": 1,
+            "time": 30068
+        },
+        "IF-15": {
+            "status": 1,
+            "time": 20147
+        }
+    }
+}

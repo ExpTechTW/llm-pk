@@ -1,0 +1,132 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "cloud",
+    "model": {
+        "id": "gemma-4-31b-it",
+        "name": "Gemma 4 31B",
+        "org": "google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "Dense",
+        "thinking": false,
+        "size": {
+            "params": "31B",
+            "active": "31B"
+        },
+        "link": ""
+    },
+    "backend": {
+        "name": "OpenRouter",
+        "ver": ""
+    },
+    "score": {
+        "total": 88,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 97,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 86,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 89,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 86,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 80,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T23:36:27.120Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 1,
+            "time": 3862
+        },
+        "DE-02": {
+            "status": 1,
+            "time": 14036
+        },
+        "DE-03": {
+            "status": 1,
+            "time": 9931
+        },
+        "DE-04": {
+            "status": 1,
+            "time": 2131
+        },
+        "DE-05": {
+            "status": 1,
+            "time": 11995
+        },
+        "DE-06": {
+            "status": 1,
+            "time": 9999
+        },
+        "DE-07": {
+            "status": null,
+            "time": 7012
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 1269
+        },
+        "DE-09": {
+            "status": 1,
+            "time": 20904
+        },
+        "DE-10": {
+            "status": null,
+            "time": 1368
+        },
+        "DE-11": {
+            "status": 1,
+            "time": 1080
+        },
+        "DE-12": {
+            "status": 1,
+            "time": 1934
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 126057
+        },
+        "DE-14": {
+            "status": null,
+            "time": 4819
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 14784
+        }
+    }
+}

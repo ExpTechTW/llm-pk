@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "ReasonMath-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "huihui-gemma-4-26b-a4b-it-qat-q4_0-unquantized-abliterated-q4_k",
+        "name": "Gemma 4 26B A4B IT QAT Q4_0 Unquantized Abliterated",
+        "org": "Google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "26B",
+            "active": "4B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:huihui-ai:Huihui-gemma-4-26B-A4B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9544"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "NVIDIA GeForce RTX 3090",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 89,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Everyday Arithmetic",
+                "score": 100,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Logic Puzzles",
+                "score": 80,
+                "weight": 25
+            },
+            {
+                "id": "C",
+                "label": "Multi-Step Word Problems",
+                "score": 85,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Trick Questions and Traps",
+                "score": 95,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Applied Reasoning",
+                "score": 85,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T23:05:18.322Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "RM-01": {
+            "status": 1,
+            "time": 6179
+        },
+        "RM-02": {
+            "status": 1,
+            "time": 2963
+        },
+        "RM-03": {
+            "status": 1,
+            "time": 31019
+        },
+        "RM-04": {
+            "status": 1,
+            "time": 33411
+        },
+        "RM-05": {
+            "status": 1,
+            "time": 33626
+        },
+        "RM-06": {
+            "status": null,
+            "time": 36444
+        },
+        "RM-07": {
+            "status": 1,
+            "time": 7998
+        },
+        "RM-08": {
+            "status": 1,
+            "time": 32500
+        },
+        "RM-09": {
+            "status": 1,
+            "time": 7676
+        },
+        "RM-10": {
+            "status": 1,
+            "time": 4622
+        },
+        "RM-11": {
+            "status": 1,
+            "time": 5000
+        },
+        "RM-12": {
+            "status": 1,
+            "time": 31146
+        },
+        "RM-13": {
+            "status": 1,
+            "time": 23899
+        },
+        "RM-14": {
+            "status": 1,
+            "time": 9434
+        },
+        "RM-15": {
+            "status": 1,
+            "time": 29435
+        }
+    }
+}

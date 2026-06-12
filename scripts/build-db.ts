@@ -126,12 +126,12 @@ function normalizeLink(link: string | null | undefined): string | null {
 }
 
 // 路徑 ↔ 檔名:DB 只存「不含目錄與副檔名的檔名」,完整路徑由 pack/ver/deployment 還原。
-//   data/{pack}/{ver}/{open|closed}/{name}.json,其中 open=local、closed=cloud。
+//   data/{pack}/{ver}/{local|cloud}/{name}.json,資料夾依 deployment 分。
 function fileKey(relName: string): string {
   return relName.split("/").pop()!.replace(/\.json$/i, "");
 }
 function relNameOf(packName: string, packVer: string, deployment: string, name: string): string {
-  const folder = deployment === "cloud" ? "closed" : "open";
+  const folder = deployment === "cloud" ? "cloud" : "local";
   return `${packName}/${packVer}/${folder}/${name}.json`;
 }
 

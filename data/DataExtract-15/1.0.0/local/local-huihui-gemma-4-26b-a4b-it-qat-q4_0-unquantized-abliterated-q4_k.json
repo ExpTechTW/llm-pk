@@ -1,0 +1,145 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "huihui-gemma-4-26b-a4b-it-qat-q4_0-unquantized-abliterated-q4_k",
+        "name": "Gemma 4 26B A4B IT QAT Q4_0 Unquantized Abliterated",
+        "org": "Google",
+        "access": "open",
+        "family": {
+            "name": "Gemma",
+            "ver": "4"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "26B",
+            "active": "4B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:huihui-ai:Huihui-gemma-4-26B-A4B-it-qat-q4_0-unquantized-abliterated-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9544"
+    },
+    "hardware": {
+        "company": "NVIDIA",
+        "device": "NVIDIA GeForce RTX 3090",
+        "chip": "GB10",
+        "os": "NVIDIA DGX Spark Version 7.5.0 (GNU/Linux 6.17.0-1021-nvidia aarch64)",
+        "driver": "595.71.05",
+        "cuda": "13.2"
+    },
+    "score": {
+        "total": 57,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 64,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 27,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 67,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 62,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 66,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-11T23:22:28.152Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 1,
+            "time": 13153
+        },
+        "DE-02": {
+            "status": 0,
+            "time": 31231
+        },
+        "DE-03": {
+            "status": 1,
+            "time": 14948
+        },
+        "DE-04": {
+            "status": 0,
+            "time": 31035
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 31820
+        },
+        "DE-06": {
+            "status": null,
+            "time": 31781
+        },
+        "DE-07": {
+            "status": 0,
+            "time": 32874
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 31424
+        },
+        "DE-09": {
+            "status": 1,
+            "time": 18437
+        },
+        "DE-10": {
+            "status": 0,
+            "time": 48366
+        },
+        "DE-11": {
+            "status": 1,
+            "time": 30528
+        },
+        "DE-12": {
+            "status": 1,
+            "time": 31671
+        },
+        "DE-13": {
+            "status": 1,
+            "time": 34735
+        },
+        "DE-14": {
+            "status": 0,
+            "time": 34384
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 5899
+        }
+    }
+}
