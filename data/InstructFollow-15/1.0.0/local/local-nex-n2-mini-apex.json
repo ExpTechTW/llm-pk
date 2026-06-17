@@ -7,26 +7,26 @@
     },
     "deployment": "local",
     "model": {
-        "id": "vibethinker-3b-q6_k",
-        "name": "VibeThinker 3B",
-        "org": "WeiboAI",
+        "id": "nex-n2-mini-apex",
+        "name": "Nex N2 Mini",
+        "org": "nex-agi",
         "access": "open",
         "family": {
-            "name": "VibeThinker",
-            "ver": "1"
+            "name": "Nex",
+            "ver": "N2"
         },
-        "type": "Dense",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "3B",
+            "params": "35B",
             "active": "3B"
         },
         "quantization": {
             "format": "GGUF",
-            "level": "Q6_K",
-            "method": "Static"
+            "level": "Dynamic",
+            "method": "APEX"
         },
-        "link": "hugging_face:mradermacher:VibeThinker-3B-i1-GGUF"
+        "link": "hugging_face:andrevp:Huihui-Nex-N2-mini-abliterated-APEX-MTP-GGUF"
     },
     "backend": {
         "name": "llama.cpp",
@@ -40,7 +40,7 @@
         "driver": ""
     },
     "score": {
-        "total": 11,
+        "total": 18,
         "categories": [
             {
                 "id": "A",
@@ -51,7 +51,7 @@
             {
                 "id": "B",
                 "label": "Ordering and Sorting",
-                "score": 13,
+                "score": 47,
                 "weight": 20
             },
             {
@@ -75,70 +75,70 @@
         ]
     },
     "run": {
-        "date": "2026-06-16T23:24:28.314Z",
+        "date": "2026-06-17T04:26:17.191Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "IF-01": {
             "status": 0,
-            "time": 13791
+            "time": 4377
         },
         "IF-02": {
             "status": 0,
-            "time": 9541
+            "time": 1883
         },
         "IF-03": {
             "status": 0,
-            "time": 10925
+            "time": 3159
         },
         "IF-04": {
-            "status": 0,
-            "time": 12600
+            "status": 1,
+            "time": 2219
         },
         "IF-05": {
             "status": 0,
-            "time": 9512
+            "time": 7570
         },
         "IF-06": {
             "status": 0,
-            "time": 5783
+            "time": 2326
         },
         "IF-07": {
             "status": 0,
-            "time": 12905
+            "time": 2545
         },
         "IF-08": {
             "status": null,
-            "time": 9807
+            "time": 2872
         },
         "IF-09": {
             "status": 0,
-            "time": 17496
+            "time": 3825
         },
         "IF-10": {
             "status": 0,
-            "time": 45722
+            "time": 15164
         },
         "IF-11": {
             "status": 0,
-            "time": 71876
+            "time": 6920
         },
         "IF-12": {
             "status": 0,
-            "time": 12236
+            "time": 5987
         },
         "IF-13": {
             "status": 0,
-            "time": 4899
+            "time": 405
         },
         "IF-14": {
             "status": 0,
-            "time": 13228
+            "time": 2818
         },
         "IF-15": {
             "status": 0,
-            "time": 14381
+            "time": 3829
         }
     }
 }

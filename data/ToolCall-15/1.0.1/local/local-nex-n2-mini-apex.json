@@ -7,26 +7,26 @@
     },
     "deployment": "local",
     "model": {
-        "id": "vibethinker-3b-q6_k",
-        "name": "VibeThinker 3B",
-        "org": "WeiboAI",
+        "id": "nex-n2-mini-apex",
+        "name": "Nex N2 Mini",
+        "org": "nex-agi",
         "access": "open",
         "family": {
-            "name": "VibeThinker",
-            "ver": "1"
+            "name": "Nex",
+            "ver": "N2"
         },
-        "type": "Dense",
+        "type": "MoE",
         "thinking": true,
         "size": {
-            "params": "3B",
+            "params": "35B",
             "active": "3B"
         },
         "quantization": {
             "format": "GGUF",
-            "level": "Q6_K",
-            "method": "Static"
+            "level": "Dynamic",
+            "method": "APEX"
         },
-        "link": "hugging_face:mradermacher:VibeThinker-3B-i1-GGUF"
+        "link": "hugging_face:andrevp:Huihui-Nex-N2-mini-abliterated-APEX-MTP-GGUF"
     },
     "backend": {
         "name": "llama.cpp",
@@ -40,105 +40,105 @@
         "driver": ""
     },
     "score": {
-        "total": 23,
+        "total": 90,
         "categories": [
             {
                 "id": "A",
                 "label": "Tool Selection",
-                "score": 17,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "B",
                 "label": "Parameter Precision",
-                "score": 0,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "C",
                 "label": "Multi-Step Chains",
-                "score": 0,
+                "score": 100,
                 "weight": 20
             },
             {
                 "id": "D",
                 "label": "Restraint & Refusal",
-                "score": 100,
+                "score": 50,
                 "weight": 20
             },
             {
                 "id": "E",
                 "label": "Error Recovery",
-                "score": 0,
+                "score": 100,
                 "weight": 20
             }
         ]
     },
     "run": {
-        "date": "2026-06-16T22:38:56.069Z",
+        "date": "2026-06-17T04:06:26.553Z",
         "mode": "parallel_by_test_case",
         "runsPerTest": 1
     },
     "results": {
         "TC-01": {
-            "status": 0,
-            "time": 38758
+            "status": 1,
+            "time": 1429
         },
         "TC-02": {
-            "status": 0,
-            "time": 60600
+            "status": 1,
+            "time": 1302
         },
         "TC-03": {
-            "status": null,
-            "time": 7898
+            "status": 1,
+            "time": 2868
         },
         "TC-04": {
-            "status": 0,
-            "time": 16815
+            "status": 1,
+            "time": 1293
         },
         "TC-05": {
-            "status": 0,
-            "time": 22322
+            "status": 1,
+            "time": 3173
         },
         "TC-06": {
-            "status": 0,
-            "time": 54856
+            "status": 1,
+            "time": 2594
         },
         "TC-07": {
-            "status": 0,
-            "time": 41138
+            "status": 1,
+            "time": 6470
         },
         "TC-08": {
-            "status": 0,
-            "time": 117719
+            "status": 1,
+            "time": 2911
         },
         "TC-09": {
-            "status": 0,
-            "time": 170781
+            "status": 1,
+            "time": 1959
         },
         "TC-10": {
             "status": 1,
-            "time": 8497
+            "time": 329
         },
         "TC-11": {
-            "status": 1,
-            "time": 9964
+            "status": null,
+            "time": 1173
         },
         "TC-12": {
-            "status": 1,
-            "time": 12441
+            "status": 0,
+            "time": 1461
         },
         "TC-13": {
-            "status": 0,
-            "time": 42673
+            "status": 1,
+            "time": 3424
         },
         "TC-14": {
-            "status": -1,
-            "time": 300007
+            "status": 1,
+            "time": 1515
         },
         "TC-15": {
-            "status": 0,
-            "time": 176387
+            "status": 1,
+            "time": 3092
         }
     }
 }
