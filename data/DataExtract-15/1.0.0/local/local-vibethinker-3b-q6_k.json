@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "vibethinker-3b-q6_k",
+        "name": "VibeThinker 3B",
+        "org": "WeiboAI",
+        "access": "open",
+        "family": {
+            "name": "VibeThinker",
+            "ver": "1"
+        },
+        "type": "Dense",
+        "thinking": true,
+        "size": {
+            "params": "3B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q6_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:VibeThinker-3B-i1-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9660"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 0,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 0,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 0,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 0,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 0,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 0,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-17T02:06:10.312Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 0,
+            "time": 11654
+        },
+        "DE-02": {
+            "status": -1,
+            "time": 299998
+        },
+        "DE-03": {
+            "status": 0,
+            "time": 60125
+        },
+        "DE-04": {
+            "status": 0,
+            "time": 61964
+        },
+        "DE-05": {
+            "status": 0,
+            "time": 78220
+        },
+        "DE-06": {
+            "status": 0,
+            "time": 74943
+        },
+        "DE-07": {
+            "status": 0,
+            "time": 52488
+        },
+        "DE-08": {
+            "status": 0,
+            "time": 61768
+        },
+        "DE-09": {
+            "status": 0,
+            "time": 79995
+        },
+        "DE-10": {
+            "status": 0,
+            "time": 42954
+        },
+        "DE-11": {
+            "status": 0,
+            "time": 27067
+        },
+        "DE-12": {
+            "status": 0,
+            "time": 86070
+        },
+        "DE-13": {
+            "status": -1,
+            "time": 299998
+        },
+        "DE-14": {
+            "status": -1,
+            "time": 299999
+        },
+        "DE-15": {
+            "status": 0,
+            "time": 14728
+        }
+    }
+}

@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "InstructFollow-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "vibethinker-3b-q6_k",
+        "name": "VibeThinker 3B",
+        "org": "WeiboAI",
+        "access": "open",
+        "family": {
+            "name": "VibeThinker",
+            "ver": "1"
+        },
+        "type": "Dense",
+        "thinking": true,
+        "size": {
+            "params": "3B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q6_K",
+            "method": "Static"
+        },
+        "link": "hugging_face:mradermacher:VibeThinker-3B-i1-GGUF"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9660"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 26.6 Beta (25G5028f)",
+        "driver": ""
+    },
+    "score": {
+        "total": 11,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Format Constraints",
+                "score": 0,
+                "weight": 20
+            },
+            {
+                "id": "B",
+                "label": "Ordering and Sorting",
+                "score": 13,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Domain",
+                "score": 20,
+                "weight": 20
+            },
+            {
+                "id": "D",
+                "label": "Precision Under Pressure",
+                "score": 22,
+                "weight": 20
+            },
+            {
+                "id": "E",
+                "label": "Adversarial",
+                "score": 0,
+                "weight": 20
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-16T23:24:28.314Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "IF-01": {
+            "status": 0,
+            "time": 13791
+        },
+        "IF-02": {
+            "status": 0,
+            "time": 9541
+        },
+        "IF-03": {
+            "status": 0,
+            "time": 10925
+        },
+        "IF-04": {
+            "status": 0,
+            "time": 12600
+        },
+        "IF-05": {
+            "status": 0,
+            "time": 9512
+        },
+        "IF-06": {
+            "status": 0,
+            "time": 5783
+        },
+        "IF-07": {
+            "status": 0,
+            "time": 12905
+        },
+        "IF-08": {
+            "status": null,
+            "time": 9807
+        },
+        "IF-09": {
+            "status": 0,
+            "time": 17496
+        },
+        "IF-10": {
+            "status": 0,
+            "time": 45722
+        },
+        "IF-11": {
+            "status": 0,
+            "time": 71876
+        },
+        "IF-12": {
+            "status": 0,
+            "time": 12236
+        },
+        "IF-13": {
+            "status": 0,
+            "time": 4899
+        },
+        "IF-14": {
+            "status": 0,
+            "time": 13228
+        },
+        "IF-15": {
+            "status": 0,
+            "time": 14381
+        }
+    }
+}
