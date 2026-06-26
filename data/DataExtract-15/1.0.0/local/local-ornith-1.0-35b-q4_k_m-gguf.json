@@ -1,0 +1,144 @@
+{
+    "BenchLocal": "0.3.0",
+    "results_upload": "whes1015",
+    "BenchPack": {
+        "name": "DataExtract-15",
+        "ver": "1.0.0"
+    },
+    "deployment": "local",
+    "model": {
+        "id": "ornith-1.0-35b-q4_k_m-gguf",
+        "name": "Ornith 1.0 35B A3B",
+        "org": "Meta",
+        "access": "open",
+        "family": {
+            "name": "Ornith",
+            "ver": "1.0"
+        },
+        "type": "MoE",
+        "thinking": true,
+        "size": {
+            "params": "35B",
+            "active": "3B"
+        },
+        "quantization": {
+            "format": "GGUF",
+            "level": "Q4_K_M",
+            "method": "Static"
+        },
+        "link": "hugging_face:deepreinforce-ai:Ornith-1.0-35B"
+    },
+    "backend": {
+        "name": "llama.cpp",
+        "ver": "9690"
+    },
+    "hardware": {
+        "company": "Apple",
+        "device": "MacBook Pro",
+        "chip": "Apple M4 Max",
+        "os": "macOS 27.0 Beta (26A5353q)",
+        "driver": ""
+    },
+    "score": {
+        "total": 86,
+        "categories": [
+            {
+                "id": "A",
+                "label": "Clean Extraction",
+                "score": 95,
+                "weight": 15
+            },
+            {
+                "id": "B",
+                "label": "Noisy and Informal",
+                "score": 86,
+                "weight": 20
+            },
+            {
+                "id": "C",
+                "label": "Multi-Entity",
+                "score": 87,
+                "weight": 25
+            },
+            {
+                "id": "D",
+                "label": "Implicit and Missing",
+                "score": 84,
+                "weight": 25
+            },
+            {
+                "id": "E",
+                "label": "Complex Documents",
+                "score": 78,
+                "weight": 15
+            }
+        ]
+    },
+    "run": {
+        "date": "2026-06-26T04:40:37.545Z",
+        "mode": "parallel_by_test_case",
+        "runsPerTest": 1
+    },
+    "results": {
+        "DE-01": {
+            "status": 1,
+            "time": 10730
+        },
+        "DE-02": {
+            "status": 1,
+            "time": 50728
+        },
+        "DE-03": {
+            "status": 1,
+            "time": 25353
+        },
+        "DE-04": {
+            "status": 1,
+            "time": 19225
+        },
+        "DE-05": {
+            "status": null,
+            "time": 47464
+        },
+        "DE-06": {
+            "status": 1,
+            "time": 44803
+        },
+        "DE-07": {
+            "status": null,
+            "time": 49369
+        },
+        "DE-08": {
+            "status": 1,
+            "time": 23371
+        },
+        "DE-09": {
+            "status": 1,
+            "time": 26908
+        },
+        "DE-10": {
+            "status": null,
+            "time": 32184
+        },
+        "DE-11": {
+            "status": 1,
+            "time": 26018
+        },
+        "DE-12": {
+            "status": 1,
+            "time": 32469
+        },
+        "DE-13": {
+            "status": 0,
+            "time": 68634
+        },
+        "DE-14": {
+            "status": null,
+            "time": 72277
+        },
+        "DE-15": {
+            "status": 1,
+            "time": 17768
+        }
+    }
+}
