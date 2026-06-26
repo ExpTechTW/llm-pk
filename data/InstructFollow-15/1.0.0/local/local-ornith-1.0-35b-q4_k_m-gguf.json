@@ -9,7 +9,7 @@
     "model": {
         "id": "ornith-1.0-35b-q4_k_m-gguf",
         "name": "Ornith 1.0 35B A3B",
-        "org": "Meta",
+        "org": "deepreinforce-ai",
         "access": "open",
         "family": {
             "name": "Ornith",
